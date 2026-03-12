@@ -1,5 +1,5 @@
 import { CLUES, DIALOGUE, ENDINGS, NPCS } from "./data";
-import type { DialogueEntry, Npc, RoomId, SolveResult } from "./types";
+import type { CharacterEmotion, DialogueEntry, Npc, RoomId, SolveResult } from "./types";
 
 function toMinutes(hhmm: string): number {
   const [h, m] = hhmm.split(":").map(Number);
@@ -15,6 +15,7 @@ export function formatTime(totalMinutes: number): string {
 export class GameState {
   timeMinutes: number;
   currentRoom: RoomId;
+  characterEmotion: CharacterEmotion;
   clues: Set<string>;
   finished: boolean;
   lastMessage: string;
@@ -22,9 +23,10 @@ export class GameState {
   constructor(seed?: Partial<GameState>) {
     this.timeMinutes = seed?.timeMinutes ?? 8 * 60;
     this.currentRoom = seed?.currentRoom ?? "dock";
+    this.characterEmotion = seed?.characterEmotion ?? "serious";
     this.clues = new Set(seed?.clues ? [...seed.clues] : []);
     this.finished = seed?.finished ?? false;
-    this.lastMessage = seed?.lastMessage ?? "Llegaste a Isla Bruma. Encuentra quien robo el medallon.";
+    this.lastMessage = seed?.lastMessage ?? "You arrived at Bruma Island. Find who stole the medallion.";
   }
 
   clone(): GameState {
@@ -75,11 +77,12 @@ export class GameState {
 
   pickDialogue(npcId: string, optionId: string): string {
     const data = DIALOGUE[npcId];
-    if (!data) return "No hay nada mas para preguntar.";
+    if (!data) return "There is nothing else to ask.";
     const option = data.options.find((op) => op.id === optionId);
-    if (!option) return "No hay nada mas para preguntar.";
-    if (option.requirement && !option.requirement(this)) return "No parece buen momento para esa pregunta.";
-    const text = option.onPick ? option.onPick(this) : "Sin respuesta.";
+    if (!option) return "There is nothing else to ask.";
+    if (option.requirement && !option.requirement(this)) return "This is not the right moment for that question.";
+    this.characterEmotion = option.emotion ?? "serious";
+    const text = option.onPick ? option.onPick(this) : "No answer.";
     this.advanceTime(20);
     this.lastMessage = text;
     return text;

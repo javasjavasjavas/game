@@ -21,7 +21,7 @@ export function InspectPanel({ open, text, onClose }: Props) {
           <button className="detail-close" onClick={onClose}>
             <X size={12} />
           </button>
-          <h3 className="detail-title">Inspeccion</h3>
+          <h3 className="detail-title">Inspection</h3>
           <p className="detail-text">{text}</p>
         </motion.div>
       )}

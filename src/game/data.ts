@@ -3,26 +3,26 @@ import type { DialogueEntry, Npc, Room, RoomId } from "./types";
 export const ROOMS: Record<RoomId, Room> = {
   dock: {
     id: "dock",
-    name: "Muelle",
-    description: "Madera humeda, cuerdas viejas y el mar golpeando en silencio.",
+    name: "Dock",
+    description: "Wet wood, old ropes, and waves breaking in silence.",
     exits: ["lobby", "beach"],
   },
   lobby: {
     id: "lobby",
-    name: "Lobby del Hotel",
-    description: "Recepcion vacia, olor a cafe frio y una campana de bronce.",
+    name: "Hotel Lobby",
+    description: "An empty desk, cold coffee smell, and a brass bell.",
     exits: ["dock", "beach", "lighthouse"],
   },
   beach: {
     id: "beach",
-    name: "Playa Norte",
-    description: "Arena oscura y un viento que tapa voces lejanas.",
+    name: "North Beach",
+    description: "Dark sand and wind that swallows distant voices.",
     exits: ["dock", "lobby", "lighthouse"],
   },
   lighthouse: {
     id: "lighthouse",
-    name: "Faro",
-    description: "Escaleras metalicas, sal pegada en paredes y vista total de la isla.",
+    name: "Lighthouse",
+    description: "Metal stairs, salt-stained walls, and a full island view.",
     exits: ["lobby", "beach"],
   },
 };
@@ -69,94 +69,109 @@ export const NPCS: Npc[] = [
 ];
 
 export const CLUES: Record<string, string> = {
-  tornJacket: "Chaqueta rasgada con pintura del faro",
-  keyLog: "Registro de llave del faro alterado",
-  witness: "Testimonio de Ana: Bruno salio del faro nervioso",
+  tornJacket: "Torn jacket with lighthouse paint.",
+  keyLog: "Lighthouse key register was altered.",
+  witness: "Ana's statement: Bruno came down nervous from the lighthouse.",
 };
 
 export const DIALOGUE: Record<string, DialogueEntry> = {
   ana: {
-    intro: "No quiero problemas, detective. Vi cosas raras hoy.",
+    intro: "\"I don't want trouble, detective. I saw strange things today.\"",
     options: [
       {
         id: "ana-witness",
-        text: "Que viste cerca del faro?",
+        text: "Have you seen anything suspicious?",
+        emotion: "serious",
         requirement: (state) => state.timeMinutes >= 14 * 60 && !state.hasClue("witness"),
         onPick: (state) => {
           state.addClue("witness");
-          return "A las 14:20 vi a Bruno bajar del faro con la chaqueta rota.";
+          return "\"At 14:20 I saw Bruno coming down from the lighthouse with a torn jacket.\"";
         },
       },
       {
-        id: "ana-routine",
-        text: "Donde estuviste todo el dia?",
-        onPick: () => "De manana en la playa, luego en el lobby. Despues fui al muelle a tomar aire.",
+        id: "ana-who",
+        text: "Who are you?",
+        emotion: "serious",
+        onPick: () => "\"I'm Ana. I work the morning shifts and keep my head down.\"",
       },
       {
-        id: "ana-about-place",
-        text: "Cuentame sobre este lugar.",
-        onPick: () => "Todos esconden algo en esta isla. El silencio siempre cuesta caro.",
+        id: "ana-place",
+        text: "Tell me about this place.",
+        emotion: "happy",
+        onPick: () => "\"Bruma Island is beautiful from far away. Up close, it bites.\"",
       },
     ],
   },
   bruno: {
-    intro: "No me gustan los interrogatorios. Tengo trabajo.",
+    intro: "\"I don't like interviews. Make it quick.\"",
     options: [
       {
         id: "bruno-jacket",
-        text: "Tu chaqueta tiene un corte extrano.",
+        text: "Your jacket has a strange cut.",
+        emotion: "serious",
         requirement: (state) => state.timeMinutes >= 13 * 60 && !state.hasClue("tornJacket"),
         onPick: (state) => {
           state.addClue("tornJacket");
-          return "Bruno intenta ocultarla, pero se ve pintura gris de la torre del faro.";
+          return "\"It is nothing,\" Bruno says, hiding gray paint from the lighthouse wall.";
         },
       },
       {
         id: "bruno-alibi",
-        text: "Donde estabas a las 14:00?",
-        onPick: () => "En la playa, seguro. Nadie puede probar lo contrario.",
+        text: "Where were you at 14:00?",
+        emotion: "serious",
+        onPick: () => "\"At the beach. Ask anyone... if they remember.\"",
       },
       {
         id: "bruno-who",
-        text: "Quien eres tu?",
-        onPick: () => "Soy el encargado de mantenimiento. No soy tu sospechoso, detective.",
+        text: "Who are you?",
+        emotion: "serious",
+        onPick: () => "\"Maintenance. I fix things, I don't steal relics.\"",
       },
     ],
   },
   carlos: {
-    intro: "El hotel se esta hundiendo en chismes. Pregunte rapido.",
+    intro: "\"What brings you here, outsider? This place is not what it seems...\"",
     options: [
       {
+        id: "carlos-who",
+        text: "Who are you?",
+        emotion: "serious",
+        onPick: () => "\"Carlos. I run this lobby and watch everyone who crosses it.\"",
+      },
+      {
         id: "carlos-key",
-        text: "Necesito saber quien uso la llave del faro.",
+        text: "Have you seen anything suspicious?",
+        emotion: "serious",
         requirement: (state) => state.timeMinutes >= 12 * 60 && !state.hasClue("keyLog"),
         onPick: (state) => {
           state.addClue("keyLog");
-          return "El libro marca una firma borrada justo en el turno de Bruno.";
+          return "\"The lighthouse key log has one erased signature during Bruno's shift.\"";
         },
       },
       {
-        id: "carlos-mood",
-        text: "Como estaba Bruno hoy?",
-        onPick: () => "Tenso desde el almuerzo. Evitaba mirarme.",
+        id: "carlos-place",
+        text: "Tell me about this place.",
+        emotion: "serious",
+        onPick: () => "\"By day this lobby is calm. At night, everyone wears a different face.\"",
       },
       {
-        id: "carlos-place",
-        text: "Cuentame sobre este lugar.",
-        onPick: () => "El lobby parece tranquilo, pero de noche todos cambian de cara.",
+        id: "carlos-thanks",
+        text: "Thanks. You've been really helpful.",
+        emotion: "happy",
+        onPick: () => "\"Finally, someone with manners.\" Carlos smiles for the first time.",
       },
     ],
   },
 };
 
 export const ENDINGS = {
-  solved: "Resolviste el caso: Bruno robo el medallon y trato de culpar a Ana.",
-  wrong: "Acusacion incorrecta. El sospechoso se fue en el ultimo bote y el caso queda abierto.",
-  late: "Demasiado tarde. Son las 22:00 y la isla queda aislada por la noche.",
+  solved: "Case solved: Bruno stole the medallion and tried to frame Ana.",
+  wrong: "Wrong accusation. The suspect escaped on the last boat.",
+  late: "Too late. It is 22:00 and the island is sealed for the night.",
 };
 
 export const INVENTORY_ITEMS = [
-  { id: "key", label: "Llave oxidada" },
-  { id: "paper", label: "Periodico viejo" },
-  { id: "cup", label: "Taza de cafe" },
+  { id: "key", label: "Rusty key" },
+  { id: "paper", label: "Old newspaper" },
+  { id: "cup", label: "Coffee cup" },
 ];

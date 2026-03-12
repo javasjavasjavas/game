@@ -42,7 +42,7 @@ export function useGame() {
       if (draft.finished || draft.currentRoom === roomId) return;
       draft.currentRoom = roomId;
       draft.advanceTime(15);
-      draft.lastMessage = `Te moviste a ${ROOMS[roomId].name}.`;
+      draft.lastMessage = `You moved to ${ROOMS[roomId].name}.`;
     });
     setCurrentTalkNpcId(null);
     setInspectOpen(false);
@@ -52,23 +52,26 @@ export function useGame() {
     mutate((draft) => {
       if (draft.finished) return;
       draft.advanceTime(30);
-      draft.lastMessage = "Esperaste 30 minutos.";
+      draft.lastMessage = "You waited 30 minutes.";
     });
     setCurrentTalkNpcId(null);
     setInspectOpen(false);
   };
 
   const talkToNpc = (npcId: string) => {
+    mutate((draft) => {
+      draft.characterEmotion = "serious";
+    });
     setInspectOpen(false);
     setCurrentTalkNpcId(npcId);
     const dialogue = game.getDialogue(npcId);
-    setConversationText(dialogue?.intro || "No parece querer hablar.");
+    setConversationText(dialogue?.intro || "They do not seem willing to talk.");
   };
 
   const openTalkSelector = () => {
     if (npcsHere.length === 0) {
       mutate((draft) => {
-        draft.lastMessage = "No hay nadie para hablar aqui.";
+        draft.lastMessage = "There is no one here to talk to.";
       });
       return;
     }
@@ -78,7 +81,7 @@ export function useGame() {
     }
     setInspectOpen(false);
     setCurrentTalkNpcId("selector");
-    setConversationText("Con quien quieres hablar?");
+    setConversationText("Who do you want to talk to?");
   };
 
   const closeConversation = () => {
@@ -102,7 +105,7 @@ export function useGame() {
 
   const openAccusationPrompt = () => {
     mutate((draft) => {
-      draft.lastMessage = "A quien acusas por el robo del medallon?";
+      draft.lastMessage = "Who do you accuse of stealing the medallion?";
     });
   };
 

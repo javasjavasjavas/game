@@ -12,7 +12,7 @@ interface Props {
 export function CursorOverlay({ mode, icon, x, y }: Props) {
   if (mode === "none") return null;
 
-  const label = mode === "talk" ? "HABLAR" : "USAR CON";
+  const label = mode === "talk" ? "TALK" : "USE WITH";
 
   return (
     <motion.div

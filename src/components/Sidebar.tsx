@@ -44,15 +44,15 @@ export function Sidebar({
       </div>
 
       <section className="panel">
-        <h2>Dialogo</h2>
+        <h2>Dialogue</h2>
         <p>{message}</p>
       </section>
 
       <section className="panel blue">
-        <h2>Pistas</h2>
+        <h2>Clues</h2>
         <ul className="clues">
           {clues.length === 0 ? (
-            <li><Search size={14} className="inline-icon" /> Sin pistas todavia.</li>
+            <li><Search size={14} className="inline-icon" /> No clues yet.</li>
           ) : (
             clues.map((clue) => <li key={clue.id}>{clue.text}</li>)
           )}
@@ -60,12 +60,12 @@ export function Sidebar({
       </section>
 
       <section className="panel" style={{ marginTop: "auto" }}>
-        <h2>Acciones</h2>
+        <h2>Actions</h2>
         <button className="action-btn" onClick={onWait}>
-          <Clock3 size={14} /> Esperar 30 minutos
+          <Clock3 size={14} /> Wait 30 minutes
         </button>
         <button className="action-btn warn" onClick={onSolveClick}>
-          <Zap size={14} /> Presentar acusacion
+          <Zap size={14} /> Submit accusation
         </button>
         {showAccuseList && (
           <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="dialogue-choices">

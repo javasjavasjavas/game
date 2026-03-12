@@ -21,7 +21,7 @@ export default function App() {
 
   const inspectText = useMemo(() => {
     const exitNames = game.room.exits.map((id) => ROOMS[id].name).join(", ");
-    return `${game.room.description} Salidas visibles: ${exitNames}. El viento tapa algunas voces; revisa pistas e interroga a los presentes.`;
+    return `${game.room.description} Visible exits: ${exitNames}. The wind drowns distant voices; inspect clues and question whoever is present.`;
   }, [game.room]);
 
   const conversationOpen = Boolean(game.currentTalkNpcId);
@@ -74,7 +74,7 @@ export default function App() {
         roomName={game.room.name}
         roomDescription={game.room.description}
         clock={game.formattedTime}
-        dateLabel="Lunes, 15 de Marzo"
+        dateLabel="Monday, March 15"
         message={game.game.lastMessage}
         clues={game.clues}
         onWait={() => {
@@ -97,6 +97,7 @@ export default function App() {
         <TopBar />
 
         <StageView
+          emotion={game.game.characterEmotion}
           onCharacterClick={() => {
             setShowAccuseList(false);
             game.openTalkSelector();

@@ -35,10 +35,10 @@ export function FooterBar({ showNav, selectedInventoryId, onToggleInventory, onI
       </div>
       <div className="nav-actions">
         <button className="pill-btn" onClick={onInspect}>
-          <Search size={14} /> Inspeccionar el lugar
+          <Search size={14} /> Inspect area
         </button>
         <button className="pill-btn" onClick={onMap}>
-          <Map size={14} /> Ir al mapa
+          <Map size={14} /> Open map
         </button>
       </div>
     </div>

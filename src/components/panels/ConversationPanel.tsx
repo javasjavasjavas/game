@@ -37,9 +37,9 @@ export function ConversationPanel({
           <div className="conversation-layout">
             <div>
               <h3 className="conversation-speaker">
-                {selectingNpc ? "QUIEN" : npc?.name.split(" ")[0].toUpperCase() || "NADIE"}
+                {selectingNpc ? "WHO" : npc?.name.split(" ")[0].toUpperCase() || "NONE"}
               </h3>
-              <p className="conversation-quote">{selectingNpc ? "Con quien quieres hablar?" : text}</p>
+              <p className="conversation-quote">{selectingNpc ? "Who do you want to talk to?" : text}</p>
             </div>
             <div className="conversation-divider" />
             <div className="detail-choices">
@@ -55,7 +55,7 @@ export function ConversationPanel({
                     </button>
                   ))}
               <button className="talk-option end" onClick={onClose}>
-                [Terminar conversacion]
+                [End conversation]
               </button>
             </div>
           </div>

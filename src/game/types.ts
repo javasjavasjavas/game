@@ -19,9 +19,12 @@ export interface Npc {
   schedule: NpcScheduleSlot[];
 }
 
+export type CharacterEmotion = "serious" | "happy";
+
 export interface DialogueOption {
   id: string;
   text: string;
+  emotion?: CharacterEmotion;
   requirement?: (state: GameState) => boolean;
   onPick?: (state: GameState) => string;
 }
@@ -40,6 +43,7 @@ export interface SolveResult {
 export interface GameState {
   timeMinutes: number;
   currentRoom: RoomId;
+  characterEmotion: CharacterEmotion;
   clues: Set<string>;
   finished: boolean;
   lastMessage: string;
