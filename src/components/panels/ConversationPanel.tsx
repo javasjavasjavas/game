@@ -7,6 +7,7 @@ interface Props {
   npc: Npc | null;
   dialogue: DialogueEntry | null;
   text: string;
+  hasClue: boolean;
   selectingNpc: boolean;
   npcsHere: Npc[];
   onSelectNpc: (npcId: string) => void;
@@ -19,6 +20,7 @@ export function ConversationPanel({
   npc,
   dialogue,
   text,
+  hasClue,
   selectingNpc,
   npcsHere,
   onSelectNpc,
@@ -85,7 +87,9 @@ export function ConversationPanel({
               <h3 className="conversation-speaker">
                 {selectingNpc ? "WHO" : npc?.name.split(" ")[0].toUpperCase() || "NONE"}
               </h3>
-              <p className="conversation-quote">{selectingNpc ? "Who do you want to talk to?" : typedText}</p>
+              <p className={`conversation-quote ${hasClue ? "clue" : ""}`}>
+                {selectingNpc ? "Who do you want to talk to?" : (typedText || " ")}
+              </p>
             </div>
           </div>
         </motion.div>

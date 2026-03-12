@@ -226,6 +226,10 @@ button {
   gap: 6px;
 }
 
+.character-clue {
+  color: #ffce6e;
+}
+
 .inline-icon {
   margin-right: 6px;
   vertical-align: text-bottom;
@@ -626,6 +630,11 @@ button {
   line-height: 1.45;
   min-height: 72px;
   white-space: pre-wrap;
+}
+
+.conversation-quote.clue {
+  color: #ffce6e;
+  text-shadow: 0 0 8px rgba(255, 206, 110, 0.2);
 }
 
 .conversation-response {

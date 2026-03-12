@@ -72,12 +72,12 @@ export function Sidebar({
         {selectedCharacter && (
           <div className="character-memory">
             <h3>{selectedCharacter.name}</h3>
-            {selectedCharacter.notes.length === 0 ? (
-              <p>No valuable conversation data stored yet.</p>
+            {selectedCharacter.clues.length === 0 ? (
+              <p>No clues recorded yet.</p>
             ) : (
               <ul className="character-notes">
-                {selectedCharacter.notes.map((note, index) => (
-                  <li key={`${selectedCharacter.npcId}-${index}`}>{note}</li>
+                {selectedCharacter.clues.map((clue, index) => (
+                  <li key={`${selectedCharacter.npcId}-${index}`} className="character-clue">{clue}</li>
                 ))}
               </ul>
             )}

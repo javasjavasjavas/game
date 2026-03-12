@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useRef } from "react";
 import { MapOverlay } from "./MapOverlay";
 import type { CharacterEmotion, RoomId } from "../game/types";
 
@@ -28,6 +29,20 @@ export function StageView({
   onMapClose,
   onMapSelect,
 }: Props) {
+  const hasPreloadedOtherSprite = useRef(false);
+
+  const handleActiveSpriteLoad = () => {
+    if (hasPreloadedOtherSprite.current) return;
+    hasPreloadedOtherSprite.current = true;
+
+    const activeSrc = CHARACTER_BY_EMOTION[emotion];
+    const alternateSrc = Object.values(CHARACTER_BY_EMOTION).find((src) => src !== activeSrc);
+    if (!alternateSrc) return;
+
+    const preloadImage = new Image();
+    preloadImage.src = alternateSrc;
+  };
+
   return (
     <section className="stage">
       <img className="scene-image" src="/game-assets/background_1.png" alt="Bruma Island scene" />
@@ -44,6 +59,7 @@ export function StageView({
               initial={{ opacity: 0.1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0.05 }}
+              onLoad={handleActiveSpriteLoad}
               transition={{ duration: 0.28, ease: "easeOut" }}
             />
           </AnimatePresence>

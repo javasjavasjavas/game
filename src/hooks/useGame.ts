@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { INVENTORY_ITEMS, NPCS, ROOMS } from "../game/data";
+import { CLUES, INVENTORY_ITEMS, NPCS, ROOMS } from "../game/data";
 import { formatTime, GameState } from "../game/state";
 import type { RoomId } from "../game/types";
 
@@ -9,7 +9,7 @@ export interface CharacterMemory {
   npcId: string;
   name: string;
   portrait: string;
-  notes: string[];
+  clues: string[];
 }
 
 export function useGame() {
@@ -22,6 +22,7 @@ export function useGame() {
   const [hoverCharacter, setHoverCharacter] = useState(false);
   const [characterMemoryByNpc, setCharacterMemoryByNpc] = useState<Record<string, CharacterMemory>>({});
   const [selectedCharacterMemoryId, setSelectedCharacterMemoryId] = useState<string | null>(null);
+  const [conversationHasClue, setConversationHasClue] = useState(false);
 
   const room = ROOMS[game.currentRoom];
   const clues = game.getClueEntries();
@@ -73,6 +74,7 @@ export function useGame() {
     mutate((draft) => {
       draft.characterEmotion = "serious";
     });
+    setConversationHasClue(false);
     ensureCharacterMemory(npcId);
     setSelectedCharacterMemoryId(npcId);
     setInspectOpen(false);
@@ -100,31 +102,38 @@ export function useGame() {
   const closeConversation = () => {
     setCurrentTalkNpcId(null);
     setConversationText("");
+    setConversationHasClue(false);
   };
 
   const pickDialogueOption = (npcId: string, optionId: string) => {
     const dialogue = game.getDialogue(npcId);
-    const optionText = dialogue?.options.find((item) => item.id === optionId)?.text ?? "Unknown prompt";
     let response = "";
+    let discoveredClues: string[] = [];
     mutate((draft) => {
+      const before = new Set(draft.clues);
       response = draft.pickDialogue(npcId, optionId);
+      discoveredClues = [...draft.clues].filter((id) => !before.has(id));
     });
     setConversationText(response);
+    setConversationHasClue(discoveredClues.length > 0);
     ensureCharacterMemory(npcId);
     setSelectedCharacterMemoryId(npcId);
-    setCharacterMemoryByNpc((prev) => {
-      const current = prev[npcId];
-      if (!current) return prev;
-      const entry = `Q: ${optionText}  A: ${response}`;
-      if (current.notes[0] === entry) return prev;
-      return {
-        ...prev,
-        [npcId]: {
-          ...current,
-          notes: [entry, ...current.notes].slice(0, 6),
-        },
-      };
-    });
+    if (discoveredClues.length > 0) {
+      const discoveredClueTexts = discoveredClues.map((clueId) => CLUES[clueId] ?? clueId);
+      setCharacterMemoryByNpc((prev) => {
+        const current = prev[npcId];
+        if (!current) return prev;
+        const merged = [...discoveredClueTexts, ...current.clues];
+        const unique = merged.filter((item, index) => merged.indexOf(item) === index).slice(0, 8);
+        return {
+          ...prev,
+          [npcId]: {
+            ...current,
+            clues: unique,
+          },
+        };
+      });
+    }
   };
 
   const solve = (npcId: string) => {
@@ -159,7 +168,7 @@ export function useGame() {
           npcId,
           name: npc.name,
           portrait: "/game-assets/character_masked.png",
-          notes: [],
+          clues: [],
         },
       };
     });
@@ -194,6 +203,7 @@ export function useGame() {
     characterMemories,
     selectedCharacterMemory,
     selectCharacterMemory: setSelectedCharacterMemoryId,
+    conversationHasClue,
     formattedTime: formatTime(game.timeMinutes),
   };
 }
