@@ -1,8 +1,12 @@
-import { Clock3, Search, Zap } from "lucide-react";
+import { Clock3, MapPin, Search, Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
 
 interface Props {
+  roomName: string;
+  roomDescription: string;
+  clock: string;
+  dateLabel: string;
   message: string;
   clues: Array<{ id: string; text: string }>;
   onWait: () => void;
@@ -12,12 +16,29 @@ interface Props {
   mobileOpen: boolean;
 }
 
-export function Sidebar({ message, clues, onWait, onSolveClick, onAccuse, showAccuseList, mobileOpen }: Props) {
+export function Sidebar({
+  roomName,
+  roomDescription,
+  clock,
+  dateLabel,
+  message,
+  clues,
+  onWait,
+  onSolveClick,
+  onAccuse,
+  showAccuseList,
+  mobileOpen,
+}: Props) {
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
-      <div className="brand">
-        <h1>ISLA BRUMA</h1>
-        <p>Aventura detectivesca inspirada en clasicos noventeros.</p>
+      <div className="sidebar-meta">
+        <div className="sidebar-room-row">
+          <MapPin size={15} className="sidebar-meta-icon" />
+          <h1>{roomName.toUpperCase()}</h1>
+        </div>
+        <p className="sidebar-room-description">{roomDescription}</p>
+        <div className="sidebar-clock">{clock}</div>
+        <div className="sidebar-date">{dateLabel}</div>
       </div>
 
       <section className="panel">

@@ -1,24 +1,16 @@
-import { MapPin } from "lucide-react";
+import { Camera, Settings } from "lucide-react";
 
-interface Props {
-  roomName: string;
-  roomDescription: string;
-  clock: string;
-}
-
-export function TopBar({ roomName, roomDescription, clock }: Props) {
+export function TopBar() {
   return (
     <header className="topbar">
-      <div className="loc-wrap">
-        <div className="room-heading">
-          <MapPin className="room-icon" />
-          <h2>{roomName.toUpperCase()}</h2>
-        </div>
-        <p>{roomDescription}</p>
-      </div>
-      <div className="clock-box">
-        <div id="clock">{clock}</div>
-        <div id="date-label">Lunes, 15 de Marzo</div>
+      <div className="topbar-spacer" />
+      <div className="topbar-icons">
+        <button className="top-icon-btn" aria-label="Ajustes">
+          <Settings size={16} />
+        </button>
+        <button className="top-icon-btn" aria-label="Captura">
+          <Camera size={16} />
+        </button>
       </div>
     </header>
   );

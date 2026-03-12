@@ -99,17 +99,10 @@ export function useGame() {
 
   const toggleInventoryItem = (id: string) => {
     setSelectedInventoryId((prev) => (prev === id ? null : id));
-    const selected = INVENTORY_ITEMS.find((item) => item.id === id);
-    mutate((draft) => {
-      draft.lastMessage = selected ? `Seleccionaste: ${selected.label}.` : "Inventario sin seleccion.";
-    });
   };
 
   const clearInventorySelection = () => {
     setSelectedInventoryId(null);
-    mutate((draft) => {
-      draft.lastMessage = "Inventario sin seleccion.";
-    });
   };
 
   return {

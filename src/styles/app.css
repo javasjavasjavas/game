@@ -9,6 +9,7 @@
   --muted: #8892a4;
   --line: rgba(61, 73, 94, 0.45);
   --panel: rgba(8, 9, 15, 0.92);
+  --lane-side: 40px;
 }
 
 * {
@@ -24,10 +25,12 @@ body,
   background: #000;
   color: var(--ink);
   font-family: Inter, sans-serif;
+  cursor: crosshair;
 }
 
 button {
   font: inherit;
+  cursor: crosshair;
 }
 
 .app {
@@ -39,6 +42,7 @@ button {
     radial-gradient(circle at 80% 80%, rgba(8, 145, 168, 0.14), transparent 40%),
     radial-gradient(circle at 10% 20%, rgba(201, 35, 78, 0.12), transparent 35%),
     #000;
+  cursor: crosshair;
 }
 
 .sidebar-toggle {
@@ -52,7 +56,6 @@ button {
   color: var(--cyber-blue);
   width: 40px;
   height: 40px;
-  cursor: pointer;
 }
 
 .sidebar {
@@ -69,21 +72,56 @@ button {
   z-index: 20;
 }
 
-.brand h1 {
-  margin: 0;
-  font-family: Orbitron, sans-serif;
-  font-size: 44px;
-  letter-spacing: 0.08em;
-  color: var(--cyber-pink);
-  text-transform: uppercase;
-  text-shadow: -1px 0 var(--cyber-pink), 1px 0 var(--cyber-blue);
+.sidebar-meta {
+  border: 1px solid rgba(31, 42, 62, 0.45);
+  background: rgba(5, 7, 14, 0.72);
+  padding: 12px;
 }
 
-.brand p {
-  margin: 4px 0 0;
+.sidebar-room-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.sidebar-meta-icon {
+  color: var(--cyber-pink);
+  margin-top: 3px;
+}
+
+.sidebar-meta h1 {
+  margin: 0;
+  font-family: Orbitron, sans-serif;
+  font-size: 34px;
+  letter-spacing: 0.08em;
+  color: #d7dbe6;
   text-transform: uppercase;
-  color: rgba(8, 145, 168, 0.75);
-  letter-spacing: 0.1em;
+}
+
+.sidebar-room-description {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  border-left: 2px solid rgba(8, 145, 168, 0.7);
+  padding-left: 10px;
+}
+
+.sidebar-clock {
+  margin-top: 12px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 38px;
+  line-height: 1;
+  font-weight: 700;
+  color: #ebeaf3;
+  text-shadow: 0 0 8px rgba(201, 35, 78, 0.3), 0 0 14px rgba(8, 145, 168, 0.25);
+}
+
+.sidebar-date {
+  margin-top: 4px;
+  text-transform: uppercase;
+  font-family: Orbitron, sans-serif;
+  letter-spacing: 0.09em;
+  color: rgba(8, 145, 168, 0.9);
   font-size: 11px;
 }
 
@@ -137,7 +175,6 @@ button {
   color: var(--ink);
   text-align: left;
   padding: 8px;
-  cursor: pointer;
   font-family: "JetBrains Mono", monospace;
   font-size: 12px;
 }
@@ -166,7 +203,6 @@ button {
   letter-spacing: 0.07em;
   text-transform: uppercase;
   font-size: 12px;
-  cursor: pointer;
   margin-bottom: 8px;
   display: inline-flex;
   align-items: center;
@@ -211,94 +247,51 @@ button {
   cursor: crosshair;
 }
 
-.viewport::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
-  background-size: 100% 4px;
-  opacity: 0.24;
-  pointer-events: none;
-  z-index: 99;
-}
-
 .viewport.hide-cursor {
   cursor: none;
 }
 
 .topbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
-  align-items: flex-start;
-  padding: 22px 40px 8px;
-  z-index: 30;
-  pointer-events: none;
+  align-items: center;
+  min-height: 52px;
+  padding: 8px var(--lane-side) 6px;
+  z-index: 35;
   position: relative;
 }
 
-.room-heading {
+.topbar-spacer {
+  margin-right: auto;
+}
+
+.topbar-icons {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
 }
 
-.room-icon {
-  color: var(--cyber-pink);
-  margin-top: 6px;
-  width: clamp(20px, 2.2vw, 30px);
-  height: clamp(20px, 2.2vw, 30px);
+.top-icon-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(61, 73, 94, 0.8);
+  background: rgba(8, 9, 15, 0.95);
+  color: #9aa8bf;
+  display: grid;
+  place-items: center;
 }
 
-.loc-wrap h2 {
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-family: Orbitron, sans-serif;
-  font-weight: 900;
-  font-size: clamp(28px, 3.6vw, 58px);
-  line-height: 0.9;
-  color: #d4dae2;
-}
-
-.loc-wrap p {
-  margin: 18px 0 0 2px;
-  border-left: 2px solid rgba(8, 145, 168, 0.7);
-  padding-left: 12px;
-  color: var(--muted);
-  font-size: clamp(12px, 1.1vw, 16px);
-  max-width: 860px;
-}
-
-.clock-box {
-  text-align: right;
-}
-
-#clock {
-  font-family: "JetBrains Mono", monospace;
-  font-size: clamp(44px, 5vw, 90px);
-  line-height: 0.9;
-  font-weight: 700;
-  color: #ebeaf3;
-  text-shadow: 0 0 10px rgba(201, 35, 78, 0.4), 0 0 18px rgba(8, 145, 168, 0.35);
-  letter-spacing: -0.04em;
-}
-
-#date-label {
-  margin-top: 8px;
-  text-transform: uppercase;
-  font-family: Orbitron, sans-serif;
-  letter-spacing: 0.09em;
-  color: rgba(8, 145, 168, 0.9);
-  font-size: clamp(12px, 1vw, 18px);
+.top-icon-btn:hover {
+  border-color: rgba(8, 145, 168, 0.7);
+  color: #d5edf3;
 }
 
 .stage {
   flex: 1;
   position: relative;
   overflow: hidden;
-  margin: 16px 40px 20px;
-  border: 1px solid #666;
+  margin: 10px var(--lane-side) 14px;
+  border: 1px solid #333;
 }
 
 .scene-image {
@@ -376,7 +369,6 @@ button {
   border: 1px solid rgba(61, 73, 94, 0.6);
   background: rgba(8, 9, 15, 0.95);
   color: #99a7be;
-  cursor: pointer;
   width: 32px;
   height: 32px;
   display: grid;
@@ -395,13 +387,13 @@ button {
 }
 
 .map-node {
-  cursor: pointer;
+  cursor: crosshair;
 }
 
 .footer {
   z-index: 30;
   position: relative;
-  padding: 14px 24px 18px;
+  padding: 12px var(--lane-side) 16px;
   background: linear-gradient(to top, rgba(2, 2, 5, 0.98) 0%, rgba(2, 2, 5, 0.86) 40%, transparent 100%);
   min-height: 130px;
   overflow: visible;
@@ -441,7 +433,6 @@ button {
   display: grid;
   place-items: center;
   font-size: 16px;
-  cursor: pointer;
   position: relative;
   padding: 0;
 }
@@ -483,7 +474,6 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 12px;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -491,14 +481,14 @@ button {
 
 .detail-box {
   position: absolute;
-  left: 24px;
-  right: 24px;
+  left: var(--lane-side);
+  right: var(--lane-side);
   bottom: 14px;
   border: 1px solid rgba(61, 73, 94, 0.7);
   background: rgba(8, 9, 15, 0.88);
   padding: 12px;
   z-index: 6;
-  max-width: calc(100% - 48px);
+  max-width: calc(100% - (var(--lane-side) * 2));
 }
 
 .detail-close {
@@ -510,7 +500,6 @@ button {
   border: 1px solid rgba(61, 73, 94, 0.7);
   background: rgba(8, 9, 15, 0.95);
   color: #93a0b8;
-  cursor: pointer;
   display: grid;
   place-items: center;
 }
@@ -575,7 +564,6 @@ button {
   color: #97a3bb;
   text-align: left;
   padding: 0;
-  cursor: pointer;
   font-family: "JetBrains Mono", monospace;
   font-size: 18px;
   line-height: 1.35;
@@ -595,6 +583,7 @@ button {
   align-items: center;
   gap: 10px;
   pointer-events: none;
+  will-change: transform;
 }
 
 .cursor-icon {
@@ -616,10 +605,6 @@ button {
 }
 
 @media (max-width: 1080px) {
-  .loc-wrap p {
-    font-size: 16px;
-  }
-
   .conversation-layout {
     grid-template-columns: 1fr;
   }
@@ -634,6 +619,10 @@ button {
 }
 
 @media (max-width: 900px) {
+  :root {
+    --lane-side: 12px;
+  }
+
   .sidebar-toggle {
     display: grid;
     place-items: center;
@@ -656,29 +645,11 @@ button {
   }
 
   .topbar {
-    padding: 58px 16px 8px;
-    flex-direction: column;
-  }
-
-  .loc-wrap h2 {
-    font-size: clamp(30px, 8vw, 44px);
-  }
-
-  .loc-wrap p {
-    margin-top: 8px;
-    font-size: 14px;
-  }
-
-  #clock {
-    font-size: clamp(34px, 11vw, 56px);
-  }
-
-  #date-label {
-    font-size: 12px;
+    padding: 58px var(--lane-side) 8px;
   }
 
   .stage {
-    margin: 10px 12px 14px;
+    margin: 10px var(--lane-side) 14px;
   }
 
   .character-wrap {
@@ -688,14 +659,14 @@ button {
   }
 
   .footer {
-    padding: 10px 12px 14px;
+    padding: 10px var(--lane-side) 14px;
   }
 
   .detail-box {
-    left: 12px;
-    right: 12px;
+    left: var(--lane-side);
+    right: var(--lane-side);
     bottom: 10px;
-    max-width: calc(100% - 24px);
+    max-width: calc(100% - (var(--lane-side) * 2));
   }
 
   .pill-btn {

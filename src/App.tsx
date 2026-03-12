@@ -1,4 +1,3 @@
-import { AnimatePresence } from "framer-motion";
 import { Coffee, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { MouseEventHandler } from "react";
@@ -69,6 +68,10 @@ export default function App() {
       </button>
 
       <Sidebar
+        roomName={game.room.name}
+        roomDescription={game.room.description}
+        clock={game.formattedTime}
+        dateLabel="Lunes, 15 de Marzo"
         message={game.game.lastMessage}
         clues={game.clues}
         onWait={() => {
@@ -88,7 +91,7 @@ export default function App() {
       />
 
       <main className={rootClass} onMouseMove={handleViewportMouseMove} onContextMenu={handleContextMenu}>
-        <TopBar roomName={game.room.name} roomDescription={game.room.description} clock={game.formattedTime} />
+        <TopBar />
 
         <StageView
           onCharacterClick={() => {
@@ -132,9 +135,7 @@ export default function App() {
           />
         </footer>
 
-        <AnimatePresence>
-          <CursorOverlay mode={game.cursorMode} icon={cursorIcon} x={cursorPos.x} y={cursorPos.y} />
-        </AnimatePresence>
+        <CursorOverlay mode={game.cursorMode} icon={cursorIcon} x={cursorPos.x} y={cursorPos.y} />
       </main>
     </div>
   );
