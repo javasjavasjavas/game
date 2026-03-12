@@ -1,230 +1,354 @@
-import { NAMES, NPCS, ROOMS } from "./data.js";
+import { NPCS, ROOMS } from "./data.js";
 import { formatTime, GameState } from "./state.js";
 
-const ui = {
-  clock: document.getElementById("clock"),
-  location: document.getElementById("location"),
-  dialogue: document.getElementById("dialogue"),
-  choices: document.getElementById("choices"),
-  clues: document.getElementById("clues"),
-  status: document.getElementById("status"),
-  waitBtn: document.getElementById("wait-btn"),
-  solveBtn: document.getElementById("solve-btn"),
+const roomOrder = ["dock", "lobby", "beach", "lighthouse"];
+const roomMapLayout = {
+  dock: { x: 20, y: 70 },
+  lobby: { x: 45, y: 48 },
+  beach: { x: 76, y: 70 },
+  lighthouse: { x: 74, y: 20 },
 };
 
-class DetectiveScene extends Phaser.Scene {
-  constructor() {
-    super("DetectiveScene");
-    this.state = new GameState();
-    this.exitObjects = [];
-    this.npcObjects = [];
-    this.dialogOpenWith = null;
-  }
+const inventoryItems = [
+  { id: "key", label: "Llave oxidada" },
+  { id: "paper", label: "Periodico viejo" },
+  { id: "cup", label: "Taza de cafe" },
+];
 
-  create() {
-    this.roomBg = this.add.rectangle(430, 280, 860, 560, 0x1f2f36).setOrigin(0.5);
-    this.roomTitle = this.add
-      .text(24, 18, "", {
-        fontFamily: "Trebuchet MS",
-        fontSize: "30px",
-        color: "#f1f3ee",
-      })
-      .setDepth(5);
-    this.roomDesc = this.add
-      .text(24, 56, "", {
-        fontFamily: "Trebuchet MS",
-        fontSize: "17px",
-        color: "#d0d8d3",
-      })
-      .setDepth(5);
-    this.hint = this.add
-      .text(24, 520, "Haz clic en salidas o personajes.", {
-        fontFamily: "Trebuchet MS",
-        fontSize: "16px",
-        color: "#cdb77a",
-      })
-      .setDepth(5);
+const ui = {
+  sidebar: document.getElementById("sidebar"),
+  sidebarToggle: document.getElementById("sidebar-toggle"),
+  sidebarDialogue: document.getElementById("sidebar-dialogue"),
+  sidebarChoices: document.getElementById("sidebar-choices"),
+  sidebarClues: document.getElementById("sidebar-clues"),
+  statusLine: document.getElementById("status-line"),
+  roomTitle: document.getElementById("room-title"),
+  roomDescription: document.getElementById("room-description"),
+  clock: document.getElementById("clock"),
+  dateLabel: document.getElementById("date-label"),
+  sceneImage: document.getElementById("scene-image"),
+  sceneFallback: document.getElementById("scene-fallback"),
+  npcStrip: document.getElementById("npc-strip"),
+  characterButton: document.getElementById("character-button"),
+  characterLabel: document.getElementById("character-label"),
+  mapOverlay: document.getElementById("map-overlay"),
+  mapClose: document.getElementById("map-close"),
+  mapBtn: document.getElementById("map-btn"),
+  mapSvg: document.getElementById("map-svg"),
+  waitBtn: document.getElementById("wait-btn"),
+  solveBtn: document.getElementById("solve-btn"),
+  inspectBtn: document.getElementById("inspect-btn"),
+  inspectPanel: document.getElementById("inspect-panel"),
+  inspectText: document.getElementById("inspect-text"),
+  conversationPanel: document.getElementById("conversation-panel"),
+  conversationTitle: document.getElementById("conversation-title"),
+  conversationText: document.getElementById("conversation-text"),
+  conversationChoices: document.getElementById("conversation-choices"),
+  footerNavigation: document.getElementById("footer-navigation"),
+  inventoryButtons: [...document.querySelectorAll(".inv-item")],
+};
 
-    ui.waitBtn.addEventListener("click", () => {
-      if (this.state.finished) return;
-      this.state.advanceTime(30);
-      this.state.lastMessage = "Esperaste media hora para observar movimientos.";
-      this.dialogOpenWith = null;
-      this.renderAll();
-    });
+const state = new GameState();
+let currentTalkNpcId = null;
+let selectedInventoryId = null;
 
-    ui.solveBtn.addEventListener("click", () => this.openAccusationMenu());
-    this.renderAll();
-  }
+function closeMobileSidebar() {
+  ui.sidebar.classList.remove("open");
+}
 
-  openAccusationMenu() {
-    if (this.state.finished) return;
-    this.dialogOpenWith = null;
-    ui.dialogue.textContent = "¿A quién acusas por el robo del medallón?";
-    ui.choices.innerHTML = "";
-    NPCS.forEach((npc) => {
+function openConversation(npcId) {
+  if (state.finished) return;
+  const npc = NPCS.find((n) => n.id === npcId);
+  if (!npc) return;
+  currentTalkNpcId = npcId;
+  const bundle = state.getDialogue(npcId);
+  ui.conversationTitle.textContent = `Conversacion - ${npc.name}`;
+  ui.conversationText.textContent = bundle?.intro || "No parece querer hablar ahora.";
+  ui.conversationChoices.innerHTML = "";
+
+  if (!bundle || bundle.options.length === 0) {
+    const noChoice = document.createElement("button");
+    noChoice.className = "choice-btn";
+    noChoice.textContent = "No hay preguntas disponibles";
+    noChoice.disabled = true;
+    ui.conversationChoices.appendChild(noChoice);
+  } else {
+    bundle.options.forEach((opt) => {
       const btn = document.createElement("button");
-      btn.className = "btn";
-      btn.textContent = npc.name;
-      btn.onclick = () => {
-        const result = this.state.solve(npc.id);
-        ui.status.textContent = result.ending;
-        if (result.ok) ui.status.classList.add("success");
-        this.renderAll();
-      };
-      ui.choices.appendChild(btn);
-    });
-  }
-
-  moveTo(roomId) {
-    if (this.state.finished || roomId === this.state.currentRoom) return;
-    this.state.currentRoom = roomId;
-    this.state.advanceTime(15);
-    this.state.lastMessage = `Te moviste a ${ROOMS[roomId].name}.`;
-    this.dialogOpenWith = null;
-    this.renderAll();
-  }
-
-  openDialogue(npcId) {
-    if (this.state.finished) return;
-    this.dialogOpenWith = npcId;
-    const pack = this.state.getDialogue(npcId);
-    ui.dialogue.textContent = pack?.intro || "No parece querer hablar.";
-    ui.choices.innerHTML = "";
-    if (!pack || pack.options.length === 0) {
-      const empty = document.createElement("button");
-      empty.className = "btn";
-      empty.textContent = "No hay preguntas disponibles";
-      empty.disabled = true;
-      ui.choices.appendChild(empty);
-      return;
-    }
-
-    pack.options.forEach((opt) => {
-      const btn = document.createElement("button");
-      btn.className = "btn";
+      btn.className = "choice-btn";
       btn.textContent = opt.text;
-      btn.onclick = () => {
-        const text = this.state.pickDialogue(npcId, opt.id);
-        ui.dialogue.textContent = text;
-        this.renderAll();
-      };
-      ui.choices.appendChild(btn);
-    });
-  }
-
-  clearRoomObjects() {
-    this.exitObjects.forEach((o) => o.destroy());
-    this.npcObjects.forEach((o) => o.destroy());
-    this.exitObjects = [];
-    this.npcObjects = [];
-  }
-
-  drawExits(room) {
-    const spacing = 180;
-    room.exits.forEach((exitId, index) => {
-      const x = 180 + index * spacing;
-      const y = 470;
-      const rect = this.add
-        .rectangle(x, y, 160, 48, 0x203943)
-        .setStrokeStyle(2, 0x6e9aaa)
-        .setInteractive({ useHandCursor: true });
-      const label = this.add
-        .text(x, y, `Ir a ${ROOMS[exitId].name}`, {
-          fontFamily: "Trebuchet MS",
-          fontSize: "15px",
-          color: "#f1f3ee",
-          align: "center",
-        })
-        .setOrigin(0.5);
-      rect.on("pointerdown", () => this.moveTo(exitId));
-      this.exitObjects.push(rect, label);
-    });
-  }
-
-  drawNpcs() {
-    const npcs = this.state.npcsInRoom(this.state.currentRoom);
-    const startX = 220;
-    npcs.forEach((npc, index) => {
-      const x = startX + index * 220;
-      const y = 310;
-      const body = this.add
-        .ellipse(x, y, 110, 150, 0x2f4a56)
-        .setStrokeStyle(2, 0xbfd3d8)
-        .setInteractive({ useHandCursor: true });
-      const name = this.add
-        .text(x, y, npc.name.split(" ")[0], {
-          fontFamily: "Trebuchet MS",
-          fontSize: "19px",
-          color: "#ffffff",
-        })
-        .setOrigin(0.5);
-      body.on("pointerdown", () => this.openDialogue(npc.id));
-      this.npcObjects.push(body, name);
-    });
-  }
-
-  renderSidebar() {
-    ui.clock.textContent = formatTime(this.state.timeMinutes);
-    ui.location.textContent = `Ubicación: ${ROOMS[this.state.currentRoom].name}`;
-    ui.status.textContent = this.state.lastMessage;
-    ui.status.classList.toggle("success", this.state.lastMessage.includes("Resolviste"));
-
-    const clues = this.state.getClueEntries();
-    ui.clues.innerHTML = "";
-    if (clues.length === 0) {
-      const li = document.createElement("li");
-      li.textContent = "Sin pistas todavía.";
-      ui.clues.appendChild(li);
-    } else {
-      clues.forEach((entry) => {
-        const li = document.createElement("li");
-        li.textContent = entry.text;
-        ui.clues.appendChild(li);
+      btn.addEventListener("click", () => {
+        const text = state.pickDialogue(npcId, opt.id);
+        ui.conversationText.textContent = text;
+        state.lastMessage = text;
+        renderAll();
+        openConversation(npcId);
       });
-    }
-
-    if (!this.dialogOpenWith) {
-      ui.dialogue.textContent = this.state.lastMessage;
-      ui.choices.innerHTML = "";
-    }
+      ui.conversationChoices.appendChild(btn);
+    });
   }
 
-  renderScene() {
-    const room = ROOMS[this.state.currentRoom];
-    this.roomBg.fillColor = room.color;
-    this.roomTitle.text = room.name;
-    this.roomDesc.text = room.description;
-    this.clearRoomObjects();
-    this.drawExits(room);
-    this.drawNpcs();
-    if (this.state.finished) {
-      this.hint.text = "Caso cerrado. Reinicia la página para jugar otra vez.";
-    } else {
-      this.hint.text = "Haz clic en salidas o personajes.";
-    }
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "choice-btn";
+  closeBtn.textContent = "[Terminar conversacion]";
+  closeBtn.addEventListener("click", () => {
+    currentTalkNpcId = null;
+    renderFooterMode();
+    renderSidebar();
+  });
+  ui.conversationChoices.appendChild(closeBtn);
+  renderFooterMode();
+}
+
+function moveTo(roomId) {
+  if (state.finished || roomId === state.currentRoom) return;
+  state.currentRoom = roomId;
+  state.advanceTime(15);
+  state.lastMessage = `Te moviste a ${ROOMS[roomId].name}.`;
+  currentTalkNpcId = null;
+  renderAll();
+}
+
+function openAccusationMenu() {
+  if (state.finished) return;
+  ui.sidebarDialogue.textContent = "A quien acusas por el robo del medallon?";
+  ui.sidebarChoices.innerHTML = "";
+  NPCS.forEach((npc) => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.textContent = npc.name;
+    btn.addEventListener("click", () => {
+      const result = state.solve(npc.id);
+      ui.statusLine.textContent = result.ending;
+      renderAll();
+    });
+    ui.sidebarChoices.appendChild(btn);
+  });
+}
+
+function renderClock() {
+  ui.clock.textContent = formatTime(state.timeMinutes);
+  ui.dateLabel.textContent = "Lunes, 15 de Marzo";
+}
+
+function renderRoomHeader() {
+  const room = ROOMS[state.currentRoom];
+  ui.roomTitle.textContent = room.name.toUpperCase();
+  ui.roomDescription.textContent = room.description;
+}
+
+function renderSidebar() {
+  ui.statusLine.textContent = state.lastMessage;
+  ui.sidebarDialogue.textContent = state.lastMessage;
+
+  const clues = state.getClueEntries();
+  ui.sidebarClues.innerHTML = "";
+  if (clues.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "Sin pistas todavia.";
+    ui.sidebarClues.appendChild(li);
+  } else {
+    clues.forEach((entry) => {
+      const li = document.createElement("li");
+      li.textContent = entry.text;
+      ui.sidebarClues.appendChild(li);
+    });
   }
 
-  renderAll() {
-    this.renderScene();
-    this.renderSidebar();
+  if (!ui.sidebarChoices.children.length || currentTalkNpcId) {
+    ui.sidebarChoices.innerHTML = "";
   }
 }
 
-new Phaser.Game({
-  type: Phaser.AUTO,
-  width: 860,
-  height: 560,
-  parent: "game-root",
-  backgroundColor: "#101820",
-  scene: [DetectiveScene],
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
-});
+function renderNpcs() {
+  const npcsHere = state.npcsInRoom(state.currentRoom);
+  ui.npcStrip.innerHTML = "";
+  if (npcsHere.length === 0) {
+    ui.characterLabel.textContent = "Sin testigos";
+    return;
+  }
+  ui.characterLabel.textContent = npcsHere.length === 1 ? `Hablar con ${npcsHere[0].name}` : "Hablar";
 
-window.__GAME_INFO__ = {
-  suspects: Object.values(NAMES),
-  note: "MVP inspirado en aventuras detectivescas con rutina horaria.",
-};
+  npcsHere.forEach((npc) => {
+    const chip = document.createElement("button");
+    chip.className = "npc-chip";
+    chip.textContent = npc.name;
+    chip.addEventListener("click", () => openConversation(npc.id));
+    ui.npcStrip.appendChild(chip);
+  });
+}
+
+function renderMap() {
+  const ns = "http://www.w3.org/2000/svg";
+  ui.mapSvg.innerHTML = "";
+
+  roomOrder.forEach((roomId) => {
+    const room = ROOMS[roomId];
+    room.exits.forEach((toId) => {
+      const a = roomMapLayout[roomId];
+      const b = roomMapLayout[toId];
+      if (!a || !b || roomId > toId) return;
+      const line = document.createElementNS(ns, "line");
+      line.setAttribute("x1", `${a.x}`);
+      line.setAttribute("y1", `${a.y}`);
+      line.setAttribute("x2", `${b.x}`);
+      line.setAttribute("y2", `${b.y}`);
+      line.setAttribute("stroke", "rgba(8,145,168,0.3)");
+      line.setAttribute("stroke-width", "0.6");
+      ui.mapSvg.appendChild(line);
+    });
+  });
+
+  roomOrder.forEach((roomId) => {
+    const room = ROOMS[roomId];
+    const point = roomMapLayout[roomId];
+    if (!point) return;
+
+    const isActive = state.currentRoom === roomId;
+    const circle = document.createElementNS(ns, "circle");
+    circle.setAttribute("cx", `${point.x}`);
+    circle.setAttribute("cy", `${point.y}`);
+    circle.setAttribute("r", isActive ? "3.2" : "2.5");
+    circle.setAttribute("fill", isActive ? "#c9234e" : "#08090f");
+    circle.setAttribute("stroke", isActive ? "#c9234e" : "#0891a8");
+    circle.setAttribute("stroke-width", "0.7");
+    circle.style.cursor = "pointer";
+    circle.addEventListener("click", () => {
+      const canGo = state.currentRoom === roomId || ROOMS[state.currentRoom].exits.includes(roomId);
+      if (!canGo) {
+        state.lastMessage = "No puedes saltar ahi desde tu ubicacion actual.";
+        renderAll();
+        return;
+      }
+      moveTo(roomId);
+      ui.mapOverlay.classList.remove("open");
+    });
+    ui.mapSvg.appendChild(circle);
+
+    const text = document.createElementNS(ns, "text");
+    text.setAttribute("x", `${point.x}`);
+    text.setAttribute("y", `${point.y - 4}`);
+    text.setAttribute("text-anchor", "middle");
+    text.setAttribute("font-size", "2.6");
+    text.setAttribute("font-family", "Orbitron, sans-serif");
+    text.setAttribute("fill", isActive ? "#c9234e" : "#93a0b8");
+    text.textContent = room.name.toUpperCase();
+    ui.mapSvg.appendChild(text);
+  });
+}
+
+function renderInspectPanel() {
+  const room = ROOMS[state.currentRoom];
+  const exitNames = room.exits.map((id) => ROOMS[id].name).join(", ");
+  ui.inspectText.textContent =
+    `${room.description} Salidas visibles: ${exitNames}. ` +
+    "El viento tapa algunas voces; revisa pistas e interroga a los presentes.";
+}
+
+function renderFooterMode() {
+  const inspectOpen = ui.inspectPanel.classList.contains("open");
+  const talkOpen = Boolean(currentTalkNpcId);
+  ui.footerNavigation.style.display = !inspectOpen && !talkOpen ? "flex" : "none";
+  ui.inspectPanel.classList.toggle("open", inspectOpen && !talkOpen);
+  ui.conversationPanel.classList.toggle("open", talkOpen);
+}
+
+function renderInventory() {
+  ui.inventoryButtons.forEach((btn) => {
+    const id = btn.dataset.id;
+    btn.classList.toggle("active", selectedInventoryId === id);
+  });
+}
+
+function renderAll() {
+  renderClock();
+  renderRoomHeader();
+  renderSidebar();
+  renderNpcs();
+  renderMap();
+  renderInspectPanel();
+  renderFooterMode();
+  renderInventory();
+}
+
+function setupImageFallbacks() {
+  const sceneError = () => {
+    ui.sceneImage.style.display = "none";
+    ui.sceneFallback.style.display = "grid";
+    ui.sceneFallback.classList.add("error-note");
+  };
+  ui.sceneImage.addEventListener("error", sceneError);
+
+  const characterImage = document.getElementById("character-image");
+  characterImage.addEventListener("error", () => {
+    characterImage.style.display = "none";
+    ui.characterLabel.textContent = "Sube assets/images/personaje.png";
+  });
+}
+
+function wireEvents() {
+  ui.sidebarToggle.addEventListener("click", () => ui.sidebar.classList.toggle("open"));
+  ui.waitBtn.addEventListener("click", () => {
+    if (state.finished) return;
+    state.advanceTime(30);
+    state.lastMessage = "Esperaste 30 minutos.";
+    currentTalkNpcId = null;
+    ui.inspectPanel.classList.remove("open");
+    renderAll();
+  });
+  ui.solveBtn.addEventListener("click", openAccusationMenu);
+  ui.inspectBtn.addEventListener("click", () => {
+    ui.inspectPanel.classList.toggle("open");
+    currentTalkNpcId = null;
+    renderAll();
+  });
+  ui.mapBtn.addEventListener("click", () => ui.mapOverlay.classList.add("open"));
+  ui.mapClose.addEventListener("click", () => ui.mapOverlay.classList.remove("open"));
+  ui.characterButton.addEventListener("click", () => {
+    const npcsHere = state.npcsInRoom(state.currentRoom);
+    if (npcsHere.length === 0) {
+      state.lastMessage = "No hay nadie para hablar aqui.";
+      renderAll();
+      return;
+    }
+    if (npcsHere.length === 1) {
+      openConversation(npcsHere[0].id);
+      return;
+    }
+    ui.conversationTitle.textContent = "Conversacion";
+    ui.conversationText.textContent = "Con quien quieres hablar?";
+    ui.conversationChoices.innerHTML = "";
+    npcsHere.forEach((npc) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      btn.textContent = npc.name;
+      btn.addEventListener("click", () => openConversation(npc.id));
+      ui.conversationChoices.appendChild(btn);
+    });
+    currentTalkNpcId = "selector";
+    renderFooterMode();
+  });
+
+  ui.inventoryButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      const clicked = inventoryItems.find((item) => item.id === id);
+      if (!clicked) return;
+      selectedInventoryId = selectedInventoryId === id ? null : id;
+      state.lastMessage = selectedInventoryId
+        ? `Seleccionaste: ${clicked.label}.`
+        : "Inventario sin seleccion.";
+      renderAll();
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (window.innerWidth <= 900 && !ui.sidebar.contains(event.target) && event.target !== ui.sidebarToggle) {
+      closeMobileSidebar();
+    }
+  });
+}
+
+setupImageFallbacks();
+wireEvents();
+renderAll();

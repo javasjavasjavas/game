@@ -17,7 +17,7 @@ export class GameState {
     this.currentRoom = "dock";
     this.clues = new Set();
     this.finished = false;
-    this.lastMessage = "Llegaste a Isla Bruma. Encuentra quién robó el medallón.";
+    this.lastMessage = "Llegaste a Isla Bruma. Encuentra quien robo el medallon.";
   }
 
   hasClue(clueId) {
@@ -67,9 +67,9 @@ export class GameState {
 
   pickDialogue(npcId, optionId) {
     const data = DIALOGUE[npcId];
-    if (!data) return "No hay nada más para preguntar.";
+    if (!data) return "No hay nada mas para preguntar.";
     const option = data.options.find((op) => op.id === optionId);
-    if (!option) return "No hay nada más para preguntar.";
+    if (!option) return "No hay nada mas para preguntar.";
     if (option.requirement && !option.requirement(this)) return "No parece buen momento para esa pregunta.";
     const text = option.onPick ? option.onPick(this) : "Sin respuesta.";
     this.advanceTime(20);

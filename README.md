@@ -10,6 +10,7 @@ Pequeña aventura detectivesca point-and-click hecha con Phaser + Express.
 - diálogo con condiciones
 - inventario de pistas
 - acusación final con distintos desenlaces
+- interfaz visual estilo noir/cyber retro
 
 ## Ejecutar local
 
@@ -19,6 +20,15 @@ npm start
 ```
 
 Abrir `http://localhost:3000`.
+
+## Assets visuales
+
+Sube tus imagenes en:
+
+- `assets/images/background_1.png`
+- `assets/images/character_masked.png`
+
+Si no existen, la UI muestra fallback visual para que el juego siga cargando.
 
 ## Deploy en Render
 
