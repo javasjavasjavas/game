@@ -27,7 +27,7 @@ export function StageView({
 
       <div className="character-wrap" onMouseEnter={onCharacterEnter} onMouseLeave={onCharacterLeave}>
         <button className="character-hitbox" title="Hablar" onClick={onCharacterClick}>
-          <img className="character-image" src="/game-assets/character_masked.png" alt="Personaje" />
+          <img className="character-image" src="/game-assets/character_big_boss_serious.png" alt="Personaje" />
         </button>
       </div>
 
