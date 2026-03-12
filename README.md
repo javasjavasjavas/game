@@ -1,25 +1,38 @@
-# Isla Bruma (MVP tipo Maupiti)
+# Isla Bruma
 
-Pequeña aventura detectivesca point-and-click hecha con Phaser + Express.
+Aventura detectivesca point-and-click con UI en React + Framer Motion + Lucide.
 
-## Incluye
+## Stack
 
-- 4 salas conectadas
-- 3 NPCs con rutinas horarias
-- reloj interno de 08:00 a 22:00
-- diálogo con condiciones
-- inventario de pistas
-- acusación final con distintos desenlaces
-- interfaz visual estilo noir/cyber retro
+- React + TypeScript + Vite
+- Framer Motion (transiciones y overlays)
+- Lucide React (iconografia)
+- Express (servido de `dist` en produccion)
 
-## Ejecutar local
+## Estructura
+
+- `src/components/` componentes visuales
+- `src/components/panels/` paneles de inspeccion y conversacion
+- `src/hooks/useGame.ts` estado y acciones del juego
+- `src/game/` datos y reglas (habitaciones, NPCs, dialogo, reloj)
+- `src/styles/app.css` tema noir/cyber
+- `game/visual.tsx` referencia original exportada desde Magic Patterns
+
+## Desarrollo local
 
 ```bash
 npm install
+npm run dev
+```
+
+## Build + run produccion local
+
+```bash
+npm run build
 npm start
 ```
 
-Abrir `http://localhost:3000`.
+`npm start` sirve la carpeta `dist` y expone `/health`.
 
 ## Assets visuales
 
@@ -28,12 +41,9 @@ Sube tus imagenes en:
 - `assets/images/background_1.png`
 - `assets/images/character_masked.png`
 
-Si no existen, la UI muestra fallback visual para que el juego siga cargando.
-
 ## Deploy en Render
 
-1. Crear un `Web Service` apuntando a este repo.
-2. Configurar:
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-3. Render usará el puerto de `PORT` automáticamente (ya soportado en `server.js`).
+Crear un `Web Service` con:
+
+- Build Command: `npm install && npm run build`
+- Start Command: `npm start`

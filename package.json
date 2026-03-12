@@ -1,13 +1,26 @@
 {
   "name": "my-project",
   "version": "1.0.0",
-  "description": "Base project",
+  "description": "Isla Bruma React UI",
   "main": "server.js",
   "scripts": {
+    "build": "vite build",
+    "check": "tsc --noEmit",
+    "client:dev": "vite",
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "vite"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "framer-motion": "^12.35.2",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
   }
 }

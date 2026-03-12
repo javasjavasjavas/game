@@ -1,4 +1,6 @@
-export const ROOMS = {
+import type { DialogueEntry, Npc, Room, RoomId } from "./types";
+
+export const ROOMS: Record<RoomId, Room> = {
   dock: {
     id: "dock",
     name: "Muelle",
@@ -25,16 +27,19 @@ export const ROOMS = {
   },
 };
 
-export const NAMES = {
-  ana: "Ana Ledesma",
-  bruno: "Bruno Varela",
-  carlos: "Carlos Mena",
+export const ROOM_ORDER: RoomId[] = ["dock", "lobby", "beach", "lighthouse"];
+
+export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
+  dock: { x: 20, y: 70 },
+  lobby: { x: 45, y: 48 },
+  beach: { x: 76, y: 70 },
+  lighthouse: { x: 74, y: 20 },
 };
 
-export const NPCS = [
+export const NPCS: Npc[] = [
   {
     id: "ana",
-    name: NAMES.ana,
+    name: "Ana Ledesma",
     schedule: [
       { from: "08:00", to: "11:00", room: "beach" },
       { from: "11:00", to: "14:00", room: "lobby" },
@@ -44,7 +49,7 @@ export const NPCS = [
   },
   {
     id: "bruno",
-    name: NAMES.bruno,
+    name: "Bruno Varela",
     schedule: [
       { from: "08:00", to: "10:00", room: "dock" },
       { from: "10:00", to: "13:00", room: "lobby" },
@@ -54,7 +59,7 @@ export const NPCS = [
   },
   {
     id: "carlos",
-    name: NAMES.carlos,
+    name: "Carlos Mena",
     schedule: [
       { from: "08:00", to: "12:00", room: "lobby" },
       { from: "12:00", to: "17:00", room: "dock" },
@@ -63,13 +68,13 @@ export const NPCS = [
   },
 ];
 
-export const CLUES = {
+export const CLUES: Record<string, string> = {
   tornJacket: "Chaqueta rasgada con pintura del faro",
   keyLog: "Registro de llave del faro alterado",
   witness: "Testimonio de Ana: Bruno salio del faro nervioso",
 };
 
-export const DIALOGUE = {
+export const DIALOGUE: Record<string, DialogueEntry> = {
   ana: {
     intro: "No quiero problemas, detective. Vi cosas raras hoy.",
     options: [
@@ -85,8 +90,7 @@ export const DIALOGUE = {
       {
         id: "ana-routine",
         text: "Donde estuviste todo el dia?",
-        onPick: () =>
-          "De manana en la playa, luego en el lobby. Despues fui al muelle a tomar aire.",
+        onPick: () => "De manana en la playa, luego en el lobby. Despues fui al muelle a tomar aire.",
       },
     ],
   },
@@ -132,7 +136,12 @@ export const DIALOGUE = {
 
 export const ENDINGS = {
   solved: "Resolviste el caso: Bruno robo el medallon y trato de culpar a Ana.",
-  wrong:
-    "Acusacion incorrecta. El sospechoso se fue en el ultimo bote y el caso queda abierto.",
+  wrong: "Acusacion incorrecta. El sospechoso se fue en el ultimo bote y el caso queda abierto.",
   late: "Demasiado tarde. Son las 22:00 y la isla queda aislada por la noche.",
 };
+
+export const INVENTORY_ITEMS = [
+  { id: "key", label: "Llave oxidada", icon: "??" },
+  { id: "paper", label: "Periodico viejo", icon: "??" },
+  { id: "cup", label: "Taza de cafe", icon: "?" },
+];

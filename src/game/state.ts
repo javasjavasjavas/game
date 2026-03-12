@@ -1,39 +1,50 @@
-import { CLUES, DIALOGUE, ENDINGS, NPCS } from "./data.js";
+import { CLUES, DIALOGUE, ENDINGS, NPCS } from "./data";
+import type { DialogueEntry, Npc, RoomId, SolveResult } from "./types";
 
-function toMinutes(hhmm) {
+function toMinutes(hhmm: string): number {
   const [h, m] = hhmm.split(":").map(Number);
   return h * 60 + m;
 }
 
-export function formatTime(totalMinutes) {
+export function formatTime(totalMinutes: number): string {
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
 export class GameState {
-  constructor() {
-    this.timeMinutes = 8 * 60;
-    this.currentRoom = "dock";
-    this.clues = new Set();
-    this.finished = false;
-    this.lastMessage = "Llegaste a Isla Bruma. Encuentra quien robo el medallon.";
+  timeMinutes: number;
+  currentRoom: RoomId;
+  clues: Set<string>;
+  finished: boolean;
+  lastMessage: string;
+
+  constructor(seed?: Partial<GameState>) {
+    this.timeMinutes = seed?.timeMinutes ?? 8 * 60;
+    this.currentRoom = seed?.currentRoom ?? "dock";
+    this.clues = new Set(seed?.clues ? [...seed.clues] : []);
+    this.finished = seed?.finished ?? false;
+    this.lastMessage = seed?.lastMessage ?? "Llegaste a Isla Bruma. Encuentra quien robo el medallon.";
   }
 
-  hasClue(clueId) {
+  clone(): GameState {
+    return new GameState(this);
+  }
+
+  hasClue(clueId: string): boolean {
     return this.clues.has(clueId);
   }
 
-  addClue(clueId) {
+  addClue(clueId: string): void {
     if (!CLUES[clueId]) return;
     this.clues.add(clueId);
   }
 
-  getClueEntries() {
+  getClueEntries(): Array<{ id: string; text: string }> {
     return [...this.clues].map((id) => ({ id, text: CLUES[id] }));
   }
 
-  advanceTime(minutes = 30) {
+  advanceTime(minutes = 30): void {
     if (this.finished) return;
     this.timeMinutes = Math.min(this.timeMinutes + minutes, 22 * 60);
     if (this.timeMinutes >= 22 * 60) {
@@ -42,7 +53,7 @@ export class GameState {
     }
   }
 
-  roomForNpc(npcId) {
+  roomForNpc(npcId: string) {
     const npc = NPCS.find((n) => n.id === npcId);
     if (!npc) return null;
     const match = npc.schedule.find(
@@ -51,21 +62,18 @@ export class GameState {
     return match ? match.room : npc.schedule[npc.schedule.length - 1].room;
   }
 
-  npcsInRoom(roomId) {
+  npcsInRoom(roomId: string): Npc[] {
     return NPCS.filter((npc) => this.roomForNpc(npc.id) === roomId);
   }
 
-  getDialogue(npcId) {
+  getDialogue(npcId: string): DialogueEntry | null {
     const data = DIALOGUE[npcId];
     if (!data) return null;
     const options = data.options.filter((op) => !op.requirement || op.requirement(this));
-    return {
-      intro: data.intro,
-      options,
-    };
+    return { intro: data.intro, options };
   }
 
-  pickDialogue(npcId, optionId) {
+  pickDialogue(npcId: string, optionId: string): string {
     const data = DIALOGUE[npcId];
     if (!data) return "No hay nada mas para preguntar.";
     const option = data.options.find((op) => op.id === optionId);
@@ -77,15 +85,14 @@ export class GameState {
     return text;
   }
 
-  solve(accusedId) {
+  solve(accusedId: string): SolveResult {
     if (this.timeMinutes >= 22 * 60) {
       this.finished = true;
       this.lastMessage = ENDINGS.late;
       return { ok: false, ending: ENDINGS.late };
     }
 
-    const hasAllCoreClues =
-      this.hasClue("tornJacket") && this.hasClue("keyLog") && this.hasClue("witness");
+    const hasAllCoreClues = this.hasClue("tornJacket") && this.hasClue("keyLog") && this.hasClue("witness");
 
     this.finished = true;
     if (accusedId === "bruno" && hasAllCoreClues) {
