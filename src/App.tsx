@@ -113,13 +113,14 @@ export default function App() {
         <footer className="footer">
           <FooterBar
             showNav={showNavigation}
+            mapOpen={game.mapOpen}
             selectedInventoryId={game.selectedInventoryId}
             onToggleInventory={game.toggleInventoryItem}
             onInspect={() => {
               setShowAccuseList(false);
               game.setInspectOpen(true);
             }}
-            onMap={() => game.setMapOpen(true)}
+            onMap={() => game.setMapOpen((prev) => !prev)}
           />
 
           <InspectPanel open={game.inspectOpen && !conversationOpen} text={inspectText} onClose={() => game.setInspectOpen(false)} />

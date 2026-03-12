@@ -548,14 +548,14 @@ button {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--cyber-blue);
-  font-size: 22px;
+  font-size: 14px;
 }
 
 .conversation-quote {
   margin: 0;
   font-style: italic;
   color: #b8bfd1;
-  font-size: clamp(20px, 1.8vw, 45px);
+  font-size: clamp(14px, 1.1vw, 22px);
   line-height: 1.35;
 }
 
@@ -570,9 +570,9 @@ button {
   background: transparent;
   color: #97a3bb;
   text-align: left;
-  padding: 6px 8px;
+  padding: 5px 8px;
   font-family: "JetBrains Mono", monospace;
-  font-size: clamp(20px, 1.9vw, 42px);
+  font-size: clamp(14px, 1.2vw, 24px);
   line-height: 1.35;
   transition: color 120ms ease, background-color 120ms ease;
 }

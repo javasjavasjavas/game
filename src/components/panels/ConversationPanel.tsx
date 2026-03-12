@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import type { DialogueEntry, Npc } from "../../game/types";
 
 interface Props {
@@ -24,6 +25,34 @@ export function ConversationPanel({
   onPickOption,
   onClose,
 }: Props) {
+  const [typedText, setTypedText] = useState(text);
+
+  useEffect(() => {
+    if (!open) {
+      setTypedText("");
+      return;
+    }
+
+    if (selectingNpc) {
+      setTypedText(text);
+      return;
+    }
+
+    setTypedText("");
+    if (!text) return;
+
+    let index = 0;
+    const tick = window.setInterval(() => {
+      index += 1;
+      setTypedText(text.slice(0, index));
+      if (index >= text.length) {
+        window.clearInterval(tick);
+      }
+    }, 18);
+
+    return () => window.clearInterval(tick);
+  }, [open, selectingNpc, text]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -35,13 +64,6 @@ export function ConversationPanel({
           transition={{ duration: 0.2 }}
         >
           <div className="conversation-layout">
-            <div>
-              <h3 className="conversation-speaker">
-                {selectingNpc ? "WHO" : npc?.name.split(" ")[0].toUpperCase() || "NONE"}
-              </h3>
-              <p className="conversation-quote">{selectingNpc ? "Who do you want to talk to?" : text}</p>
-            </div>
-            <div className="conversation-divider" />
             <div className="detail-choices">
               {selectingNpc
                 ? npcsHere.map((item) => (
@@ -57,6 +79,13 @@ export function ConversationPanel({
               <button className="talk-option end" onClick={onClose}>
                 [End conversation]
               </button>
+            </div>
+            <div className="conversation-divider" />
+            <div>
+              <h3 className="conversation-speaker">
+                {selectingNpc ? "WHO" : npc?.name.split(" ")[0].toUpperCase() || "NONE"}
+              </h3>
+              <p className="conversation-quote">{selectingNpc ? "Who do you want to talk to?" : typedText}</p>
             </div>
           </div>
         </motion.div>

@@ -76,29 +76,31 @@ export const CLUES: Record<string, string> = {
 
 export const DIALOGUE: Record<string, DialogueEntry> = {
   ana: {
-    intro: "\"I don't want trouble, detective. I saw strange things today.\"",
+    intro: "\"People ask too much on this island. Keep your questions short.\"",
     options: [
-      {
-        id: "ana-witness",
-        text: "Have you seen anything suspicious?",
-        emotion: "serious",
-        requirement: (state) => state.timeMinutes >= 14 * 60 && !state.hasClue("witness"),
-        onPick: (state) => {
-          state.addClue("witness");
-          return "\"At 14:20 I saw Bruno coming down from the lighthouse with a torn jacket.\"";
-        },
-      },
       {
         id: "ana-who",
         text: "Who are you?",
         emotion: "serious",
-        onPick: () => "\"I'm Ana. I work the morning shifts and keep my head down.\"",
+        onPick: () => "\"Ana Ledesma. Morning shift, no drama, no mistakes.\"",
       },
       {
-        id: "ana-place",
-        text: "Tell me about this place.",
+        id: "ana-suit",
+        text: "I like your suit",
         emotion: "happy",
-        onPick: () => "\"Bruma Island is beautiful from far away. Up close, it bites.\"",
+        onPick: () => "\"Thanks. In this weather, style is armor.\"",
+      },
+      {
+        id: "ana-rumour",
+        text: "Any new rumour?",
+        emotion: "serious",
+        onPick: (state) => {
+          if (!state.hasClue("witness")) {
+            state.addClue("witness");
+            return "\"At 14:20 I saw Bruno coming down from the lighthouse. He looked shaken.\"";
+          }
+          return "\"No fresh rumor. Just the same fear in different voices.\"";
+        },
       },
     ],
   },
@@ -106,26 +108,28 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
     intro: "\"I don't like interviews. Make it quick.\"",
     options: [
       {
-        id: "bruno-jacket",
-        text: "Your jacket has a strange cut.",
-        emotion: "serious",
-        requirement: (state) => state.timeMinutes >= 13 * 60 && !state.hasClue("tornJacket"),
-        onPick: (state) => {
-          state.addClue("tornJacket");
-          return "\"It is nothing,\" Bruno says, hiding gray paint from the lighthouse wall.";
-        },
-      },
-      {
-        id: "bruno-alibi",
-        text: "Where were you at 14:00?",
-        emotion: "serious",
-        onPick: () => "\"At the beach. Ask anyone... if they remember.\"",
-      },
-      {
         id: "bruno-who",
         text: "Who are you?",
         emotion: "serious",
-        onPick: () => "\"Maintenance. I fix things, I don't steal relics.\"",
+        onPick: () => "\"Bruno Varela. Maintenance. I fix what people break.\"",
+      },
+      {
+        id: "bruno-suit",
+        text: "I like your suit",
+        emotion: "happy",
+        onPick: () => "\"You have taste. Not many people notice details.\"",
+      },
+      {
+        id: "bruno-rumour",
+        text: "Any new rumour?",
+        emotion: "serious",
+        onPick: (state) => {
+          if (!state.hasClue("tornJacket")) {
+            state.addClue("tornJacket");
+            return "\"People talk too much. They say someone ripped a jacket near the lighthouse stairs.\"";
+          }
+          return "\"Only old noise. Nothing you can trust.\"";
+        },
       },
     ],
   },
@@ -139,26 +143,22 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
         onPick: () => "\"Carlos. I run this lobby and watch everyone who crosses it.\"",
       },
       {
-        id: "carlos-key",
-        text: "Have you seen anything suspicious?",
-        emotion: "serious",
-        requirement: (state) => state.timeMinutes >= 12 * 60 && !state.hasClue("keyLog"),
-        onPick: (state) => {
-          state.addClue("keyLog");
-          return "\"The lighthouse key log has one erased signature during Bruno's shift.\"";
-        },
-      },
-      {
-        id: "carlos-place",
-        text: "Tell me about this place.",
-        emotion: "serious",
-        onPick: () => "\"By day this lobby is calm. At night, everyone wears a different face.\"",
-      },
-      {
-        id: "carlos-thanks",
-        text: "Thanks. You've been really helpful.",
+        id: "carlos-suit",
+        text: "I like your suit",
         emotion: "happy",
-        onPick: () => "\"Finally, someone with manners.\" Carlos smiles for the first time.",
+        onPick: () => "\"Sharp eye. Noir never dies, detective.\"",
+      },
+      {
+        id: "carlos-rumour",
+        text: "Any new rumour?",
+        emotion: "serious",
+        onPick: (state) => {
+          if (!state.hasClue("keyLog")) {
+            state.addClue("keyLog");
+            return "\"A fresh one: someone edited the lighthouse key log during Bruno's shift.\"";
+          }
+          return "\"Same old storm, same old lies.\"";
+        },
       },
     ],
   },

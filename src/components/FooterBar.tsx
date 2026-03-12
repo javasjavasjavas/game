@@ -3,13 +3,14 @@ import { INVENTORY_ITEMS } from "../game/data";
 
 interface Props {
   showNav: boolean;
+  mapOpen: boolean;
   selectedInventoryId: string | null;
   onToggleInventory: (id: string) => void;
   onInspect: () => void;
   onMap: () => void;
 }
 
-export function FooterBar({ showNav, selectedInventoryId, onToggleInventory, onInspect, onMap }: Props) {
+export function FooterBar({ showNav, mapOpen, selectedInventoryId, onToggleInventory, onInspect, onMap }: Props) {
   if (!showNav) return null;
 
   const iconForItem = (id: string) => {
@@ -38,7 +39,7 @@ export function FooterBar({ showNav, selectedInventoryId, onToggleInventory, onI
           <Search size={14} /> Inspect area
         </button>
         <button className="pill-btn" onClick={onMap}>
-          <Map size={14} /> Open map
+          <Map size={14} /> {mapOpen ? "Close map" : "Open map"}
         </button>
       </div>
     </div>
