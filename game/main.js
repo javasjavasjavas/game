@@ -10,9 +10,9 @@ const roomMapLayout = {
 };
 
 const inventoryItems = [
-  { id: "key", label: "Llave oxidada" },
-  { id: "paper", label: "Periodico viejo" },
-  { id: "cup", label: "Taza de cafe" },
+  { id: "key", label: "Llave oxidada", icon: "🔑" },
+  { id: "paper", label: "Periodico viejo", icon: "📰" },
+  { id: "cup", label: "Taza de cafe", icon: "☕" },
 ];
 
 const ui = {
@@ -28,9 +28,11 @@ const ui = {
   dateLabel: document.getElementById("date-label"),
   sceneImage: document.getElementById("scene-image"),
   sceneFallback: document.getElementById("scene-fallback"),
+  viewport: document.getElementById("viewport"),
+  stage: document.getElementById("stage"),
   npcStrip: document.getElementById("npc-strip"),
+  characterWrap: document.getElementById("character-wrap"),
   characterButton: document.getElementById("character-button"),
-  characterLabel: document.getElementById("character-label"),
   mapOverlay: document.getElementById("map-overlay"),
   mapClose: document.getElementById("map-close"),
   mapBtn: document.getElementById("map-btn"),
@@ -38,44 +40,98 @@ const ui = {
   waitBtn: document.getElementById("wait-btn"),
   solveBtn: document.getElementById("solve-btn"),
   inspectBtn: document.getElementById("inspect-btn"),
+  inspectClose: document.getElementById("inspect-close"),
   inspectPanel: document.getElementById("inspect-panel"),
   inspectText: document.getElementById("inspect-text"),
   conversationPanel: document.getElementById("conversation-panel"),
-  conversationTitle: document.getElementById("conversation-title"),
+  conversationSpeaker: document.getElementById("conversation-speaker"),
   conversationText: document.getElementById("conversation-text"),
   conversationChoices: document.getElementById("conversation-choices"),
   footerNavigation: document.getElementById("footer-navigation"),
   inventoryButtons: [...document.querySelectorAll(".inv-item")],
+  cursorOverlay: document.getElementById("cursor-overlay"),
+  cursorIcon: document.getElementById("cursor-icon"),
+  cursorTag: document.getElementById("cursor-tag"),
 };
 
 const state = new GameState();
 let currentTalkNpcId = null;
 let selectedInventoryId = null;
+let hoverCharacter = false;
+let inspectOpen = false;
+let mousePos = { x: 0, y: 0 };
 
 function closeMobileSidebar() {
   ui.sidebar.classList.remove("open");
+}
+
+function selectedItem() {
+  return inventoryItems.find((item) => item.id === selectedInventoryId) || null;
+}
+
+function setCursorOverlay(mode) {
+  if (mode === "none") {
+    ui.cursorOverlay.classList.remove("show");
+    ui.viewport.classList.remove("hide-cursor");
+    return;
+  }
+
+  if (mode === "talk") {
+    ui.cursorIcon.textContent = "💬";
+    ui.cursorTag.textContent = "HABLAR";
+  }
+
+  if (mode === "use") {
+    const item = selectedItem();
+    ui.cursorIcon.textContent = item ? item.icon : "🔎";
+    ui.cursorTag.textContent = "USAR CON";
+  }
+
+  ui.cursorOverlay.classList.add("show");
+  ui.viewport.classList.add("hide-cursor");
+}
+
+function updateCursorOverlay() {
+  if (selectedInventoryId) {
+    setCursorOverlay("use");
+  } else if (hoverCharacter && !state.finished) {
+    setCursorOverlay("talk");
+  } else {
+    setCursorOverlay("none");
+  }
+}
+
+function moveCursorOverlay(clientX, clientY) {
+  const rect = ui.viewport.getBoundingClientRect();
+  mousePos = {
+    x: clientX - rect.left + 14,
+    y: clientY - rect.top + 14,
+  };
+  ui.cursorOverlay.style.transform = `translate(${mousePos.x}px, ${mousePos.y}px)`;
 }
 
 function openConversation(npcId) {
   if (state.finished) return;
   const npc = NPCS.find((n) => n.id === npcId);
   if (!npc) return;
+
+  inspectOpen = false;
   currentTalkNpcId = npcId;
   const bundle = state.getDialogue(npcId);
-  ui.conversationTitle.textContent = `Conversacion - ${npc.name}`;
+  ui.conversationSpeaker.textContent = npc.name.split(" ")[0].toUpperCase();
   ui.conversationText.textContent = bundle?.intro || "No parece querer hablar ahora.";
   ui.conversationChoices.innerHTML = "";
 
   if (!bundle || bundle.options.length === 0) {
     const noChoice = document.createElement("button");
-    noChoice.className = "choice-btn";
-    noChoice.textContent = "No hay preguntas disponibles";
+    noChoice.className = "talk-option";
+    noChoice.textContent = "No hay preguntas disponibles.";
     noChoice.disabled = true;
     ui.conversationChoices.appendChild(noChoice);
   } else {
     bundle.options.forEach((opt) => {
       const btn = document.createElement("button");
-      btn.className = "choice-btn";
+      btn.className = "talk-option";
       btn.textContent = opt.text;
       btn.addEventListener("click", () => {
         const text = state.pickDialogue(npcId, opt.id);
@@ -89,7 +145,7 @@ function openConversation(npcId) {
   }
 
   const closeBtn = document.createElement("button");
-  closeBtn.className = "choice-btn";
+  closeBtn.className = "talk-option end";
   closeBtn.textContent = "[Terminar conversacion]";
   closeBtn.addEventListener("click", () => {
     currentTalkNpcId = null;
@@ -97,6 +153,7 @@ function openConversation(npcId) {
     renderSidebar();
   });
   ui.conversationChoices.appendChild(closeBtn);
+
   renderFooterMode();
 }
 
@@ -106,6 +163,7 @@ function moveTo(roomId) {
   state.advanceTime(15);
   state.lastMessage = `Te moviste a ${ROOMS[roomId].name}.`;
   currentTalkNpcId = null;
+  inspectOpen = false;
   renderAll();
 }
 
@@ -163,11 +221,6 @@ function renderSidebar() {
 function renderNpcs() {
   const npcsHere = state.npcsInRoom(state.currentRoom);
   ui.npcStrip.innerHTML = "";
-  if (npcsHere.length === 0) {
-    ui.characterLabel.textContent = "Sin testigos";
-    return;
-  }
-  ui.characterLabel.textContent = npcsHere.length === 1 ? `Hablar con ${npcsHere[0].name}` : "Hablar";
 
   npcsHere.forEach((npc) => {
     const chip = document.createElement("button");
@@ -246,7 +299,6 @@ function renderInspectPanel() {
 }
 
 function renderFooterMode() {
-  const inspectOpen = ui.inspectPanel.classList.contains("open");
   const talkOpen = Boolean(currentTalkNpcId);
   ui.footerNavigation.style.display = !inspectOpen && !talkOpen ? "flex" : "none";
   ui.inspectPanel.classList.toggle("open", inspectOpen && !talkOpen);
@@ -269,6 +321,7 @@ function renderAll() {
   renderInspectPanel();
   renderFooterMode();
   renderInventory();
+  updateCursorOverlay();
 }
 
 function setupImageFallbacks() {
@@ -282,28 +335,58 @@ function setupImageFallbacks() {
   const characterImage = document.getElementById("character-image");
   characterImage.addEventListener("error", () => {
     characterImage.style.display = "none";
-    ui.characterLabel.textContent = "Sube assets/images/personaje.png";
+    state.lastMessage = "Falta cargar assets/images/character_masked.png";
+    renderAll();
   });
 }
 
 function wireEvents() {
   ui.sidebarToggle.addEventListener("click", () => ui.sidebar.classList.toggle("open"));
+
+  ui.viewport.addEventListener("mousemove", (event) => moveCursorOverlay(event.clientX, event.clientY));
+  ui.viewport.addEventListener("contextmenu", (event) => {
+    if (!selectedInventoryId) return;
+    event.preventDefault();
+    selectedInventoryId = null;
+    state.lastMessage = "Inventario sin seleccion.";
+    renderAll();
+  });
+
   ui.waitBtn.addEventListener("click", () => {
     if (state.finished) return;
     state.advanceTime(30);
     state.lastMessage = "Esperaste 30 minutos.";
     currentTalkNpcId = null;
-    ui.inspectPanel.classList.remove("open");
+    inspectOpen = false;
     renderAll();
   });
+
   ui.solveBtn.addEventListener("click", openAccusationMenu);
+
   ui.inspectBtn.addEventListener("click", () => {
-    ui.inspectPanel.classList.toggle("open");
+    inspectOpen = true;
     currentTalkNpcId = null;
     renderAll();
   });
+
+  ui.inspectClose.addEventListener("click", () => {
+    inspectOpen = false;
+    renderAll();
+  });
+
   ui.mapBtn.addEventListener("click", () => ui.mapOverlay.classList.add("open"));
   ui.mapClose.addEventListener("click", () => ui.mapOverlay.classList.remove("open"));
+
+  ui.characterWrap.addEventListener("mouseenter", () => {
+    hoverCharacter = true;
+    updateCursorOverlay();
+  });
+
+  ui.characterWrap.addEventListener("mouseleave", () => {
+    hoverCharacter = false;
+    updateCursorOverlay();
+  });
+
   ui.characterButton.addEventListener("click", () => {
     const npcsHere = state.npcsInRoom(state.currentRoom);
     if (npcsHere.length === 0) {
@@ -315,16 +398,25 @@ function wireEvents() {
       openConversation(npcsHere[0].id);
       return;
     }
-    ui.conversationTitle.textContent = "Conversacion";
+    ui.conversationSpeaker.textContent = "QUIEN";
     ui.conversationText.textContent = "Con quien quieres hablar?";
     ui.conversationChoices.innerHTML = "";
     npcsHere.forEach((npc) => {
       const btn = document.createElement("button");
-      btn.className = "choice-btn";
+      btn.className = "talk-option";
       btn.textContent = npc.name;
       btn.addEventListener("click", () => openConversation(npc.id));
       ui.conversationChoices.appendChild(btn);
     });
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "talk-option end";
+    closeBtn.textContent = "[Cancelar]";
+    closeBtn.addEventListener("click", () => {
+      currentTalkNpcId = null;
+      renderFooterMode();
+    });
+    ui.conversationChoices.appendChild(closeBtn);
+    inspectOpen = false;
     currentTalkNpcId = "selector";
     renderFooterMode();
   });

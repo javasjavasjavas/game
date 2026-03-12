@@ -202,6 +202,7 @@
       flex-direction: column;
       overflow: hidden;
       background: #000;
+      cursor: crosshair;
     }
 
     .viewport::before {
@@ -215,6 +216,10 @@
       z-index: 99;
     }
 
+    .viewport.hide-cursor {
+      cursor: none;
+    }
+
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -226,24 +231,36 @@
       position: relative;
     }
 
+    .room-heading {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .room-icon {
+      font-size: clamp(20px, 2.2vw, 30px);
+      color: var(--cyber-pink);
+      margin-top: 6px;
+    }
+
     .loc-wrap h2 {
       margin: 0;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       font-family: Orbitron, sans-serif;
       font-weight: 900;
-      font-size: clamp(30px, 4.2vw, 72px);
+      font-size: clamp(28px, 3.6vw, 58px);
       line-height: 0.9;
       color: #d4dae2;
     }
 
     .loc-wrap p {
-      margin: 10px 0 0 2px;
+      margin: 8px 0 0 2px;
       border-left: 2px solid rgba(8, 145, 168, 0.7);
       padding-left: 12px;
       color: var(--muted);
-      font-size: 24px;
-      max-width: 900px;
+      font-size: clamp(14px, 1.6vw, 20px);
+      max-width: 860px;
     }
 
     .clock-box {
@@ -266,7 +283,7 @@
       font-family: Orbitron, sans-serif;
       letter-spacing: 0.09em;
       color: rgba(8, 145, 168, 0.9);
-      font-size: 18px;
+      font-size: clamp(12px, 1vw, 18px);
     }
 
     .stage {
@@ -290,7 +307,8 @@
     .stage-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(2, 2, 5, 1) 0%, rgba(2, 2, 5, 0.1) 38%, rgba(2, 2, 5, 0.75) 100%);
+      background:
+        linear-gradient(to top, rgba(2, 2, 5, 1) 0%, rgba(2, 2, 5, 0.98) 22%, rgba(2, 2, 5, 0.7) 50%, rgba(2, 2, 5, 0.15) 72%, rgba(2, 2, 5, 0.78) 100%);
       z-index: 6;
       pointer-events: none;
     }
@@ -339,7 +357,7 @@
       height: 100%;
       border: 0;
       background: transparent;
-      cursor: pointer;
+      cursor: none;
       padding: 0;
     }
 
@@ -349,29 +367,8 @@
       object-fit: contain;
       object-position: bottom;
       filter: drop-shadow(0 0 18px rgba(8, 145, 168, 0.5));
-      -webkit-mask-image: linear-gradient(to bottom, black 84%, transparent 100%);
-      mask-image: linear-gradient(to bottom, black 84%, transparent 100%);
-    }
-
-    .character-label {
-      position: absolute;
-      right: 8px;
-      top: 24%;
-      border: 1px solid rgba(8, 145, 168, 0.6);
-      background: rgba(8, 9, 15, 0.94);
-      padding: 6px 10px;
-      font-family: Orbitron, sans-serif;
-      color: var(--cyber-blue);
-      letter-spacing: 0.08em;
-      font-size: 11px;
-      text-transform: uppercase;
-      opacity: 0;
-      transition: opacity 120ms ease-in;
-      pointer-events: none;
-    }
-
-    .character-wrap:hover .character-label {
-      opacity: 1;
+      -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
     }
 
     .map-overlay {
@@ -428,7 +425,7 @@
       z-index: 30;
       position: relative;
       padding: 14px 24px 18px;
-      background: linear-gradient(to top, rgba(2, 2, 5, 0.98) 0%, rgba(2, 2, 5, 0.86) 55%, transparent 100%);
+      background: linear-gradient(to top, rgba(2, 2, 5, 0.98) 0%, rgba(2, 2, 5, 0.86) 40%, transparent 100%);
       min-height: 130px;
     }
 
@@ -518,11 +515,43 @@
       border: 1px solid rgba(61, 73, 94, 0.7);
       background: rgba(8, 9, 15, 0.88);
       padding: 12px;
+      position: relative;
       display: none;
     }
 
     .detail-box.open {
       display: block;
+      animation: panel-in 220ms ease;
+    }
+
+    @keyframes panel-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .detail-close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(61, 73, 94, 0.7);
+      background: rgba(8, 9, 15, 0.95);
+      color: #93a0b8;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .detail-close:hover {
+      border-color: rgba(201, 35, 78, 0.8);
+      color: var(--cyber-pink);
     }
 
     .detail-title {
@@ -541,11 +570,63 @@
       line-height: 1.5;
     }
 
+    .conversation-layout {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) 1px minmax(240px, 1fr);
+      gap: 18px;
+      align-items: start;
+      margin-top: 8px;
+    }
+
+    .conversation-divider {
+      background: rgba(96, 118, 151, 0.4);
+      width: 1px;
+      height: 100%;
+      min-height: 120px;
+    }
+
+    .conversation-speaker {
+      margin: 0 0 8px;
+      font-family: Orbitron, sans-serif;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cyber-blue);
+      font-size: 15px;
+    }
+
+    .conversation-quote {
+      margin: 0;
+      font-style: italic;
+      color: #b8bfd1;
+      font-size: 19px;
+      line-height: 1.35;
+    }
+
     .detail-choices {
-      margin-top: 10px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
+    }
+
+    .talk-option {
+      border: 0;
+      background: transparent;
+      color: #97a3bb;
+      text-align: left;
+      padding: 0;
+      cursor: pointer;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .talk-option:hover {
+      color: #d9e2ef;
+    }
+
+    .talk-option.end {
+      margin-top: 10px;
+      color: var(--cyber-blue);
     }
 
     .empty-scene {
@@ -564,13 +645,61 @@
         radial-gradient(circle at 30% 40%, rgba(8, 145, 168, 0.22), transparent 40%);
     }
 
+    .cursor-overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-9999px, -9999px);
+      z-index: 120;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 80ms linear;
+    }
+
+    .cursor-overlay.show {
+      opacity: 1;
+    }
+
+    .cursor-icon {
+      font-size: 34px;
+      line-height: 1;
+      filter: drop-shadow(0 0 6px rgba(8, 145, 168, 0.4));
+    }
+
+    .cursor-tag {
+      border: 1px solid rgba(201, 35, 78, 0.75);
+      background: rgba(8, 9, 15, 0.95);
+      color: var(--cyber-pink);
+      font-family: Orbitron, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 14px;
+      padding: 7px 14px;
+      border-radius: 6px;
+    }
+
     .error-note {
       color: #ef8392;
     }
 
     @media (max-width: 1080px) {
       .loc-wrap p {
-        font-size: 18px;
+        font-size: 16px;
+      }
+
+      .conversation-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .conversation-divider {
+        display: none;
+      }
+
+      .talk-option {
+        font-size: 16px;
       }
     }
 
@@ -639,7 +768,7 @@
 </head>
 <body>
   <div class="app">
-    <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+    <button class="sidebar-toggle" id="sidebar-toggle">&#9776;</button>
 
     <aside class="sidebar" id="sidebar">
       <div class="brand">
@@ -669,7 +798,10 @@
     <main class="viewport" id="viewport">
       <header class="topbar">
         <div class="loc-wrap">
-          <h2 id="room-title">LOBBY DEL HOTEL</h2>
+          <div class="room-heading">
+            <span class="room-icon">&#128205;</span>
+            <h2 id="room-title">LOBBY DEL HOTEL</h2>
+          </div>
           <p id="room-description">Recepcion vacia, olor a cafe frio y una campana de bronce.</p>
         </div>
         <div class="clock-box">
@@ -689,7 +821,6 @@
           <button class="character-hitbox" id="character-button" title="Hablar">
             <img class="character-image" id="character-image" src="./assets/images/character_masked.png" alt="Personaje" />
           </button>
-          <div class="character-label" id="character-label">Hablar</div>
         </div>
 
         <div class="map-overlay" id="map-overlay">
@@ -705,9 +836,9 @@
         <div class="footer-row" id="footer-navigation">
           <div class="inv-wrap">
             <span class="inv-title">INV</span>
-            <div class="inv-item" data-label="Llave oxidada" data-id="key">🔑</div>
-            <div class="inv-item" data-label="Periodico viejo" data-id="paper">📰</div>
-            <div class="inv-item" data-label="Taza de cafe" data-id="cup">☕</div>
+            <div class="inv-item" data-label="Llave oxidada" data-id="key">&#128273;</div>
+            <div class="inv-item" data-label="Periodico viejo" data-id="paper">&#128240;</div>
+            <div class="inv-item" data-label="Taza de cafe" data-id="cup">&#9749;</div>
           </div>
           <div class="nav-actions">
             <button class="pill-btn" id="inspect-btn">Inspeccionar el lugar</button>
@@ -716,16 +847,27 @@
         </div>
 
         <div class="detail-box" id="inspect-panel">
+          <button class="detail-close" id="inspect-close">X</button>
           <h3 class="detail-title">Inspeccion</h3>
           <p class="detail-text" id="inspect-text"></p>
         </div>
 
         <div class="detail-box" id="conversation-panel">
-          <h3 class="detail-title" id="conversation-title">Conversacion</h3>
-          <p class="detail-text" id="conversation-text"></p>
-          <div class="detail-choices" id="conversation-choices"></div>
+          <div class="conversation-layout">
+            <div>
+              <h3 class="conversation-speaker" id="conversation-speaker">CARLOS</h3>
+              <p class="conversation-quote" id="conversation-text"></p>
+            </div>
+            <div class="conversation-divider"></div>
+            <div class="detail-choices" id="conversation-choices"></div>
+          </div>
         </div>
       </footer>
+
+      <div class="cursor-overlay" id="cursor-overlay">
+        <span class="cursor-icon" id="cursor-icon">&#128172;</span>
+        <span class="cursor-tag" id="cursor-tag">HABLAR</span>
+      </div>
     </main>
   </div>
 
