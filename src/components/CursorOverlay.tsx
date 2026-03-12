@@ -21,7 +21,7 @@ export function CursorOverlay({ mode, icon, x, y }: Props) {
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.12 }}
       className="cursor-overlay"
-      style={{ transform: `translate(${x}px, ${y}px)` }}
+      style={{ left: x, top: y }}
     >
       <span className="cursor-icon">{icon}</span>
       <span className="cursor-tag">{label}</span>

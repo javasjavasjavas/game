@@ -1,5 +1,5 @@
 import { Coffee, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { MouseEventHandler } from "react";
 import { ConversationPanel } from "./components/panels/ConversationPanel";
 import { InspectPanel } from "./components/panels/InspectPanel";
@@ -39,10 +39,13 @@ export default function App() {
       <Coffee size={26} />
     );
 
-  const handleViewportMouseMove: MouseEventHandler<HTMLElement> = (event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    setCursorPos({ x: event.clientX - rect.left + 14, y: event.clientY - rect.top + 14 });
-  };
+  useEffect(() => {
+    const onMouseMove = (event: MouseEvent) => {
+      setCursorPos({ x: event.clientX + 14, y: event.clientY + 14 });
+    };
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMouseMove);
+  }, []);
 
   const handleContextMenu: MouseEventHandler<HTMLElement> = (event) => {
     if (!game.selectedInventoryId) return;
@@ -90,7 +93,7 @@ export default function App() {
         mobileOpen={mobileSidebar}
       />
 
-      <main className={rootClass} onMouseMove={handleViewportMouseMove} onContextMenu={handleContextMenu}>
+      <main className={rootClass} onContextMenu={handleContextMenu}>
         <TopBar />
 
         <StageView
