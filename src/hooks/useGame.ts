@@ -5,6 +5,13 @@ import type { RoomId } from "../game/types";
 
 export type CursorMode = "none" | "talk" | "use";
 
+export interface CharacterMemory {
+  npcId: string;
+  name: string;
+  portrait: string;
+  notes: string[];
+}
+
 export function useGame() {
   const [game, setGame] = useState(() => new GameState());
   const [currentTalkNpcId, setCurrentTalkNpcId] = useState<string | null>(null);
@@ -13,6 +20,8 @@ export function useGame() {
   const [mapOpen, setMapOpen] = useState(false);
   const [selectedInventoryId, setSelectedInventoryId] = useState<string | null>(null);
   const [hoverCharacter, setHoverCharacter] = useState(false);
+  const [characterMemoryByNpc, setCharacterMemoryByNpc] = useState<Record<string, CharacterMemory>>({});
+  const [selectedCharacterMemoryId, setSelectedCharacterMemoryId] = useState<string | null>(null);
 
   const room = ROOMS[game.currentRoom];
   const clues = game.getClueEntries();
@@ -26,6 +35,8 @@ export function useGame() {
   }, [currentTalkNpcId, game]);
 
   const selectedItem = INVENTORY_ITEMS.find((item) => item.id === selectedInventoryId) ?? null;
+  const characterMemories = useMemo(() => Object.values(characterMemoryByNpc), [characterMemoryByNpc]);
+  const selectedCharacterMemory = selectedCharacterMemoryId ? characterMemoryByNpc[selectedCharacterMemoryId] ?? null : null;
 
   const cursorMode: CursorMode = selectedInventoryId ? "use" : hoverCharacter && !game.finished ? "talk" : "none";
 
@@ -62,6 +73,8 @@ export function useGame() {
     mutate((draft) => {
       draft.characterEmotion = "serious";
     });
+    ensureCharacterMemory(npcId);
+    setSelectedCharacterMemoryId(npcId);
     setInspectOpen(false);
     setCurrentTalkNpcId(npcId);
     const dialogue = game.getDialogue(npcId);
@@ -90,11 +103,28 @@ export function useGame() {
   };
 
   const pickDialogueOption = (npcId: string, optionId: string) => {
+    const dialogue = game.getDialogue(npcId);
+    const optionText = dialogue?.options.find((item) => item.id === optionId)?.text ?? "Unknown prompt";
     let response = "";
     mutate((draft) => {
       response = draft.pickDialogue(npcId, optionId);
     });
     setConversationText(response);
+    ensureCharacterMemory(npcId);
+    setSelectedCharacterMemoryId(npcId);
+    setCharacterMemoryByNpc((prev) => {
+      const current = prev[npcId];
+      if (!current) return prev;
+      const entry = `Q: ${optionText}  A: ${response}`;
+      if (current.notes[0] === entry) return prev;
+      return {
+        ...prev,
+        [npcId]: {
+          ...current,
+          notes: [entry, ...current.notes].slice(0, 6),
+        },
+      };
+    });
   };
 
   const solve = (npcId: string) => {
@@ -115,6 +145,24 @@ export function useGame() {
 
   const clearInventorySelection = () => {
     setSelectedInventoryId(null);
+  };
+
+  const ensureCharacterMemory = (npcId: string) => {
+    const npc = NPCS.find((item) => item.id === npcId);
+    if (!npc) return;
+
+    setCharacterMemoryByNpc((prev) => {
+      if (prev[npcId]) return prev;
+      return {
+        ...prev,
+        [npcId]: {
+          npcId,
+          name: npc.name,
+          portrait: "/game-assets/character_masked.png",
+          notes: [],
+        },
+      };
+    });
   };
 
   return {
@@ -143,6 +191,9 @@ export function useGame() {
     openAccusationPrompt,
     toggleInventoryItem,
     clearInventorySelection,
+    characterMemories,
+    selectedCharacterMemory,
+    selectCharacterMemory: setSelectedCharacterMemoryId,
     formattedTime: formatTime(game.timeMinutes),
   };
 }

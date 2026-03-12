@@ -1,6 +1,7 @@
 import { Clock3, MapPin, Search, Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
+import type { CharacterMemory } from "../hooks/useGame";
 
 interface Props {
   roomName: string;
@@ -9,6 +10,9 @@ interface Props {
   dateLabel: string;
   message: string;
   clues: Array<{ id: string; text: string }>;
+  characters: CharacterMemory[];
+  selectedCharacter: CharacterMemory | null;
+  onSelectCharacter: (npcId: string) => void;
   onWait: () => void;
   onSolveClick: () => void;
   onAccuse: (npcId: string) => void;
@@ -23,6 +27,9 @@ export function Sidebar({
   dateLabel,
   message,
   clues,
+  characters,
+  selectedCharacter,
+  onSelectCharacter,
   onWait,
   onSolveClick,
   onAccuse,
@@ -44,8 +51,38 @@ export function Sidebar({
       </div>
 
       <section className="panel">
-        <h2>Dialogue</h2>
-        <p>{message}</p>
+        <h2>Characters</h2>
+        <div className="characters-list">
+          {characters.length === 0 ? (
+            <p>No character records yet.</p>
+          ) : (
+            characters.map((character) => (
+              <button
+                key={character.npcId}
+                className={`character-row ${selectedCharacter?.npcId === character.npcId ? "active" : ""}`}
+                onClick={() => onSelectCharacter(character.npcId)}
+              >
+                <img className="character-thumb" src={character.portrait} alt={`${character.name} portrait`} />
+                <span className="character-name">{character.name}</span>
+              </button>
+            ))
+          )}
+        </div>
+
+        {selectedCharacter && (
+          <div className="character-memory">
+            <h3>{selectedCharacter.name}</h3>
+            {selectedCharacter.notes.length === 0 ? (
+              <p>No valuable conversation data stored yet.</p>
+            ) : (
+              <ul className="character-notes">
+                {selectedCharacter.notes.map((note, index) => (
+                  <li key={`${selectedCharacter.npcId}-${index}`}>{note}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </section>
 
       <section className="panel blue">

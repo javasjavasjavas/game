@@ -81,7 +81,7 @@ export function ConversationPanel({
               </button>
             </div>
             <div className="conversation-divider" />
-            <div>
+            <div className="conversation-response">
               <h3 className="conversation-speaker">
                 {selectingNpc ? "WHO" : npc?.name.split(" ")[0].toUpperCase() || "NONE"}
               </h3>

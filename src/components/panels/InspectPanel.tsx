@@ -12,7 +12,7 @@ export function InspectPanel({ open, text, onClose }: Props) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="detail-box open"
+          className="detail-box inspect-box open"
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 14 }}

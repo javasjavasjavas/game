@@ -77,6 +77,9 @@ export default function App() {
         dateLabel="Monday, March 15"
         message={game.game.lastMessage}
         clues={game.clues}
+        characters={game.characterMemories}
+        selectedCharacter={game.selectedCharacterMemory}
+        onSelectCharacter={game.selectCharacterMemory}
         onWait={() => {
           setShowAccuseList(false);
           game.wait();
@@ -123,23 +126,24 @@ export default function App() {
             onMap={() => game.setMapOpen((prev) => !prev)}
           />
 
-          <InspectPanel open={game.inspectOpen && !conversationOpen} text={inspectText} onClose={() => game.setInspectOpen(false)} />
-
-          <ConversationPanel
-            open={conversationOpen}
-            npc={game.conversation?.npc ?? null}
-            dialogue={game.conversation?.dialogue ?? null}
-            text={game.conversationText}
-            selectingNpc={selectingNpc}
-            npcsHere={game.npcsHere}
-            onSelectNpc={game.talkToNpc}
-            onPickOption={(optionId) => {
-              if (!game.currentTalkNpcId || game.currentTalkNpcId === "selector") return;
-              game.pickDialogueOption(game.currentTalkNpcId, optionId);
-            }}
-            onClose={game.closeConversation}
-          />
         </footer>
+
+        <InspectPanel open={game.inspectOpen && !conversationOpen} text={inspectText} onClose={() => game.setInspectOpen(false)} />
+
+        <ConversationPanel
+          open={conversationOpen}
+          npc={game.conversation?.npc ?? null}
+          dialogue={game.conversation?.dialogue ?? null}
+          text={game.conversationText}
+          selectingNpc={selectingNpc}
+          npcsHere={game.npcsHere}
+          onSelectNpc={game.talkToNpc}
+          onPickOption={(optionId) => {
+            if (!game.currentTalkNpcId || game.currentTalkNpcId === "selector") return;
+            game.pickDialogueOption(game.currentTalkNpcId, optionId);
+          }}
+          onClose={game.closeConversation}
+        />
 
         <CursorOverlay mode={game.cursorMode} icon={cursorIcon} x={cursorPos.x} y={cursorPos.y} />
       </main>

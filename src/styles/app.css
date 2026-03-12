@@ -10,7 +10,7 @@
   --line: rgba(61, 73, 94, 0.45);
   --panel: rgba(8, 9, 15, 0.92);
   --lane-side: 40px;
-  --stage-top-offset: 72px;
+  --stage-top-offset: 76px;
 }
 
 * {
@@ -62,11 +62,11 @@ button {
 .sidebar {
   width: 320px;
   min-width: 320px;
-  height: calc(100% - var(--stage-top-offset));
-  margin-top: var(--stage-top-offset);
+  height: 100%;
+  margin-top: 0;
   background: var(--panel);
   border-right: 1px solid var(--line);
-  padding: 18px 16px;
+  padding: var(--stage-top-offset) 16px 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -161,8 +161,69 @@ button {
 .panel li {
   margin: 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.35;
+}
+
+.characters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.character-row {
+  width: 100%;
+  border: 1px solid rgba(61, 73, 94, 0.6);
+  background: rgba(8, 9, 15, 0.85);
+  color: #aeb8cc;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+}
+
+.character-row.active,
+.character-row:hover {
+  border-color: rgba(8, 145, 168, 0.8);
+  color: #d7e2f2;
+}
+
+.character-thumb {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  object-position: center top;
+  border: 1px solid rgba(8, 145, 168, 0.35);
+  background: #020205;
+}
+
+.character-name {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+}
+
+.character-memory {
+  margin-top: 10px;
+  border-top: 1px solid rgba(31, 42, 62, 0.7);
+  padding-top: 8px;
+}
+
+.character-memory h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: #d1d9e8;
+  font-family: Orbitron, sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.character-notes {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .inline-icon {
@@ -347,7 +408,6 @@ button {
   height: 100%;
   object-fit: contain;
   object-position: bottom;
-  filter: drop-shadow(0 0 18px rgba(8, 145, 168, 0.5));
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
@@ -490,12 +550,19 @@ button {
   position: absolute;
   left: var(--lane-side);
   right: var(--lane-side);
-  bottom: 14px;
+  bottom: 18px;
   border: 1px solid rgba(61, 73, 94, 0.7);
   background: rgba(8, 9, 15, 0.88);
-  padding: 12px;
-  z-index: 6;
+  padding: 16px;
+  z-index: 36;
   max-width: calc(100% - (var(--lane-side) * 2));
+}
+
+.inspect-box {
+  top: 84px;
+  bottom: 18px;
+  padding: 24px;
+  overflow: auto;
 }
 
 .detail-close {
@@ -523,16 +590,16 @@ button {
 .detail-text {
   margin: 0;
   color: #c4cbda;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.65;
 }
 
 .conversation-layout {
   display: grid;
   grid-template-columns: minmax(240px, 1fr) 1px minmax(240px, 1fr);
-  gap: 18px;
+  gap: 14px;
   align-items: start;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .conversation-divider {
@@ -548,15 +615,21 @@ button {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--cyber-blue);
-  font-size: 14px;
+  font-size: 11px;
 }
 
 .conversation-quote {
   margin: 0;
   font-style: italic;
   color: #b8bfd1;
-  font-size: clamp(14px, 1.1vw, 22px);
-  line-height: 1.35;
+  font-size: clamp(10px, 0.75vw, 12px);
+  line-height: 1.45;
+  min-height: 72px;
+  white-space: pre-wrap;
+}
+
+.conversation-response {
+  min-height: 100%;
 }
 
 .detail-choices {
@@ -570,10 +643,10 @@ button {
   background: transparent;
   color: #97a3bb;
   text-align: left;
-  padding: 5px 8px;
+  padding: 4px 8px;
   font-family: "JetBrains Mono", monospace;
-  font-size: clamp(14px, 1.2vw, 24px);
-  line-height: 1.35;
+  font-size: clamp(10px, 0.75vw, 12px);
+  line-height: 1.45;
   transition: color 120ms ease, background-color 120ms ease;
 }
 
@@ -642,7 +715,7 @@ button {
   }
 
   .talk-option {
-    font-size: 20px;
+    font-size: 12px;
   }
 }
 
@@ -665,6 +738,7 @@ button {
     min-width: 300px;
     height: 100%;
     margin-top: 0;
+    padding-top: 54px;
     transform: translateX(-100%);
     transition: transform 170ms ease-out;
     z-index: 105;
@@ -697,6 +771,12 @@ button {
     right: var(--lane-side);
     bottom: 10px;
     max-width: calc(100% - (var(--lane-side) * 2));
+  }
+
+  .inspect-box {
+    top: 76px;
+    bottom: 10px;
+    padding: 16px;
   }
 
   .pill-btn {
