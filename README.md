@@ -38,8 +38,8 @@ npm start
 
 Sube tus imagenes en:
 
-- `assets/images/background_1.png`
-- `assets/images/character_masked.png`
+- `public/game-assets/background_1.png`
+- `public/game-assets/character_masked.png`
 
 ## Deploy en Render
 
