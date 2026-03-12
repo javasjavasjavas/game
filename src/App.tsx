@@ -127,6 +127,7 @@ export default function App() {
             open={conversationOpen}
             npc={game.conversation?.npc ?? null}
             dialogue={game.conversation?.dialogue ?? null}
+            text={game.conversationText}
             selectingNpc={selectingNpc}
             npcsHere={game.npcsHere}
             onSelectNpc={game.talkToNpc}

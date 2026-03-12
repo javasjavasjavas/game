@@ -92,6 +92,11 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
         text: "Donde estuviste todo el dia?",
         onPick: () => "De manana en la playa, luego en el lobby. Despues fui al muelle a tomar aire.",
       },
+      {
+        id: "ana-about-place",
+        text: "Cuentame sobre este lugar.",
+        onPick: () => "Todos esconden algo en esta isla. El silencio siempre cuesta caro.",
+      },
     ],
   },
   bruno: {
@@ -111,6 +116,11 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
         text: "Donde estabas a las 14:00?",
         onPick: () => "En la playa, seguro. Nadie puede probar lo contrario.",
       },
+      {
+        id: "bruno-who",
+        text: "Quien eres tu?",
+        onPick: () => "Soy el encargado de mantenimiento. No soy tu sospechoso, detective.",
+      },
     ],
   },
   carlos: {
@@ -129,6 +139,11 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
         id: "carlos-mood",
         text: "Como estaba Bruno hoy?",
         onPick: () => "Tenso desde el almuerzo. Evitaba mirarme.",
+      },
+      {
+        id: "carlos-place",
+        text: "Cuentame sobre este lugar.",
+        onPick: () => "El lobby parece tranquilo, pero de noche todos cambian de cara.",
       },
     ],
   },

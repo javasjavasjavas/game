@@ -5,6 +5,7 @@ interface Props {
   open: boolean;
   npc: Npc | null;
   dialogue: DialogueEntry | null;
+  text: string;
   selectingNpc: boolean;
   npcsHere: Npc[];
   onSelectNpc: (npcId: string) => void;
@@ -16,6 +17,7 @@ export function ConversationPanel({
   open,
   npc,
   dialogue,
+  text,
   selectingNpc,
   npcsHere,
   onSelectNpc,
@@ -37,9 +39,7 @@ export function ConversationPanel({
               <h3 className="conversation-speaker">
                 {selectingNpc ? "QUIEN" : npc?.name.split(" ")[0].toUpperCase() || "NADIE"}
               </h3>
-              <p className="conversation-quote">
-                {selectingNpc ? "Con quien quieres hablar?" : dialogue?.intro || "No parece querer hablar."}
-              </p>
+              <p className="conversation-quote">{selectingNpc ? "Con quien quieres hablar?" : text}</p>
             </div>
             <div className="conversation-divider" />
             <div className="detail-choices">

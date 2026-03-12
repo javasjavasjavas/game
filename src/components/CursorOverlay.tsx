@@ -23,8 +23,17 @@ export function CursorOverlay({ mode, icon, x, y }: Props) {
       className="cursor-overlay"
       style={{ left: x, top: y }}
     >
-      <span className="cursor-icon">{icon}</span>
-      <span className="cursor-tag">{label}</span>
+      {mode === "talk" ? (
+        <span className="cursor-tag cursor-tag-talk">
+          <span className="cursor-tag-icon">{icon}</span>
+          <span>{label}</span>
+        </span>
+      ) : (
+        <>
+          <span className="cursor-icon">{icon}</span>
+          <span className="cursor-tag">{label}</span>
+        </>
+      )}
     </motion.div>
   );
 }

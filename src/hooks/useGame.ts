@@ -8,6 +8,7 @@ export type CursorMode = "none" | "talk" | "use";
 export function useGame() {
   const [game, setGame] = useState(() => new GameState());
   const [currentTalkNpcId, setCurrentTalkNpcId] = useState<string | null>(null);
+  const [conversationText, setConversationText] = useState("");
   const [inspectOpen, setInspectOpen] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
   const [selectedInventoryId, setSelectedInventoryId] = useState<string | null>(null);
@@ -60,6 +61,8 @@ export function useGame() {
   const talkToNpc = (npcId: string) => {
     setInspectOpen(false);
     setCurrentTalkNpcId(npcId);
+    const dialogue = game.getDialogue(npcId);
+    setConversationText(dialogue?.intro || "No parece querer hablar.");
   };
 
   const openTalkSelector = () => {
@@ -75,14 +78,20 @@ export function useGame() {
     }
     setInspectOpen(false);
     setCurrentTalkNpcId("selector");
+    setConversationText("Con quien quieres hablar?");
   };
 
-  const closeConversation = () => setCurrentTalkNpcId(null);
+  const closeConversation = () => {
+    setCurrentTalkNpcId(null);
+    setConversationText("");
+  };
 
   const pickDialogueOption = (npcId: string, optionId: string) => {
+    let response = "";
     mutate((draft) => {
-      draft.pickDialogue(npcId, optionId);
+      response = draft.pickDialogue(npcId, optionId);
     });
+    setConversationText(response);
   };
 
   const solve = (npcId: string) => {
@@ -114,6 +123,7 @@ export function useGame() {
     selectedItem,
     cursorMode,
     currentTalkNpcId,
+    conversationText,
     inspectOpen,
     mapOpen,
     selectedInventoryId,

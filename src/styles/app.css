@@ -10,6 +10,7 @@
   --line: rgba(61, 73, 94, 0.45);
   --panel: rgba(8, 9, 15, 0.92);
   --lane-side: 40px;
+  --stage-top-offset: 72px;
 }
 
 * {
@@ -61,7 +62,8 @@ button {
 .sidebar {
   width: 320px;
   min-width: 320px;
-  height: 100%;
+  height: calc(100% - var(--stage-top-offset));
+  margin-top: var(--stage-top-offset);
   background: var(--panel);
   border-right: 1px solid var(--line);
   padding: 18px 16px;
@@ -80,13 +82,13 @@ button {
 
 .sidebar-room-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
 }
 
 .sidebar-meta-icon {
   color: var(--cyber-pink);
-  margin-top: 3px;
+  margin-top: 0;
 }
 
 .sidebar-meta h1 {
@@ -107,7 +109,6 @@ button {
 }
 
 .sidebar-clock {
-  margin-top: 12px;
   font-family: "JetBrains Mono", monospace;
   font-size: 38px;
   line-height: 1;
@@ -117,12 +118,19 @@ button {
 }
 
 .sidebar-date {
-  margin-top: 4px;
+  margin-top: 8px;
   text-transform: uppercase;
   font-family: Orbitron, sans-serif;
   letter-spacing: 0.09em;
   color: rgba(8, 145, 168, 0.9);
   font-size: 11px;
+}
+
+.sidebar-clock-frame {
+  margin-top: 16px;
+  border: 1px solid rgba(61, 73, 94, 0.65);
+  background: rgba(6, 10, 18, 0.72);
+  padding: 10px 12px;
 }
 
 .panel {
@@ -308,25 +316,17 @@ button {
 .stage-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(2, 2, 5, 0.98) 0%,
-    rgba(2, 2, 5, 0.94) 22%,
-    rgba(2, 2, 5, 0.68) 42%,
-    rgba(2, 2, 5, 0.3) 58%,
-    rgba(2, 2, 5, 0.08) 72%,
-    rgba(2, 2, 5, 0) 84%
-  );
+  background: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0) 50%);
   z-index: 6;
   pointer-events: none;
 }
 
 .character-wrap {
   position: absolute;
-  right: 5%;
+  right: 2%;
   bottom: 0;
-  width: min(34vw, 500px);
-  height: min(70vh, 820px);
+  width: min(51vw, 750px);
+  height: min(95vh, 1230px);
   z-index: 12;
   display: flex;
   align-items: flex-end;
@@ -548,14 +548,14 @@ button {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--cyber-blue);
-  font-size: 15px;
+  font-size: 22px;
 }
 
 .conversation-quote {
   margin: 0;
   font-style: italic;
   color: #b8bfd1;
-  font-size: 19px;
+  font-size: clamp(20px, 1.8vw, 45px);
   line-height: 1.35;
 }
 
@@ -570,10 +570,16 @@ button {
   background: transparent;
   color: #97a3bb;
   text-align: left;
-  padding: 0;
+  padding: 6px 8px;
   font-family: "JetBrains Mono", monospace;
-  font-size: 18px;
+  font-size: clamp(20px, 1.9vw, 42px);
   line-height: 1.35;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+
+.talk-option:hover {
+  color: #d3d9e4;
+  background: rgba(201, 35, 78, 0.05);
 }
 
 .talk-option.end {
@@ -611,6 +617,21 @@ button {
   border-radius: 6px;
 }
 
+.cursor-tag-talk {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+}
+
+.cursor-tag-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 1080px) {
   .conversation-layout {
     grid-template-columns: 1fr;
@@ -621,7 +642,7 @@ button {
   }
 
   .talk-option {
-    font-size: 16px;
+    font-size: 20px;
   }
 }
 
@@ -642,6 +663,8 @@ button {
     bottom: 0;
     width: 300px;
     min-width: 300px;
+    height: 100%;
+    margin-top: 0;
     transform: translateX(-100%);
     transition: transform 170ms ease-out;
     z-index: 105;

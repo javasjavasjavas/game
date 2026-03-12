@@ -33,12 +33,14 @@ export function Sidebar({
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
       <div className="sidebar-meta">
         <div className="sidebar-room-row">
-          <MapPin size={15} className="sidebar-meta-icon" />
+          <MapPin size={24} className="sidebar-meta-icon" />
           <h1>{roomName.toUpperCase()}</h1>
         </div>
         <p className="sidebar-room-description">{roomDescription}</p>
-        <div className="sidebar-clock">{clock}</div>
-        <div className="sidebar-date">{dateLabel}</div>
+        <div className="sidebar-clock-frame">
+          <div className="sidebar-clock">{clock}</div>
+          <div className="sidebar-date">{dateLabel}</div>
+        </div>
       </div>
 
       <section className="panel">
