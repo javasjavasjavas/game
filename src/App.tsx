@@ -1,12 +1,11 @@
 import { AnimatePresence } from "framer-motion";
-import { Menu } from "lucide-react";
+import { Coffee, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { MouseEventHandler } from "react";
 import { ConversationPanel } from "./components/panels/ConversationPanel";
 import { InspectPanel } from "./components/panels/InspectPanel";
 import { CursorOverlay } from "./components/CursorOverlay";
 import { FooterBar } from "./components/FooterBar";
-import { MapOverlay } from "./components/MapOverlay";
 import { Sidebar } from "./components/Sidebar";
 import { StageView } from "./components/StageView";
 import { TopBar } from "./components/TopBar";
@@ -30,7 +29,16 @@ export default function App() {
   const selectingNpc = game.currentTalkNpcId === "selector";
   const showNavigation = !game.inspectOpen && !conversationOpen;
 
-  const cursorIcon = game.cursorMode === "use" ? game.selectedItem?.icon ?? "??" : "??";
+  const cursorIcon =
+    game.cursorMode === "talk" ? (
+      <MessageSquareText size={26} />
+    ) : game.selectedInventoryId === "key" ? (
+      <KeyRound size={26} />
+    ) : game.selectedInventoryId === "paper" ? (
+      <Newspaper size={26} />
+    ) : (
+      <Coffee size={26} />
+    );
 
   const handleViewportMouseMove: MouseEventHandler<HTMLElement> = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -83,24 +91,16 @@ export default function App() {
         <TopBar roomName={game.room.name} roomDescription={game.room.description} clock={game.formattedTime} />
 
         <StageView
-          npcsHere={game.npcsHere}
-          onNpcClick={(npcId) => {
-            setShowAccuseList(false);
-            game.talkToNpc(npcId);
-          }}
           onCharacterClick={() => {
             setShowAccuseList(false);
             game.openTalkSelector();
           }}
           onCharacterEnter={() => game.setHoverCharacter(true)}
           onCharacterLeave={() => game.setHoverCharacter(false)}
-        />
-
-        <MapOverlay
-          open={game.mapOpen}
+          mapOpen={game.mapOpen}
           currentRoom={game.game.currentRoom}
-          onClose={() => game.setMapOpen(false)}
-          onSelectRoom={handleMapSelect}
+          onMapClose={() => game.setMapOpen(false)}
+          onMapSelect={handleMapSelect}
         />
 
         <footer className="footer">

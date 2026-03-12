@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
+import type { ReactNode } from "react";
 import type { CursorMode } from "../hooks/useGame";
 
 interface Props {
   mode: CursorMode;
-  icon: string;
+  icon: ReactNode;
   x: number;
   y: number;
 }
@@ -15,11 +16,12 @@ export function CursorOverlay({ mode, icon, x, y }: Props) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1, x, y }}
+      initial={false}
+      animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.12 }}
       className="cursor-overlay"
+      style={{ transform: `translate(${x}px, ${y}px)` }}
     >
       <span className="cursor-icon">{icon}</span>
       <span className="cursor-tag">{label}</span>

@@ -141,7 +141,7 @@ export const ENDINGS = {
 };
 
 export const INVENTORY_ITEMS = [
-  { id: "key", label: "Llave oxidada", icon: "??" },
-  { id: "paper", label: "Periodico viejo", icon: "??" },
-  { id: "cup", label: "Taza de cafe", icon: "?" },
+  { id: "key", label: "Llave oxidada" },
+  { id: "paper", label: "Periodico viejo" },
+  { id: "cup", label: "Taza de cafe" },
 ];
