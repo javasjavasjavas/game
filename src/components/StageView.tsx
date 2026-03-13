@@ -29,19 +29,41 @@ export function StageView({
   onMapSelect,
 }: Props) {
   const hasPreloadedOtherSprite = useRef(false);
+  const [displayedRoom, setDisplayedRoom] = useState<RoomId>(currentRoom);
+  const [fadePhase, setFadePhase] = useState<"idle" | "fadeOut" | "fadeIn">("idle");
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [firstSpriteLoaded, setFirstSpriteLoaded] = useState(false);
-  const showStageCharacter = currentRoom !== "cab" && currentRoom !== "apartment";
+  const showStageCharacter = displayedRoom !== "cab" && displayedRoom !== "apartment";
   const backgroundByRoom: Partial<Record<RoomId, string>> = {
     bar: "/game-assets/background_bar.jpg",
     cab: "/game-assets/background_cab.jpg",
     apartment: "/game-assets/background_apartment.jpg",
   };
-  const backgroundSrc = backgroundByRoom[currentRoom] ?? "/game-assets/background_bar.jpg";
+  const backgroundSrc = backgroundByRoom[displayedRoom] ?? "/game-assets/background_bar.jpg";
   const stageLoading = useMemo(
     () => !(backgroundLoaded && (showStageCharacter ? firstSpriteLoaded : true)),
     [backgroundLoaded, firstSpriteLoaded, showStageCharacter]
   );
+
+  useEffect(() => {
+    if (currentRoom === displayedRoom) return;
+
+    let fadeInTimer: number | null = null;
+    setFadePhase("fadeOut");
+    const fadeOutTimer = window.setTimeout(() => {
+      setDisplayedRoom(currentRoom);
+      setBackgroundLoaded(false);
+      setFadePhase("fadeIn");
+      fadeInTimer = window.setTimeout(() => {
+        setFadePhase("idle");
+      }, 230);
+    }, 230);
+
+    return () => {
+      window.clearTimeout(fadeOutTimer);
+      if (fadeInTimer !== null) window.clearTimeout(fadeInTimer);
+    };
+  }, [currentRoom, displayedRoom]);
 
   useEffect(() => {
     setBackgroundLoaded(false);
@@ -83,6 +105,11 @@ export function StageView({
           <span className="stage-loading-text">Loading assets...</span>
         </div>
       )}
+      <motion.div
+        className="stage-transition-black"
+        animate={{ opacity: fadePhase === "fadeOut" ? 1 : fadePhase === "fadeIn" ? 0 : 0 }}
+        transition={{ duration: 0.23, ease: "easeInOut" }}
+      />
 
       {showStageCharacter && (
         <div className="character-wrap" onMouseEnter={onCharacterEnter} onMouseLeave={onCharacterLeave}>

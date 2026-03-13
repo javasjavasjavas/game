@@ -469,6 +469,14 @@ button {
   color: rgba(8, 145, 168, 0.85);
 }
 
+.stage-transition-black {
+  position: absolute;
+  inset: 0;
+  z-index: 21;
+  background: #000;
+  pointer-events: none;
+}
+
 @keyframes stage-spin {
   to {
     transform: rotate(360deg);
