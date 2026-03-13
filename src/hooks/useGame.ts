@@ -106,14 +106,14 @@ export function useGame() {
   };
 
   const pickDialogueOption = (npcId: string, optionId: string) => {
-    const dialogue = game.getDialogue(npcId);
     let response = "";
     let discoveredClues: string[] = [];
-    mutate((draft) => {
-      const before = new Set(draft.clues);
-      response = draft.pickDialogue(npcId, optionId);
-      discoveredClues = [...draft.clues].filter((id) => !before.has(id));
-    });
+    const nextGame = game.clone();
+    const before = new Set(nextGame.clues);
+    response = nextGame.pickDialogue(npcId, optionId);
+    discoveredClues = [...nextGame.clues].filter((id) => !before.has(id));
+    setGame(nextGame);
+
     setConversationText(response);
     setConversationHasClue(discoveredClues.length > 0);
     ensureCharacterMemory(npcId);
@@ -167,7 +167,7 @@ export function useGame() {
         [npcId]: {
           npcId,
           name: npc.name,
-          portrait: "/game-assets/character_masked.png",
+          portrait: "/game-assets/character_big_boss_serious.png",
           clues: [],
         },
       };

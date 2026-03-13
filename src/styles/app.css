@@ -563,9 +563,9 @@ button {
 }
 
 .inspect-box {
-  top: 84px;
-  bottom: 18px;
-  padding: 24px;
+  min-height: 220px;
+  max-height: 220px;
+  padding: 16px;
   overflow: auto;
 }
 
@@ -783,8 +783,8 @@ button {
   }
 
   .inspect-box {
-    top: 76px;
-    bottom: 10px;
+    min-height: 180px;
+    max-height: 180px;
     padding: 16px;
   }
 
