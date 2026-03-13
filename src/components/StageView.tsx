@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { MapOverlay } from "./MapOverlay";
 import type { CharacterEmotion, RoomId } from "../game/types";
 
@@ -30,8 +30,13 @@ export function StageView({
   onMapSelect,
 }: Props) {
   const hasPreloadedOtherSprite = useRef(false);
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
+  const [firstSpriteLoaded, setFirstSpriteLoaded] = useState(false);
+  const stageLoading = useMemo(() => !(backgroundLoaded && firstSpriteLoaded), [backgroundLoaded, firstSpriteLoaded]);
 
   const handleActiveSpriteLoad = () => {
+    setFirstSpriteLoaded(true);
+
     if (hasPreloadedOtherSprite.current) return;
     hasPreloadedOtherSprite.current = true;
 
@@ -45,8 +50,20 @@ export function StageView({
 
   return (
     <section className="stage">
-      <img className="scene-image" src="/game-assets/background_1.png" alt="Bruma Island scene" />
+      <img
+        className="scene-image"
+        src="/game-assets/background_1.png"
+        alt="Bruma Island scene"
+        onLoad={() => setBackgroundLoaded(true)}
+        onError={() => setBackgroundLoaded(true)}
+      />
       <div className="stage-overlay" />
+      {stageLoading && (
+        <div className="stage-loading">
+          <span className="stage-loading-spinner" />
+          <span className="stage-loading-text">Loading assets...</span>
+        </div>
+      )}
 
       <div className="character-wrap" onMouseEnter={onCharacterEnter} onMouseLeave={onCharacterLeave}>
         <button className="character-hitbox" title="Talk" onClick={onCharacterClick}>
@@ -60,6 +77,7 @@ export function StageView({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0.05 }}
               onLoad={handleActiveSpriteLoad}
+              onError={() => setFirstSpriteLoaded(true)}
               transition={{ duration: 0.28, ease: "easeOut" }}
             />
           </AnimatePresence>
