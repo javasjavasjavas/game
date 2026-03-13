@@ -75,14 +75,18 @@ export default function App() {
         roomDescription={game.room.description}
         clock={game.formattedTime}
         dateLabel="Monday, March 15"
+        money={game.game.money}
         message={game.game.lastMessage}
-        clues={game.clues}
         characters={game.characterMemories}
         expandedCharacter={game.expandedCharacterMemory}
         onToggleCharacter={game.toggleCharacterMemory}
         onWait={() => {
           setShowAccuseList(false);
           game.wait();
+        }}
+        onTakeCab={() => {
+          setShowAccuseList(false);
+          game.takeCab();
         }}
         onSolveClick={() => {
           game.openAccusationPrompt();

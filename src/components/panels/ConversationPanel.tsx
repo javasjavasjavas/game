@@ -85,7 +85,7 @@ export function ConversationPanel({
             <div className="conversation-divider" />
             <div className="conversation-response">
               <h3 className="conversation-speaker">
-                {selectingNpc ? "WHO" : npc?.name.split(" ")[0].toUpperCase() || "NONE"}
+                {selectingNpc ? "WHO" : npc?.name || "NONE"}
               </h3>
               <p className={`conversation-quote ${hasClue ? "clue" : ""}`}>
                 {selectingNpc ? "Who do you want to talk to?" : (typedText || " ")}

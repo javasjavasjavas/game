@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CHARACTER_BY_ID, STAGE_CHARACTER_ID } from "../game/data";
 import { MapOverlay } from "./MapOverlay";
 import type { CharacterEmotion, RoomId } from "../game/types";
@@ -31,7 +31,16 @@ export function StageView({
   const hasPreloadedOtherSprite = useRef(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [firstSpriteLoaded, setFirstSpriteLoaded] = useState(false);
+  const backgroundByRoom: Partial<Record<RoomId, string>> = {
+    bar: "/game-assets/background_bar.png",
+    cab: "/game-assets/background_cab.png",
+  };
+  const backgroundSrc = backgroundByRoom[currentRoom] ?? "/game-assets/background_bar.png";
   const stageLoading = useMemo(() => !(backgroundLoaded && firstSpriteLoaded), [backgroundLoaded, firstSpriteLoaded]);
+
+  useEffect(() => {
+    setBackgroundLoaded(false);
+  }, [backgroundSrc]);
 
   const handleActiveSpriteLoad = () => {
     setFirstSpriteLoaded(true);
@@ -51,7 +60,7 @@ export function StageView({
     <section className="stage">
       <img
         className="scene-image"
-        src="/game-assets/background_1.png"
+        src={backgroundSrc}
         alt="Night city scene"
         onLoad={() => setBackgroundLoaded(true)}
         onError={() => setBackgroundLoaded(true)}

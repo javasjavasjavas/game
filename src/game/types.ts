@@ -1,4 +1,4 @@
-export type RoomId = "bar" | "apartment" | "store" | "alley";
+export type RoomId = "bar" | "cab" | "apartment" | "store" | "alley";
 
 export interface Room {
   id: RoomId;
@@ -24,6 +24,7 @@ export type CharacterEmotion = "serious" | "happy";
 export interface CharacterDefinition {
   id: string;
   name: string;
+  description: string;
   defaultEmotion: CharacterEmotion;
   emotions: Record<CharacterEmotion, string>;
 }
@@ -51,6 +52,7 @@ export interface GameState {
   timeMinutes: number;
   currentRoom: RoomId;
   characterEmotion: CharacterEmotion;
+  money: number;
   clues: Set<string>;
   finished: boolean;
   lastMessage: string;

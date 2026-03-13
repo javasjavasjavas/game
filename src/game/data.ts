@@ -4,6 +4,8 @@ export const CHARACTERS: CharacterDefinition[] = [
   {
     id: "bigboss",
     name: "Big Boss",
+    description:
+      "A feared criminal boss who controls favors, debts, and silence across the district.",
     defaultEmotion: "serious",
     emotions: {
       serious: "/game-assets/character_big_boss_serious.png",
@@ -23,7 +25,13 @@ export const ROOMS: Record<RoomId, Room> = {
     id: "bar",
     name: "The Bar",
     description: "Neon lights, old jazz, and whispers nobody repeats twice.",
-    exits: ["apartment", "store", "alley"],
+    exits: ["cab", "apartment", "store", "alley"],
+  },
+  cab: {
+    id: "cab",
+    name: "Cab",
+    description: "Rain on the windshield, city lights stretched into blurred streaks.",
+    exits: ["bar"],
   },
   apartment: {
     id: "apartment",
@@ -45,10 +53,11 @@ export const ROOMS: Record<RoomId, Room> = {
   },
 };
 
-export const ROOM_ORDER: RoomId[] = ["bar", "apartment", "store", "alley"];
+export const ROOM_ORDER: RoomId[] = ["bar", "cab", "apartment", "store", "alley"];
 
 export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
   bar: { x: 48, y: 48 },
+  cab: { x: 50, y: 92 },
   apartment: { x: 22, y: 24 },
   store: { x: 78, y: 26 },
   alley: { x: 52, y: 78 },

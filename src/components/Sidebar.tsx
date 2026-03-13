@@ -1,4 +1,4 @@
-import { Clock3, MapPin, Search, Zap } from "lucide-react";
+import { Clock3, MapPin, Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
@@ -8,12 +8,13 @@ interface Props {
   roomDescription: string;
   clock: string;
   dateLabel: string;
+  money: number;
   message: string;
-  clues: Array<{ id: string; text: string }>;
   characters: CharacterMemory[];
   expandedCharacter: CharacterMemory | null;
   onToggleCharacter: (npcId: string) => void;
   onWait: () => void;
+  onTakeCab: () => void;
   onSolveClick: () => void;
   onAccuse: (npcId: string) => void;
   showAccuseList: boolean;
@@ -25,12 +26,13 @@ export function Sidebar({
   roomDescription,
   clock,
   dateLabel,
+  money,
   message,
-  clues,
   characters,
   expandedCharacter,
   onToggleCharacter,
   onWait,
+  onTakeCab,
   onSolveClick,
   onAccuse,
   showAccuseList,
@@ -67,11 +69,22 @@ export function Sidebar({
                   {character.hasNewClue && <span className="character-tag">New clue</span>}
                 </button>
                 {expandedCharacter?.npcId === character.npcId && character.clues.length > 0 && (
-                  <ul className="character-notes">
-                    {character.clues.map((clue, index) => (
-                      <li key={`${character.npcId}-${index}`} className="character-clue">{clue}</li>
-                    ))}
-                  </ul>
+                  <div className="character-detail">
+                    <p className="character-description">{character.description}</p>
+                    <h3 className="character-clues-title">Clues</h3>
+                    <ul className="character-notes">
+                      {character.clues.map((clue, index) => (
+                        <li key={`${character.npcId}-${index}`} className="character-clue">{clue}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {expandedCharacter?.npcId === character.npcId && character.clues.length === 0 && (
+                  <div className="character-detail">
+                    <p className="character-description">{character.description}</p>
+                    <h3 className="character-clues-title">Clues</h3>
+                    <p>No clues yet.</p>
+                  </div>
                 )}
               </div>
             ))
@@ -80,20 +93,17 @@ export function Sidebar({
       </section>
 
       <section className="panel blue">
-        <h2>Clues</h2>
-        <ul className="clues">
-          {clues.length === 0 ? (
-            <li><Search size={14} className="inline-icon" /> No clues yet.</li>
-          ) : (
-            clues.map((clue) => <li key={clue.id}>{clue.text}</li>)
-          )}
-        </ul>
+        <h2>Money</h2>
+        <p className="money-value">${money}</p>
       </section>
 
       <section className="panel" style={{ marginTop: "auto" }}>
         <h2>Actions</h2>
         <button className="action-btn" onClick={onWait}>
           <Clock3 size={14} /> Wait 30 minutes
+        </button>
+        <button className="action-btn" onClick={onTakeCab}>
+          <MapPin size={14} /> Take a cab
         </button>
         <button className="action-btn warn" onClick={onSolveClick}>
           <Zap size={14} /> Submit accusation

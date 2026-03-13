@@ -8,6 +8,7 @@ export type CursorMode = "none" | "talk" | "use";
 export interface CharacterMemory {
   npcId: string;
   name: string;
+  description: string;
   portrait: string;
   clues: string[];
   hasNewClue: boolean;
@@ -156,6 +157,28 @@ export function useGame() {
     setSelectedInventoryId(null);
   };
 
+  const takeCab = () => {
+    const fare = 18;
+    mutate((draft) => {
+      if (draft.finished) return;
+      if (draft.currentRoom === "cab") {
+        draft.lastMessage = "You are already in the cab.";
+        return;
+      }
+      if (draft.money < fare) {
+        draft.lastMessage = "Not enough cash for a cab ride.";
+        return;
+      }
+      draft.money -= fare;
+      draft.currentRoom = "cab";
+      draft.advanceTime(10);
+      draft.lastMessage = `You took a cab for $${fare}.`;
+    });
+    setCurrentTalkNpcId(null);
+    setInspectOpen(false);
+    setConversationHasClue(false);
+  };
+
   const ensureCharacterMemory = (npcId: string) => {
     const npc = NPCS.find((item) => item.id === npcId);
     if (!npc) return;
@@ -167,6 +190,7 @@ export function useGame() {
         [npcId]: {
           npcId,
           name: npc.name,
+          description: CHARACTER_BY_ID[npcId]?.description ?? `${npc.name} is a person of interest in this district.`,
           portrait: CHARACTER_BY_ID[npcId]?.emotions.serious ?? "/game-assets/character_big_boss_serious.png",
           clues: [],
           hasNewClue: false,
@@ -214,6 +238,7 @@ export function useGame() {
     pickDialogueOption,
     solve,
     openAccusationPrompt,
+    takeCab,
     toggleInventoryItem,
     clearInventorySelection,
     characterMemories,

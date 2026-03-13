@@ -78,6 +78,8 @@ button {
   border: 1px solid rgba(31, 42, 62, 0.45);
   background: rgba(5, 7, 14, 0.72);
   padding: 12px;
+  margin-top: -30px;
+  margin-bottom: 30px;
 }
 
 .sidebar-room-row {
@@ -224,17 +226,44 @@ button {
   background: rgba(201, 35, 78, 0.08);
 }
 
+.character-detail {
+  border-top: 1px solid rgba(31, 42, 62, 0.6);
+  padding: 8px 12px 10px;
+}
+
+.character-description {
+  margin: 0 0 8px;
+  color: #b9c2d4;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.character-clues-title {
+  margin: 0 0 6px;
+  font-family: Orbitron, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cyber-blue);
+  font-size: 11px;
+}
+
 .character-notes {
   margin: 0;
-  padding: 2px 14px 10px 28px;
+  padding: 0 0 0 18px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-top: 1px solid rgba(31, 42, 62, 0.6);
 }
 
 .character-clue {
   color: #ffce6e;
+}
+
+.money-value {
+  font-family: "JetBrains Mono", monospace;
+  color: #d6f2ff !important;
+  font-size: 22px !important;
+  letter-spacing: 0.04em;
 }
 
 .inline-icon {
@@ -793,6 +822,11 @@ button {
     transform: translateX(-100%);
     transition: transform 170ms ease-out;
     z-index: 105;
+  }
+
+  .sidebar-meta {
+    margin-top: 0;
+    margin-bottom: 16px;
   }
 
   .sidebar.open {
