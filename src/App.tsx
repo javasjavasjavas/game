@@ -76,10 +76,13 @@ export default function App() {
         clock={game.formattedTime}
         dateLabel="Monday, March 15"
         money={game.game.money}
+        moneyExpenses={game.moneyExpenses}
+        moneyDetailsOpen={game.moneyDetailsOpen}
         message={game.game.lastMessage}
         characters={game.characterMemories}
         expandedCharacter={game.expandedCharacterMemory}
         onToggleCharacter={game.toggleCharacterMemory}
+        onToggleMoneyDetails={game.toggleMoneyDetails}
         onWait={() => {
           setShowAccuseList(false);
           game.wait();

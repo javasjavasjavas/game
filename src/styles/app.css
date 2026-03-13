@@ -64,7 +64,7 @@ button {
   min-width: 320px;
   height: 100%;
   margin-top: 0;
-  background: var(--panel);
+  background: #111;
   border-right: 1px solid var(--line);
   padding: var(--stage-top-offset) 16px 18px;
   display: flex;
@@ -136,7 +136,7 @@ button {
 }
 
 .panel {
-  background: rgba(5, 7, 14, 0.9);
+  background: #171717;
   border: 1px solid rgba(31, 42, 62, 0.5);
   padding: 12px;
   border-left: 2px solid var(--cyber-pink);
@@ -176,6 +176,8 @@ button {
 .character-card {
   border: 1px solid rgba(61, 73, 94, 0.5);
   background: rgba(8, 9, 15, 0.74);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .character-card.expanded {
@@ -215,13 +217,14 @@ button {
 
 .character-tag {
   margin-left: auto;
+  transform: translateX(-10px);
   border: 1px solid rgba(201, 35, 78, 0.7);
   color: #ff9ab0;
   font-family: Orbitron, sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 10px;
-  padding: 3px 7px;
+  font-size: 9px;
+  padding: 2px 6px;
   border-radius: 4px;
   background: rgba(201, 35, 78, 0.08);
 }
@@ -264,6 +267,19 @@ button {
   color: #d6f2ff !important;
   font-size: 22px !important;
   letter-spacing: 0.04em;
+}
+
+.money-detail-btn {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.money-details {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .inline-icon {
@@ -352,7 +368,7 @@ button {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #000;
+  background: #111;
   cursor: crosshair;
 }
 
@@ -401,6 +417,8 @@ button {
   overflow: hidden;
   margin: 10px var(--lane-side) 14px;
   border: 1px solid #333;
+  border-radius: 40px;
+  box-shadow: 0 0 17px rgba(0, 0, 0, 0.8);
 }
 
 .scene-image {

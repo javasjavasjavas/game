@@ -17,6 +17,7 @@ export class GameState {
   currentRoom: RoomId;
   characterEmotion: CharacterEmotion;
   money: number;
+  expenses: string[];
   clues: Set<string>;
   finished: boolean;
   lastMessage: string;
@@ -26,6 +27,7 @@ export class GameState {
     this.currentRoom = seed?.currentRoom ?? "bar";
     this.characterEmotion = seed?.characterEmotion ?? "serious";
     this.money = seed?.money ?? 120;
+    this.expenses = seed?.expenses ? [...seed.expenses] : [];
     this.clues = new Set(seed?.clues ? [...seed.clues] : []);
     this.finished = seed?.finished ?? false;
     this.lastMessage = seed?.lastMessage ?? "You entered the city at night. Find who forged the logs.";

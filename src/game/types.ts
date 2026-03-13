@@ -53,6 +53,7 @@ export interface GameState {
   currentRoom: RoomId;
   characterEmotion: CharacterEmotion;
   money: number;
+  expenses: string[];
   clues: Set<string>;
   finished: boolean;
   lastMessage: string;

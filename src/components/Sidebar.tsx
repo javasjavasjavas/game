@@ -1,4 +1,4 @@
-import { Clock3, MapPin, Zap } from "lucide-react";
+import { Clock3, DollarSign, MapPin, Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
@@ -9,10 +9,13 @@ interface Props {
   clock: string;
   dateLabel: string;
   money: number;
+  moneyExpenses: string[];
+  moneyDetailsOpen: boolean;
   message: string;
   characters: CharacterMemory[];
   expandedCharacter: CharacterMemory | null;
   onToggleCharacter: (npcId: string) => void;
+  onToggleMoneyDetails: () => void;
   onWait: () => void;
   onTakeCab: () => void;
   onSolveClick: () => void;
@@ -27,10 +30,13 @@ export function Sidebar({
   clock,
   dateLabel,
   money,
+  moneyExpenses,
+  moneyDetailsOpen,
   message,
   characters,
   expandedCharacter,
   onToggleCharacter,
+  onToggleMoneyDetails,
   onWait,
   onTakeCab,
   onSolveClick,
@@ -93,8 +99,16 @@ export function Sidebar({
       </section>
 
       <section className="panel blue">
-        <h2>Money</h2>
+        <h2><DollarSign size={14} className="inline-icon" /> Money</h2>
         <p className="money-value">${money}</p>
+        <button className="choice-btn money-detail-btn" onClick={onToggleMoneyDetails}>
+          View details
+        </button>
+        {moneyDetailsOpen && (
+          <ul className="money-details">
+            {moneyExpenses.length === 0 ? <li>No expenses yet.</li> : moneyExpenses.map((expense, idx) => <li key={idx}>{expense}</li>)}
+          </ul>
+        )}
       </section>
 
       <section className="panel" style={{ marginTop: "auto" }}>

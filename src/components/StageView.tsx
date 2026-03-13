@@ -31,10 +31,11 @@ export function StageView({
   const hasPreloadedOtherSprite = useRef(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [firstSpriteLoaded, setFirstSpriteLoaded] = useState(false);
-  const showStageCharacter = currentRoom !== "cab";
+  const showStageCharacter = currentRoom !== "cab" && currentRoom !== "apartment";
   const backgroundByRoom: Partial<Record<RoomId, string>> = {
     bar: "/game-assets/background_bar.jpg",
     cab: "/game-assets/background_cab.jpg",
+    apartment: "/game-assets/background_apartment.jpg",
   };
   const backgroundSrc = backgroundByRoom[currentRoom] ?? "/game-assets/background_bar.jpg";
   const stageLoading = useMemo(

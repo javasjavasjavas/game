@@ -22,6 +22,7 @@ export function useGame() {
   const [mapOpen, setMapOpen] = useState(false);
   const [selectedInventoryId, setSelectedInventoryId] = useState<string | null>(null);
   const [hoverCharacter, setHoverCharacter] = useState(false);
+  const [moneyDetailsOpen, setMoneyDetailsOpen] = useState(false);
   const [characterMemoryByNpc, setCharacterMemoryByNpc] = useState<Record<string, CharacterMemory>>({});
   const [expandedCharacterMemoryId, setExpandedCharacterMemoryId] = useState<string | null>(null);
   const [conversationHasClue, setConversationHasClue] = useState(false);
@@ -170,6 +171,7 @@ export function useGame() {
         return;
       }
       draft.money -= fare;
+      draft.expenses = [`Cab fare: -$${fare}`, ...draft.expenses].slice(0, 12);
       draft.currentRoom = "cab";
       draft.advanceTime(10);
       draft.lastMessage = `You took a cab for $${fare}.`;
@@ -226,10 +228,12 @@ export function useGame() {
     conversationText,
     inspectOpen,
     mapOpen,
+    moneyDetailsOpen,
     selectedInventoryId,
     setMapOpen,
     setInspectOpen,
     setHoverCharacter,
+    toggleMoneyDetails: () => setMoneyDetailsOpen((prev) => !prev),
     moveRoom,
     wait,
     talkToNpc,
@@ -245,6 +249,7 @@ export function useGame() {
     expandedCharacterMemory,
     toggleCharacterMemory,
     conversationHasClue,
+    moneyExpenses: game.expenses,
     formattedTime: formatTime(game.timeMinutes),
   };
 }
