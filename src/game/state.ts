@@ -21,12 +21,12 @@ export class GameState {
   lastMessage: string;
 
   constructor(seed?: Partial<GameState>) {
-    this.timeMinutes = seed?.timeMinutes ?? 8 * 60;
-    this.currentRoom = seed?.currentRoom ?? "dock";
+    this.timeMinutes = seed?.timeMinutes ?? 20 * 60;
+    this.currentRoom = seed?.currentRoom ?? "bar";
     this.characterEmotion = seed?.characterEmotion ?? "serious";
     this.clues = new Set(seed?.clues ? [...seed.clues] : []);
     this.finished = seed?.finished ?? false;
-    this.lastMessage = seed?.lastMessage ?? "You arrived at Bruma Island. Find who stole the medallion.";
+    this.lastMessage = seed?.lastMessage ?? "You entered the city at night. Find who forged the logs.";
   }
 
   clone(): GameState {
@@ -98,7 +98,7 @@ export class GameState {
     const hasAllCoreClues = this.hasClue("tornJacket") && this.hasClue("keyLog") && this.hasClue("witness");
 
     this.finished = true;
-    if (accusedId === "bruno" && hasAllCoreClues) {
+    if (accusedId === "bigboss" && hasAllCoreClues) {
       this.lastMessage = ENDINGS.solved;
       return { ok: true, ending: ENDINGS.solved };
     }

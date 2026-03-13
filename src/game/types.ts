@@ -1,4 +1,4 @@
-export type RoomId = "dock" | "lobby" | "beach" | "lighthouse";
+export type RoomId = "bar" | "apartment" | "store" | "alley";
 
 export interface Room {
   id: RoomId;
@@ -20,6 +20,13 @@ export interface Npc {
 }
 
 export type CharacterEmotion = "serious" | "happy";
+
+export interface CharacterDefinition {
+  id: string;
+  name: string;
+  defaultEmotion: CharacterEmotion;
+  emotions: Record<CharacterEmotion, string>;
+}
 
 export interface DialogueOption {
   id: string;

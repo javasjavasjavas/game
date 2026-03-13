@@ -21,7 +21,7 @@ export default function App() {
 
   const inspectText = useMemo(() => {
     const exitNames = game.room.exits.map((id) => ROOMS[id].name).join(", ");
-    return `${game.room.description} Visible exits: ${exitNames}. The wind drowns distant voices; inspect clues and question whoever is present.`;
+    return `${game.room.description} Visible exits: ${exitNames}. Traffic noise covers whispers; inspect clues and question whoever is present.`;
   }, [game.room]);
 
   const conversationOpen = Boolean(game.currentTalkNpcId);
@@ -78,8 +78,8 @@ export default function App() {
         message={game.game.lastMessage}
         clues={game.clues}
         characters={game.characterMemories}
-        selectedCharacter={game.selectedCharacterMemory}
-        onSelectCharacter={game.selectCharacterMemory}
+        expandedCharacter={game.expandedCharacterMemory}
+        onToggleCharacter={game.toggleCharacterMemory}
         onWait={() => {
           setShowAccuseList(false);
           game.wait();

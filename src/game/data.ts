@@ -1,163 +1,176 @@
-import type { DialogueEntry, Npc, Room, RoomId } from "./types";
+import type { CharacterDefinition, DialogueEntry, Npc, Room, RoomId } from "./types";
+
+export const CHARACTERS: CharacterDefinition[] = [
+  {
+    id: "bigboss",
+    name: "Big Boss",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: "/game-assets/character_big_boss_serious.png",
+      happy: "/game-assets/character_big_boss_happy.png",
+    },
+  },
+];
+
+export const CHARACTER_BY_ID: Record<string, CharacterDefinition> = Object.fromEntries(
+  CHARACTERS.map((character) => [character.id, character])
+);
+
+export const STAGE_CHARACTER_ID = "bigboss";
 
 export const ROOMS: Record<RoomId, Room> = {
-  dock: {
-    id: "dock",
-    name: "Dock",
-    description: "Wet wood, old ropes, and waves breaking in silence.",
-    exits: ["lobby", "beach"],
+  bar: {
+    id: "bar",
+    name: "The Bar",
+    description: "Neon lights, old jazz, and whispers nobody repeats twice.",
+    exits: ["apartment", "store", "alley"],
   },
-  lobby: {
-    id: "lobby",
-    name: "Hotel Lobby",
-    description: "An empty desk, cold coffee smell, and a brass bell.",
-    exits: ["dock", "beach", "lighthouse"],
+  apartment: {
+    id: "apartment",
+    name: "Apartment",
+    description: "A narrow hallway, broken intercom, and sleepless windows.",
+    exits: ["bar", "alley"],
   },
-  beach: {
-    id: "beach",
-    name: "North Beach",
-    description: "Dark sand and wind that swallows distant voices.",
-    exits: ["dock", "lobby", "lighthouse"],
+  store: {
+    id: "store",
+    name: "Store",
+    description: "Half-closed shutters, humming fridges, and nervous eyes behind glass.",
+    exits: ["bar", "alley"],
   },
-  lighthouse: {
-    id: "lighthouse",
-    name: "Lighthouse",
-    description: "Metal stairs, salt-stained walls, and a full island view.",
-    exits: ["lobby", "beach"],
+  alley: {
+    id: "alley",
+    name: "Alley",
+    description: "Wet concrete, flickering signs, and footsteps that stop when you turn.",
+    exits: ["bar", "apartment", "store"],
   },
 };
 
-export const ROOM_ORDER: RoomId[] = ["dock", "lobby", "beach", "lighthouse"];
+export const ROOM_ORDER: RoomId[] = ["bar", "apartment", "store", "alley"];
 
 export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
-  dock: { x: 20, y: 70 },
-  lobby: { x: 45, y: 48 },
-  beach: { x: 76, y: 70 },
-  lighthouse: { x: 74, y: 20 },
+  bar: { x: 48, y: 48 },
+  apartment: { x: 22, y: 24 },
+  store: { x: 78, y: 26 },
+  alley: { x: 52, y: 78 },
 };
 
 export const NPCS: Npc[] = [
   {
-    id: "ana",
-    name: "Ana Ledesma",
+    id: "bigboss",
+    name: "Big Boss",
     schedule: [
-      { from: "08:00", to: "11:00", room: "beach" },
-      { from: "11:00", to: "14:00", room: "lobby" },
-      { from: "14:00", to: "18:00", room: "dock" },
-      { from: "18:00", to: "22:00", room: "lobby" },
+      { from: "20:00", to: "21:00", room: "bar" },
+      { from: "21:00", to: "22:00", room: "alley" },
     ],
   },
   {
-    id: "bruno",
-    name: "Bruno Varela",
+    id: "nina",
+    name: "Nina Cole",
     schedule: [
-      { from: "08:00", to: "10:00", room: "dock" },
-      { from: "10:00", to: "13:00", room: "lobby" },
-      { from: "13:00", to: "16:00", room: "lighthouse" },
-      { from: "16:00", to: "22:00", room: "beach" },
+      { from: "20:00", to: "21:00", room: "apartment" },
+      { from: "21:00", to: "22:00", room: "bar" },
     ],
   },
   {
-    id: "carlos",
-    name: "Carlos Mena",
+    id: "clerk",
+    name: "Milo Trent",
     schedule: [
-      { from: "08:00", to: "12:00", room: "lobby" },
-      { from: "12:00", to: "17:00", room: "dock" },
-      { from: "17:00", to: "22:00", room: "lighthouse" },
+      { from: "20:00", to: "21:00", room: "store" },
+      { from: "21:00", to: "22:00", room: "bar" },
     ],
   },
 ];
 
 export const CLUES: Record<string, string> = {
-  tornJacket: "Torn jacket with lighthouse paint.",
-  keyLog: "Lighthouse key register was altered.",
-  witness: "Ana's statement: Bruno came down nervous from the lighthouse.",
+  tornJacket: "Torn jacket with neon paint from the alley wall.",
+  keyLog: "Store shutter log was edited during the blackout window.",
+  witness: "Nina's statement: Big Boss rushed out of the alley at 21:10.",
 };
 
 export const DIALOGUE: Record<string, DialogueEntry> = {
-  ana: {
-    intro: "\"People ask too much on this island. Keep your questions short.\"",
+  bigboss: {
+    intro: "\"Ask fast. Night is expensive in this city.\"",
     options: [
       {
-        id: "ana-who",
+        id: "bigboss-who",
         text: "Who are you?",
         emotion: "serious",
-        onPick: () => "\"Ana Ledesma. Morning shift, no drama, no mistakes.\"",
+        onPick: () => "\"People call me Big Boss. I own nothing, but I hear everything.\"",
       },
       {
-        id: "ana-suit",
+        id: "bigboss-suit",
         text: "I like your suit",
         emotion: "happy",
-        onPick: () => "\"Thanks. In this weather, style is armor.\"",
+        onPick: () => "\"Finally, someone with taste.\"",
       },
       {
-        id: "ana-rumour",
-        text: "Any new rumour?",
-        emotion: "serious",
-        onPick: (state) => {
-          if (!state.hasClue("witness")) {
-            state.addClue("witness");
-            return "\"At 14:20 I saw Bruno coming down from the lighthouse. He looked shaken.\"";
-          }
-          return "\"No fresh rumor. Just the same fear in different voices.\"";
-        },
-      },
-    ],
-  },
-  bruno: {
-    intro: "\"I don't like interviews. Make it quick.\"",
-    options: [
-      {
-        id: "bruno-who",
-        text: "Who are you?",
-        emotion: "serious",
-        onPick: () => "\"Bruno Varela. Maintenance. I fix what people break.\"",
-      },
-      {
-        id: "bruno-suit",
-        text: "I like your suit",
-        emotion: "happy",
-        onPick: () => "\"You have taste. Not many people notice details.\"",
-      },
-      {
-        id: "bruno-rumour",
+        id: "bigboss-rumour",
         text: "Any new rumour?",
         emotion: "serious",
         onPick: (state) => {
           if (!state.hasClue("tornJacket")) {
             state.addClue("tornJacket");
-            return "\"People talk too much. They say someone ripped a jacket near the lighthouse stairs.\"";
+            return "\"Rumor says someone scraped a jacket on fresh neon paint in the alley.\"";
           }
-          return "\"Only old noise. Nothing you can trust.\"";
+          return "\"Same noise, different mouths.\"";
         },
       },
     ],
   },
-  carlos: {
-    intro: "\"What brings you here, outsider? This place is not what it seems...\"",
+  nina: {
+    intro: "\"You look lost. That's dangerous around here.\"",
     options: [
       {
-        id: "carlos-who",
+        id: "nina-who",
         text: "Who are you?",
         emotion: "serious",
-        onPick: () => "\"Carlos. I run this lobby and watch everyone who crosses it.\"",
+        onPick: () => "\"Nina Cole. I keep records and avoid trouble.\"",
       },
       {
-        id: "carlos-suit",
+        id: "nina-suit",
         text: "I like your suit",
         emotion: "happy",
-        onPick: () => "\"Sharp eye. Noir never dies, detective.\"",
+        onPick: () => "\"Thanks, detective. Someone has to look alive at this hour.\"",
       },
       {
-        id: "carlos-rumour",
+        id: "nina-rumour",
+        text: "Any new rumour?",
+        emotion: "serious",
+        onPick: (state) => {
+          if (!state.hasClue("witness")) {
+            state.addClue("witness");
+            return "\"I saw Big Boss leaving the alley at 21:10. He looked nervous.\"";
+          }
+          return "\"Only old stories and bad alibis.\"";
+        },
+      },
+    ],
+  },
+  clerk: {
+    intro: "\"If you're buying answers, pay in trust.\"",
+    options: [
+      {
+        id: "clerk-who",
+        text: "Who are you?",
+        emotion: "serious",
+        onPick: () => "\"Milo Trent. I close the store and remember every lock.\"",
+      },
+      {
+        id: "clerk-suit",
+        text: "I like your suit",
+        emotion: "happy",
+        onPick: () => "\"Not bad. You notice details.\"",
+      },
+      {
+        id: "clerk-rumour",
         text: "Any new rumour?",
         emotion: "serious",
         onPick: (state) => {
           if (!state.hasClue("keyLog")) {
             state.addClue("keyLog");
-            return "\"A fresh one: someone edited the lighthouse key log during Bruno's shift.\"";
+            return "\"Someone altered the store shutter log right after the blackout.\"";
           }
-          return "\"Same old storm, same old lies.\"";
+          return "\"Rumors are cheap, facts are expensive.\"";
         },
       },
     ],
@@ -165,9 +178,9 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
 };
 
 export const ENDINGS = {
-  solved: "Case solved: Bruno stole the medallion and tried to frame Ana.",
-  wrong: "Wrong accusation. The suspect escaped on the last boat.",
-  late: "Too late. It is 22:00 and the island is sealed for the night.",
+  solved: "Case solved: Big Boss staged the theft and forged the city logs.",
+  wrong: "Wrong accusation. The suspect slipped into the night crowd.",
+  late: "Too late. At 22:00 the district locks down and all leads go cold.",
 };
 
 export const INVENTORY_ITEMS = [

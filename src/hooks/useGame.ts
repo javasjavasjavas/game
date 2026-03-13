@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CLUES, INVENTORY_ITEMS, NPCS, ROOMS } from "../game/data";
+import { CHARACTER_BY_ID, CLUES, INVENTORY_ITEMS, NPCS, ROOMS } from "../game/data";
 import { formatTime, GameState } from "../game/state";
 import type { RoomId } from "../game/types";
 
@@ -10,6 +10,7 @@ export interface CharacterMemory {
   name: string;
   portrait: string;
   clues: string[];
+  hasNewClue: boolean;
 }
 
 export function useGame() {
@@ -21,7 +22,7 @@ export function useGame() {
   const [selectedInventoryId, setSelectedInventoryId] = useState<string | null>(null);
   const [hoverCharacter, setHoverCharacter] = useState(false);
   const [characterMemoryByNpc, setCharacterMemoryByNpc] = useState<Record<string, CharacterMemory>>({});
-  const [selectedCharacterMemoryId, setSelectedCharacterMemoryId] = useState<string | null>(null);
+  const [expandedCharacterMemoryId, setExpandedCharacterMemoryId] = useState<string | null>(null);
   const [conversationHasClue, setConversationHasClue] = useState(false);
 
   const room = ROOMS[game.currentRoom];
@@ -37,7 +38,7 @@ export function useGame() {
 
   const selectedItem = INVENTORY_ITEMS.find((item) => item.id === selectedInventoryId) ?? null;
   const characterMemories = useMemo(() => Object.values(characterMemoryByNpc), [characterMemoryByNpc]);
-  const selectedCharacterMemory = selectedCharacterMemoryId ? characterMemoryByNpc[selectedCharacterMemoryId] ?? null : null;
+  const expandedCharacterMemory = expandedCharacterMemoryId ? characterMemoryByNpc[expandedCharacterMemoryId] ?? null : null;
 
   const cursorMode: CursorMode = selectedInventoryId ? "use" : hoverCharacter && !game.finished ? "talk" : "none";
 
@@ -72,11 +73,10 @@ export function useGame() {
 
   const talkToNpc = (npcId: string) => {
     mutate((draft) => {
-      draft.characterEmotion = "serious";
+      draft.characterEmotion = CHARACTER_BY_ID[npcId]?.defaultEmotion ?? "serious";
     });
     setConversationHasClue(false);
     ensureCharacterMemory(npcId);
-    setSelectedCharacterMemoryId(npcId);
     setInspectOpen(false);
     setCurrentTalkNpcId(npcId);
     const dialogue = game.getDialogue(npcId);
@@ -117,7 +117,6 @@ export function useGame() {
     setConversationText(response);
     setConversationHasClue(discoveredClues.length > 0);
     ensureCharacterMemory(npcId);
-    setSelectedCharacterMemoryId(npcId);
     if (discoveredClues.length > 0) {
       const discoveredClueTexts = discoveredClues.map((clueId) => CLUES[clueId] ?? clueId);
       setCharacterMemoryByNpc((prev) => {
@@ -130,6 +129,7 @@ export function useGame() {
           [npcId]: {
             ...current,
             clues: unique,
+            hasNewClue: true,
           },
         };
       });
@@ -144,7 +144,7 @@ export function useGame() {
 
   const openAccusationPrompt = () => {
     mutate((draft) => {
-      draft.lastMessage = "Who do you accuse of stealing the medallion?";
+      draft.lastMessage = "Who do you accuse of forging the city logs?";
     });
   };
 
@@ -167,8 +167,24 @@ export function useGame() {
         [npcId]: {
           npcId,
           name: npc.name,
-          portrait: "/game-assets/character_big_boss_serious.png",
+          portrait: CHARACTER_BY_ID[npcId]?.emotions.serious ?? "/game-assets/character_big_boss_serious.png",
           clues: [],
+          hasNewClue: false,
+        },
+      };
+    });
+  };
+
+  const toggleCharacterMemory = (npcId: string) => {
+    setExpandedCharacterMemoryId((prev) => (prev === npcId ? null : npcId));
+    setCharacterMemoryByNpc((prev) => {
+      const current = prev[npcId];
+      if (!current || !current.hasNewClue) return prev;
+      return {
+        ...prev,
+        [npcId]: {
+          ...current,
+          hasNewClue: false,
         },
       };
     });
@@ -201,8 +217,8 @@ export function useGame() {
     toggleInventoryItem,
     clearInventorySelection,
     characterMemories,
-    selectedCharacterMemory,
-    selectCharacterMemory: setSelectedCharacterMemoryId,
+    expandedCharacterMemory,
+    toggleCharacterMemory,
     conversationHasClue,
     formattedTime: formatTime(game.timeMinutes),
   };

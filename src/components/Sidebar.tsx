@@ -11,8 +11,8 @@ interface Props {
   message: string;
   clues: Array<{ id: string; text: string }>;
   characters: CharacterMemory[];
-  selectedCharacter: CharacterMemory | null;
-  onSelectCharacter: (npcId: string) => void;
+  expandedCharacter: CharacterMemory | null;
+  onToggleCharacter: (npcId: string) => void;
   onWait: () => void;
   onSolveClick: () => void;
   onAccuse: (npcId: string) => void;
@@ -28,8 +28,8 @@ export function Sidebar({
   message,
   clues,
   characters,
-  selectedCharacter,
-  onSelectCharacter,
+  expandedCharacter,
+  onToggleCharacter,
   onWait,
   onSolveClick,
   onAccuse,
@@ -57,32 +57,26 @@ export function Sidebar({
             <p>No character records yet.</p>
           ) : (
             characters.map((character) => (
-              <button
-                key={character.npcId}
-                className={`character-row ${selectedCharacter?.npcId === character.npcId ? "active" : ""}`}
-                onClick={() => onSelectCharacter(character.npcId)}
-              >
-                <img className="character-thumb" src={character.portrait} alt={`${character.name} portrait`} />
-                <span className="character-name">{character.name}</span>
-              </button>
+              <div key={character.npcId} className={`character-card ${expandedCharacter?.npcId === character.npcId ? "expanded" : ""}`}>
+                <button
+                  className={`character-row ${expandedCharacter?.npcId === character.npcId ? "active" : ""}`}
+                  onClick={() => onToggleCharacter(character.npcId)}
+                >
+                  <img className="character-thumb" src={character.portrait} alt={`${character.name} portrait`} />
+                  <span className="character-name">{character.name}</span>
+                  {character.hasNewClue && <span className="character-tag">New clue</span>}
+                </button>
+                {expandedCharacter?.npcId === character.npcId && character.clues.length > 0 && (
+                  <ul className="character-notes">
+                    {character.clues.map((clue, index) => (
+                      <li key={`${character.npcId}-${index}`} className="character-clue">{clue}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             ))
           )}
         </div>
-
-        {selectedCharacter && (
-          <div className="character-memory">
-            <h3>{selectedCharacter.name}</h3>
-            {selectedCharacter.clues.length === 0 ? (
-              <p>No clues recorded yet.</p>
-            ) : (
-              <ul className="character-notes">
-                {selectedCharacter.clues.map((clue, index) => (
-                  <li key={`${selectedCharacter.npcId}-${index}`} className="character-clue">{clue}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
       </section>
 
       <section className="panel blue">

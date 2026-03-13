@@ -1,12 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useRef, useState } from "react";
+import { CHARACTER_BY_ID, STAGE_CHARACTER_ID } from "../game/data";
 import { MapOverlay } from "./MapOverlay";
 import type { CharacterEmotion, RoomId } from "../game/types";
 
-const CHARACTER_BY_EMOTION: Record<CharacterEmotion, string> = {
-  serious: "/game-assets/character_big_boss_serious.png",
-  happy: "/game-assets/character_big_boss_happy.png",
-};
+const STAGE_CHARACTER = CHARACTER_BY_ID[STAGE_CHARACTER_ID];
+const CHARACTER_BY_EMOTION: Record<CharacterEmotion, string> = STAGE_CHARACTER.emotions;
 
 interface Props {
   emotion: CharacterEmotion;
@@ -53,7 +52,7 @@ export function StageView({
       <img
         className="scene-image"
         src="/game-assets/background_1.png"
-        alt="Bruma Island scene"
+        alt="Night city scene"
         onLoad={() => setBackgroundLoaded(true)}
         onError={() => setBackgroundLoaded(true)}
       />

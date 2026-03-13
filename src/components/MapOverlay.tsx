@@ -22,7 +22,7 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
           transition={{ duration: 0.2 }}
         >
           <div className="map-head">
-            <span>Island Map</span>
+            <span>City Map</span>
             <button className="map-close" onClick={onClose}>
               <X size={16} />
             </button>
