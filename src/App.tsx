@@ -73,16 +73,9 @@ export default function App() {
       <Sidebar
         roomName={game.room.name}
         roomDescription={game.room.description}
-        clock={game.formattedTime}
-        dateLabel="Monday, March 15"
-        money={game.game.money}
-        moneyExpenses={game.moneyExpenses}
-        moneyDetailsOpen={game.moneyDetailsOpen}
-        message={game.game.lastMessage}
         characters={game.characterMemories}
         expandedCharacter={game.expandedCharacterMemory}
         onToggleCharacter={game.toggleCharacterMemory}
-        onToggleMoneyDetails={game.toggleMoneyDetails}
         onWait={() => {
           setShowAccuseList(false);
           game.wait();
@@ -104,7 +97,14 @@ export default function App() {
       />
 
       <main className={rootClass} onContextMenu={handleContextMenu}>
-        <TopBar />
+        <TopBar
+          clock={game.formattedTime}
+          dateLabel="Monday, March 15"
+          money={game.game.money}
+          moneyDetailsOpen={game.moneyDetailsOpen}
+          moneyExpenses={game.moneyExpenses}
+          onToggleMoneyDetails={game.toggleMoneyDetails}
+        />
 
         <StageView
           emotion={game.game.characterEmotion}

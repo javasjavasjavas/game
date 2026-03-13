@@ -31,13 +31,13 @@ export const ROOMS: Record<RoomId, Room> = {
     id: "cab",
     name: "Cab",
     description: "Rain on the windshield, city lights stretched into blurred streaks.",
-    exits: ["bar"],
+    exits: ["bar", "apartment"],
   },
   apartment: {
     id: "apartment",
     name: "Apartment",
     description: "A narrow hallway, broken intercom, and sleepless windows.",
-    exits: ["bar", "alley"],
+    exits: ["bar", "cab", "alley"],
   },
   store: {
     id: "store",

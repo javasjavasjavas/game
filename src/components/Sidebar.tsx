@@ -1,4 +1,4 @@
-import { Clock3, DollarSign, MapPin, Zap } from "lucide-react";
+import { Clock3, MapPin, Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
@@ -6,16 +6,9 @@ import type { CharacterMemory } from "../hooks/useGame";
 interface Props {
   roomName: string;
   roomDescription: string;
-  clock: string;
-  dateLabel: string;
-  money: number;
-  moneyExpenses: string[];
-  moneyDetailsOpen: boolean;
-  message: string;
   characters: CharacterMemory[];
   expandedCharacter: CharacterMemory | null;
   onToggleCharacter: (npcId: string) => void;
-  onToggleMoneyDetails: () => void;
   onWait: () => void;
   onTakeCab: () => void;
   onSolveClick: () => void;
@@ -27,16 +20,9 @@ interface Props {
 export function Sidebar({
   roomName,
   roomDescription,
-  clock,
-  dateLabel,
-  money,
-  moneyExpenses,
-  moneyDetailsOpen,
-  message,
   characters,
   expandedCharacter,
   onToggleCharacter,
-  onToggleMoneyDetails,
   onWait,
   onTakeCab,
   onSolveClick,
@@ -52,10 +38,6 @@ export function Sidebar({
           <h1>{roomName.toUpperCase()}</h1>
         </div>
         <p className="sidebar-room-description">{roomDescription}</p>
-        <div className="sidebar-clock-frame">
-          <div className="sidebar-clock">{clock}</div>
-          <div className="sidebar-date">{dateLabel}</div>
-        </div>
       </div>
 
       <section className="panel">
@@ -98,19 +80,6 @@ export function Sidebar({
         </div>
       </section>
 
-      <section className="panel blue">
-        <h2><DollarSign size={14} className="inline-icon" /> Money</h2>
-        <p className="money-value">${money}</p>
-        <button className="choice-btn money-detail-btn" onClick={onToggleMoneyDetails}>
-          View details
-        </button>
-        {moneyDetailsOpen && (
-          <ul className="money-details">
-            {moneyExpenses.length === 0 ? <li>No expenses yet.</li> : moneyExpenses.map((expense, idx) => <li key={idx}>{expense}</li>)}
-          </ul>
-        )}
-      </section>
-
       <section className="panel" style={{ marginTop: "auto" }}>
         <h2>Actions</h2>
         <button className="action-btn" onClick={onWait}>
@@ -131,7 +100,6 @@ export function Sidebar({
             ))}
           </motion.div>
         )}
-        <div className="status">{message}</div>
       </section>
     </aside>
   );
