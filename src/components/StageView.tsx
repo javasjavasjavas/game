@@ -31,16 +31,26 @@ export function StageView({
   const hasPreloadedOtherSprite = useRef(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [firstSpriteLoaded, setFirstSpriteLoaded] = useState(false);
+  const showStageCharacter = currentRoom !== "cab";
   const backgroundByRoom: Partial<Record<RoomId, string>> = {
-    bar: "/game-assets/background_bar.png",
-    cab: "/game-assets/background_cab.png",
+    bar: "/game-assets/background_bar.jpg",
+    cab: "/game-assets/background_cab.jpg",
   };
-  const backgroundSrc = backgroundByRoom[currentRoom] ?? "/game-assets/background_bar.png";
-  const stageLoading = useMemo(() => !(backgroundLoaded && firstSpriteLoaded), [backgroundLoaded, firstSpriteLoaded]);
+  const backgroundSrc = backgroundByRoom[currentRoom] ?? "/game-assets/background_bar.jpg";
+  const stageLoading = useMemo(
+    () => !(backgroundLoaded && (showStageCharacter ? firstSpriteLoaded : true)),
+    [backgroundLoaded, firstSpriteLoaded, showStageCharacter]
+  );
 
   useEffect(() => {
     setBackgroundLoaded(false);
   }, [backgroundSrc]);
+
+  useEffect(() => {
+    if (!showStageCharacter) {
+      setFirstSpriteLoaded(true);
+    }
+  }, [showStageCharacter]);
 
   const handleActiveSpriteLoad = () => {
     setFirstSpriteLoaded(true);
@@ -73,24 +83,26 @@ export function StageView({
         </div>
       )}
 
-      <div className="character-wrap" onMouseEnter={onCharacterEnter} onMouseLeave={onCharacterLeave}>
-        <button className="character-hitbox" title="Talk" onClick={onCharacterClick}>
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={emotion}
-              className="character-image"
-              src={CHARACTER_BY_EMOTION[emotion]}
-              alt="Main character portrait"
-              initial={{ opacity: 0.1 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0.05 }}
-              onLoad={handleActiveSpriteLoad}
-              onError={() => setFirstSpriteLoaded(true)}
-              transition={{ duration: 0.28, ease: "easeOut" }}
-            />
-          </AnimatePresence>
-        </button>
-      </div>
+      {showStageCharacter && (
+        <div className="character-wrap" onMouseEnter={onCharacterEnter} onMouseLeave={onCharacterLeave}>
+          <button className="character-hitbox" title="Talk" onClick={onCharacterClick}>
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={emotion}
+                className="character-image"
+                src={CHARACTER_BY_EMOTION[emotion]}
+                alt="Main character portrait"
+                initial={{ opacity: 0.1 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0.05 }}
+                onLoad={handleActiveSpriteLoad}
+                onError={() => setFirstSpriteLoaded(true)}
+                transition={{ duration: 0.28, ease: "easeOut" }}
+              />
+            </AnimatePresence>
+          </button>
+        </div>
+      )}
 
       <MapOverlay open={mapOpen} currentRoom={currentRoom} onClose={onMapClose} onSelectRoom={onMapSelect} />
     </section>
