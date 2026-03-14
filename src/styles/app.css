@@ -105,15 +105,15 @@ button {
 .sidebar-room-description {
   margin: 14px 0 0;
   color: var(--muted);
-  font-size: 13px;
-  border-left: 2px solid rgba(8, 145, 168, 0.7);
-  padding-left: 10px;
+  font-size: 20px;
+  border-left: 0;
+  padding-left: 0;
 }
 
 .panel {
   background: #171717;
   border: 1px solid rgba(31, 42, 62, 0.5);
-  padding: 12px;
+  padding: 18px 18px 18px 21px;
   border-left: 2px solid var(--cyber-pink);
 }
 
@@ -122,9 +122,9 @@ button {
 }
 
 .panel h2 {
-  margin: 0 0 8px;
+  margin: 0 0 12px;
   font-family: "VT323", monospace;
-  font-size: 13px;
+  font-size: 18px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--cyber-pink);
@@ -167,7 +167,7 @@ button {
   padding: 6px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 20px;
   text-align: left;
 }
 
@@ -187,7 +187,7 @@ button {
 
 .character-name {
   font-family: "VT323", monospace;
-  font-size: 12px;
+  font-size: 18px;
 }
 
 .character-tag {
@@ -210,9 +210,9 @@ button {
 }
 
 .character-description {
-  margin: 0 0 8px;
+  margin: 0 0 20px;
   color: #b9c2d4;
-  font-size: 12px;
+  font-size: 18px;
   line-height: 1.45;
 }
 
@@ -222,7 +222,7 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--cyber-blue);
-  font-size: 11px;
+  font-size: 16px;
 }
 
 .character-notes {
@@ -282,7 +282,7 @@ button {
   font-family: "VT323", monospace;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  font-size: 12px;
+  font-size: 18px;
   margin-bottom: 8px;
   display: inline-flex;
   align-items: center;
@@ -333,11 +333,11 @@ button {
 
 .topbar {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  align-items: center;
-  min-height: 52px;
-  padding: 8px var(--lane-side) 6px;
+  justify-content: flex-start;
+  gap: 14px;
+  align-items: flex-start;
+  min-height: 88px;
+  padding: 14px var(--lane-side) 8px;
   z-index: 35;
   position: relative;
 }
@@ -346,74 +346,114 @@ button {
   margin-right: auto;
 }
 
+.topbar-location-block {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 320px;
+  max-width: 560px;
+  padding-top: 4px;
+}
+
+.topbar-location-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar-location-icon {
+  color: #c9234e;
+}
+
+.topbar-location-title {
+  margin: 0;
+  color: #eceff6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 40px;
+  line-height: 0.95;
+}
+
+.topbar-location-description {
+  margin: 0;
+  color: #8f9bb1;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+}
+
 .topbar-meta {
   display: flex;
-  align-items: stretch;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.topbar-card {
+  border: 1px solid rgba(52, 66, 92, 0.7);
+  background: rgba(7, 10, 18, 0.92);
+  min-height: 86px;
+  padding: 12px 18px 10px;
+  box-shadow: inset 0 0 0 1px rgba(8, 145, 168, 0.05);
 }
 
 .topbar-clock-block {
-  border: 1px solid rgba(61, 73, 94, 0.72);
-  background: rgba(8, 9, 15, 0.95);
-  padding: 6px 10px;
-  min-width: 170px;
+  min-width: 260px;
+}
+
+.topbar-clock-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.topbar-wifi-icon {
+  color: #00d0ea;
+  margin-top: -2px;
 }
 
 .topbar-clock {
   font-family: "VT323", monospace;
-  font-size: 20px;
+  font-size: 62px;
   line-height: 1;
-  font-weight: 700;
+  font-weight: 400;
   color: #ebeaf3;
 }
 
 .topbar-date {
-  margin-top: 4px;
+  margin-top: 8px;
+  text-align: center;
   text-transform: uppercase;
   font-family: "VT323", monospace;
-  letter-spacing: 0.08em;
-  color: rgba(8, 145, 168, 0.9);
-  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: #03bad4;
+  font-size: 38px;
 }
 
 .topbar-money-block {
-  border: 1px solid rgba(61, 73, 94, 0.72);
-  background: rgba(8, 9, 15, 0.95);
-  padding: 6px 10px;
-  min-width: 180px;
-  position: relative;
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .topbar-money-value {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 6px;
-  color: #d6f2ff;
+  gap: 10px;
+  color: #f4be1e;
   font-family: "VT323", monospace;
-  font-size: 16px;
+  font-size: 62px;
+  line-height: 1;
 }
 
-.topbar-money-btn {
-  margin-top: 6px;
-  width: 100%;
-  border: 1px solid rgba(61, 73, 94, 0.7);
-  background: rgba(8, 9, 15, 0.95);
-  color: #a9b3c4;
-  font-family: "VT323", monospace;
+.topbar-money-label {
+  margin-top: 8px;
+  text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  font-size: 10px;
-  padding: 5px 6px;
-}
-
-.topbar-money-details {
-  margin: 8px 0 0;
-  padding-left: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 11px;
-  color: #9aa6ba;
+  letter-spacing: 0.16em;
+  color: #d8a20d;
+  font-size: 38px;
 }
 
 .topbar-icons {
@@ -549,7 +589,7 @@ button {
 
 .map-head {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 10px;
   font-family: "VT323", monospace;
@@ -595,7 +635,7 @@ button {
 .footer-row {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   align-items: center;
   flex-wrap: wrap;
@@ -741,14 +781,14 @@ button {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--cyber-blue);
-  font-size: 11px;
+  font-size: 26px;
 }
 
 .conversation-quote {
   margin: 0;
   font-style: italic;
   color: #b8bfd1;
-  font-size: clamp(10px, 0.75vw, 12px);
+  font-size: 25px;
   line-height: 1.45;
   min-height: 72px;
   white-space: pre-wrap;
@@ -776,7 +816,7 @@ button {
   text-align: left;
   padding: 4px 8px;
   font-family: "VT323", monospace;
-  font-size: clamp(10px, 0.75vw, 12px);
+  font-size: 25px;
   line-height: 1.45;
   transition: color 120ms ease, background-color 120ms ease;
 }
@@ -886,6 +926,46 @@ button {
 
   .topbar {
     padding: 58px var(--lane-side) 8px;
+    min-height: auto;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .topbar-location-block {
+    min-width: 100%;
+    max-width: none;
+  }
+
+  .topbar-location-title {
+    font-size: 30px;
+  }
+
+  .topbar-location-description {
+    font-size: 18px;
+  }
+
+  .topbar-meta {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .topbar-clock-block {
+    min-width: 190px;
+  }
+
+  .topbar-money-block {
+    min-width: 170px;
+  }
+
+  .topbar-clock,
+  .topbar-money-value {
+    font-size: 42px;
+  }
+
+  .topbar-date,
+  .topbar-money-label {
+    font-size: 26px;
   }
 
   .stage {

@@ -71,8 +71,6 @@ export default function App() {
       </button>
 
       <Sidebar
-        roomName={game.room.name}
-        roomDescription={game.room.description}
         characters={game.characterMemories}
         expandedCharacter={game.expandedCharacterMemory}
         onToggleCharacter={game.toggleCharacterMemory}
@@ -98,12 +96,11 @@ export default function App() {
 
       <main className={rootClass} onContextMenu={handleContextMenu}>
         <TopBar
+          roomName={game.room.name}
+          roomDescription={game.room.description}
           clock={game.formattedTime}
           dateLabel="Monday, March 15"
           money={game.game.money}
-          moneyDetailsOpen={game.moneyDetailsOpen}
-          moneyExpenses={game.moneyExpenses}
-          onToggleMoneyDetails={game.toggleMoneyDetails}
         />
 
         <StageView

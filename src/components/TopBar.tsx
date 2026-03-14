@@ -1,46 +1,41 @@
-import { Camera, Settings } from "lucide-react";
-import { DollarSign } from "lucide-react";
+import { DollarSign, MapPin, Wifi } from "lucide-react";
 
 interface Props {
+  roomName: string;
+  roomDescription: string;
   clock: string;
   dateLabel: string;
   money: number;
-  moneyDetailsOpen: boolean;
-  moneyExpenses: string[];
-  onToggleMoneyDetails: () => void;
 }
 
-export function TopBar({ clock, dateLabel, money, moneyDetailsOpen, moneyExpenses, onToggleMoneyDetails }: Props) {
+export function TopBar({ roomName, roomDescription, clock, dateLabel, money }: Props) {
   return (
     <header className="topbar">
+      <div className="topbar-location-block">
+        <div className="topbar-location-row">
+          <MapPin size={16} className="topbar-location-icon" />
+          <h1 className="topbar-location-title">{roomName}</h1>
+        </div>
+        <p className="topbar-location-description">{roomDescription}</p>
+      </div>
+
       <div className="topbar-spacer" />
+
       <div className="topbar-meta">
-        <div className="topbar-clock-block">
-          <div className="topbar-clock">{clock}</div>
+        <div className="topbar-clock-block topbar-card">
+          <div className="topbar-clock-row">
+            <Wifi size={14} className="topbar-wifi-icon" />
+            <div className="topbar-clock">{clock}</div>
+          </div>
           <div className="topbar-date">{dateLabel}</div>
         </div>
-        <div className="topbar-money-block">
+        <div className="topbar-money-block topbar-card">
           <div className="topbar-money-value">
-            <DollarSign size={14} />
+            <DollarSign size={18} />
             <span>{money}</span>
           </div>
-          <button className="topbar-money-btn" onClick={onToggleMoneyDetails}>
-            View details
-          </button>
-          {moneyDetailsOpen && (
-            <ul className="topbar-money-details">
-              {moneyExpenses.length === 0 ? <li>No expenses yet.</li> : moneyExpenses.map((expense, idx) => <li key={idx}>{expense}</li>)}
-            </ul>
-          )}
+          <div className="topbar-money-label">Available</div>
         </div>
-      </div>
-      <div className="topbar-icons">
-        <button className="top-icon-btn" aria-label="Settings">
-          <Settings size={16} />
-        </button>
-        <button className="top-icon-btn" aria-label="Capture">
-          <Camera size={16} />
-        </button>
       </div>
     </header>
   );

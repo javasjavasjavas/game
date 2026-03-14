@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
 
 interface Props {
-  roomName: string;
-  roomDescription: string;
   characters: CharacterMemory[];
   expandedCharacter: CharacterMemory | null;
   onToggleCharacter: (npcId: string) => void;
@@ -18,8 +16,6 @@ interface Props {
 }
 
 export function Sidebar({
-  roomName,
-  roomDescription,
   characters,
   expandedCharacter,
   onToggleCharacter,
@@ -32,14 +28,6 @@ export function Sidebar({
 }: Props) {
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
-      <div className="sidebar-meta">
-        <div className="sidebar-room-row">
-          <MapPin size={24} className="sidebar-meta-icon" />
-          <h1>{roomName.toUpperCase()}</h1>
-        </div>
-        <p className="sidebar-room-description">{roomDescription}</p>
-      </div>
-
       <section className="panel">
         <h2>Characters</h2>
         <div className="characters-list">
