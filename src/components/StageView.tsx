@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { MouseEvent, SyntheticEvent } from "react";
 import { CHARACTER_BY_ID, STAGE_CHARACTER_ID } from "../game/data";
 import { MapOverlay } from "./MapOverlay";
 import type { CharacterEmotion, RoomId } from "../game/types";
@@ -29,10 +30,13 @@ export function StageView({
   onMapSelect,
 }: Props) {
   const hasPreloadedOtherSprite = useRef(false);
+  const hitCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const hitContextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [displayedRoom, setDisplayedRoom] = useState<RoomId>(currentRoom);
   const [fadePhase, setFadePhase] = useState<"idle" | "fadeOut" | "fadeIn">("idle");
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [firstSpriteLoaded, setFirstSpriteLoaded] = useState(false);
+  const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const showStageCharacter = displayedRoom !== "cab" && displayedRoom !== "apartment";
   const backgroundByRoom: Partial<Record<RoomId, string>> = {
     bar: "/game-assets/background_bar.jpg",
@@ -72,11 +76,28 @@ export function StageView({
   useEffect(() => {
     if (!showStageCharacter) {
       setFirstSpriteLoaded(true);
+      setCharacterPixelHover(false);
+      onCharacterLeave();
     }
-  }, [showStageCharacter]);
+  }, [showStageCharacter, onCharacterLeave]);
 
-  const handleActiveSpriteLoad = () => {
+  const handleActiveSpriteLoad = (event: SyntheticEvent<HTMLImageElement>) => {
     setFirstSpriteLoaded(true);
+    const image = event.currentTarget;
+    const width = image.naturalWidth;
+    const height = image.naturalHeight;
+    if (width > 0 && height > 0) {
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (ctx) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(image, 0, 0);
+        hitCanvasRef.current = canvas;
+        hitContextRef.current = ctx;
+      }
+    }
 
     if (hasPreloadedOtherSprite.current) return;
     hasPreloadedOtherSprite.current = true;
@@ -87,6 +108,52 @@ export function StageView({
 
     const preloadImage = new Image();
     preloadImage.src = alternateSrc;
+  };
+
+  const setPixelHover = (value: boolean) => {
+    setCharacterPixelHover((prev) => {
+      if (prev === value) return prev;
+      if (value) {
+        onCharacterEnter();
+      } else {
+        onCharacterLeave();
+      }
+      return value;
+    });
+  };
+
+  const handleCharacterPointerMove = (event: MouseEvent<HTMLButtonElement>) => {
+    const ctx = hitContextRef.current;
+    if (!ctx) {
+      setPixelHover(true);
+      return;
+    }
+
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    if (buttonRect.width <= 0 || buttonRect.height <= 0) {
+      setPixelHover(false);
+      return;
+    }
+
+    const xRatio = (event.clientX - buttonRect.left) / buttonRect.width;
+    const yRatio = (event.clientY - buttonRect.top) / buttonRect.height;
+
+    const x = Math.max(0, Math.min(ctx.canvas.width - 1, Math.floor(xRatio * ctx.canvas.width)));
+    const y = Math.max(0, Math.min(ctx.canvas.height - 1, Math.floor(yRatio * ctx.canvas.height)));
+    const alpha = ctx.getImageData(x, y, 1, 1).data[3];
+    setPixelHover(alpha > 20);
+  };
+
+  const handleCharacterMouseLeave = () => {
+    setPixelHover(false);
+  };
+
+  const handleCharacterClick = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!characterPixelHover) {
+      event.preventDefault();
+      return;
+    }
+    onCharacterClick();
   };
 
   return (
@@ -112,8 +179,14 @@ export function StageView({
       />
 
       {showStageCharacter && (
-        <div className="character-wrap" onMouseEnter={onCharacterEnter} onMouseLeave={onCharacterLeave}>
-          <button className="character-hitbox" title="Talk" onClick={onCharacterClick}>
+        <div className="character-wrap">
+          <button
+            className="character-hitbox"
+            title="Talk"
+            onMouseMove={handleCharacterPointerMove}
+            onMouseLeave={handleCharacterMouseLeave}
+            onClick={handleCharacterClick}
+          >
             <AnimatePresence mode="wait">
               <motion.img
                 key={emotion}

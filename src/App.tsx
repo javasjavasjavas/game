@@ -73,6 +73,7 @@ export default function App() {
       <Sidebar
         characters={game.characterMemories}
         expandedCharacter={game.expandedCharacterMemory}
+        money={game.game.money}
         onToggleCharacter={game.toggleCharacterMemory}
         onWait={() => {
           setShowAccuseList(false);
@@ -100,7 +101,6 @@ export default function App() {
           roomDescription={game.room.description}
           clock={game.formattedTime}
           dateLabel="Monday, March 15"
-          money={game.game.money}
         />
 
         <StageView

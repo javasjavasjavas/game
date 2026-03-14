@@ -1,4 +1,4 @@
-import { Clock3, MapPin, Zap } from "lucide-react";
+import { Clock3, DollarSign, MapPin, Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
@@ -6,6 +6,7 @@ import type { CharacterMemory } from "../hooks/useGame";
 interface Props {
   characters: CharacterMemory[];
   expandedCharacter: CharacterMemory | null;
+  money: number;
   onToggleCharacter: (npcId: string) => void;
   onWait: () => void;
   onTakeCab: () => void;
@@ -18,6 +19,7 @@ interface Props {
 export function Sidebar({
   characters,
   expandedCharacter,
+  money,
   onToggleCharacter,
   onWait,
   onTakeCab,
@@ -28,6 +30,14 @@ export function Sidebar({
 }: Props) {
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
+      <section className="panel blue">
+        <h2>Money</h2>
+        <p className="sidebar-money-value">
+          <DollarSign size={16} className="inline-icon" />
+          {money} available
+        </p>
+      </section>
+
       <section className="panel">
         <h2>Characters</h2>
         <div className="characters-list">

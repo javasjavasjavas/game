@@ -337,7 +337,7 @@ button {
   gap: 14px;
   align-items: flex-start;
   min-height: 88px;
-  padding: 14px var(--lane-side) 8px;
+  padding: 30px var(--lane-side);
   z-index: 35;
   position: relative;
 }
@@ -363,6 +363,9 @@ button {
 
 .topbar-location-icon {
   color: #c9234e;
+  width: 30px;
+  height: 30px;
+  margin-right: 7px;
 }
 
 .topbar-location-title {
@@ -370,7 +373,7 @@ button {
   color: #eceff6;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 40px;
+  font-size: 66px;
   line-height: 0.95;
 }
 
@@ -396,7 +399,9 @@ button {
 }
 
 .topbar-clock-block {
-  min-width: 260px;
+  border: 1px solid rgba(31, 42, 62, 0.5);
+  background: #171717;
+  padding: 12px 32px;
 }
 
 .topbar-clock-row {
@@ -413,7 +418,7 @@ button {
 
 .topbar-clock {
   font-family: "VT323", monospace;
-  font-size: 62px;
+  font-size: 50px;
   line-height: 1;
   font-weight: 400;
   color: #ebeaf3;
@@ -426,7 +431,7 @@ button {
   font-family: "VT323", monospace;
   letter-spacing: 0.16em;
   color: #03bad4;
-  font-size: 38px;
+  font-size: 19px;
 }
 
 .topbar-money-block {
@@ -443,7 +448,7 @@ button {
   gap: 10px;
   color: #f4be1e;
   font-family: "VT323", monospace;
-  font-size: 62px;
+  font-size: 50px;
   line-height: 1;
 }
 
@@ -480,9 +485,9 @@ button {
   flex: 1;
   position: relative;
   overflow: hidden;
-  margin: 10px var(--lane-side) 14px;
+  margin: 0;
   border: 1px solid #333;
-  border-radius: 40px;
+  border-radius: 0;
   box-shadow: 0 0 17px rgba(0, 0, 0, 0.8);
 }
 
@@ -500,7 +505,7 @@ button {
 .stage-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0) 50%);
+  background: linear-gradient(to top, #000, #0000 80%);
   z-index: 6;
   pointer-events: none;
 }
@@ -574,8 +579,19 @@ button {
   height: 100%;
   object-fit: contain;
   object-position: bottom;
+  filter: drop-shadow(0 0 22px rgba(0, 0, 0, 0.95));
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.sidebar-money-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  color: #d6f2ff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .map-overlay {
