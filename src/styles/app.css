@@ -123,9 +123,9 @@ button {
 }
 
 .panel h2 {
-  margin: 0 0 12px;
+  margin: 0 0 18px;
   font-family: "Press Start 2P", monospace;
-  font-size: 18px;
+  font-size: 13px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--cyber-pink);
@@ -165,7 +165,7 @@ button {
   border: 0;
   background: transparent;
   color: #aeb8cc;
-  padding: 6px;
+  padding: 12px;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -188,7 +188,7 @@ button {
 
 .character-name {
   font-family: "Press Start 2P", monospace;
-  font-size: 18px;
+  font-size: 13px;
 }
 
 .character-tag {
@@ -213,7 +213,7 @@ button {
 .character-description {
   margin: 0 0 20px;
   color: #b9c2d4;
-  font-size: 18px;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -283,7 +283,7 @@ button {
   font-family: "Press Start 2P", monospace;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  font-size: 18px;
+  font-size: 13px;
   margin-bottom: 8px;
   display: inline-flex;
   align-items: center;
@@ -1096,7 +1096,7 @@ button {
   }
 
   .topbar-location-description {
-    font-size: 18px;
+    font-size: 13px;
   }
 
   .topbar-meta {
