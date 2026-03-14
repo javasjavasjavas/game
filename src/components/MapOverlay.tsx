@@ -60,7 +60,7 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
                     y={ROOM_MAP_LAYOUT[roomId].y - 4}
                     textAnchor="middle"
                     fontSize="2.6"
-                    fontFamily="Orbitron, sans-serif"
+                    fontFamily="VT323, monospace"
                     fill={active ? "#c9234e" : "#93a0b8"}
                   >
                     {ROOMS[roomId].name.toUpperCase()}
