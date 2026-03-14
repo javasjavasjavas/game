@@ -6,6 +6,7 @@ import type { CharacterMemory } from "../hooks/useGame";
 interface Props {
   characters: CharacterMemory[];
   expandedCharacter: CharacterMemory | null;
+  score: number;
   money: number;
   clock: string;
   dateLabel: string;
@@ -21,6 +22,7 @@ interface Props {
 export function Sidebar({
   characters,
   expandedCharacter,
+  score,
   money,
   clock,
   dateLabel,
@@ -38,6 +40,11 @@ export function Sidebar({
 
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
+      <section className="sidebar-score">
+        <h2>Score</h2>
+        <p className="sidebar-score-value">{score}</p>
+      </section>
+
       <section className="panel blue">
         <h2>Time</h2>
         <div className="sidebar-time-block">

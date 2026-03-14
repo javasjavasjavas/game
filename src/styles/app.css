@@ -64,8 +64,8 @@ button {
   min-width: 400px;
   height: 100%;
   margin-top: 0;
-  background: #111;
-  border-right: 1px solid var(--line);
+  background: #020205f2;
+  border-right: 1px solid #111;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9);
   padding: var(--stage-top-offset) 16px 18px;
   display: flex;
@@ -112,7 +112,7 @@ button {
 }
 
 .panel {
-  background: #171717;
+  background: #08090fe6;
   border: 1px solid rgba(31, 42, 62, 0.5);
   padding: 18px 18px 18px 21px;
   border-left: 2px solid var(--cyber-pink);
@@ -139,8 +139,8 @@ button {
 .panel li {
   margin: 0;
   color: var(--muted);
-  font-size: 12px;
-  line-height: 1.35;
+  font-size: 10px;
+  line-height: 1.6;
 }
 
 .characters-list {
@@ -188,7 +188,7 @@ button {
 
 .character-name {
   font-family: "Press Start 2P", monospace;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .character-tag {
@@ -218,12 +218,12 @@ button {
 }
 
 .character-clues-title {
-  margin: 0 0 6px;
+  margin: 30px 0 20px;
   font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--cyber-blue);
-  font-size: 16px;
+  font-size: 12px;
 }
 
 .character-notes {
@@ -283,7 +283,7 @@ button {
   font-family: "Press Start 2P", monospace;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 14px;
   margin-bottom: 8px;
   display: inline-flex;
   align-items: center;
@@ -324,7 +324,7 @@ button {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #111;
+  background: #000;
   cursor: crosshair;
 }
 
@@ -367,6 +367,8 @@ button {
   width: 30px;
   height: 30px;
   margin-right: 7px;
+  position: relative;
+  top: -8px;
 }
 
 .topbar-location-title {
@@ -374,14 +376,16 @@ button {
   color: #eceff6;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 66px;
+  font-size: 30px;
   line-height: 0.95;
+  margin-bottom: 12px;
 }
 
 .topbar-location-description {
   margin: 0;
   color: #8f9bb1;
-  font-size: 20px;
+  font-size: 14px;
+  line-height: 22px;
   letter-spacing: 0.02em;
 }
 
@@ -487,7 +491,8 @@ button {
   position: relative;
   overflow: hidden;
   margin: 0;
-  border: 1px solid #333;
+  border: 0;
+  border-top: 1px solid #111;
   border-radius: 0;
   box-shadow: 0 0 17px rgba(0, 0, 0, 0.8);
 }
@@ -674,12 +679,13 @@ button {
 }
 
 .panel .sidebar-time-value {
-  font-size: 60px;
+  font-size: 42px;
   line-height: 1;
+  margin-bottom: 10px;
 }
 
 .panel .sidebar-date-value {
-  font-size: 27px;
+  font-size: 12px;
 }
 
 .panel .sidebar-money-value {
@@ -687,7 +693,7 @@ button {
 }
 
 .panel .sidebar-money-label {
-  font-size: 27px;
+  font-size: 13px;
 }
 
 .map-overlay {
@@ -766,7 +772,7 @@ button {
   z-index: 30;
   position: relative;
   padding: 12px var(--lane-side) 16px;
-  background: #111;
+  background: #000;
   min-height: 130px;
   overflow: visible;
 }
@@ -797,8 +803,8 @@ button {
 }
 
 .inv-item {
-  width: 46px;
-  height: 46px;
+  width: 58px;
+  height: 58px;
   border: 0;
   background: transparent;
   color: #d1d6e0;
@@ -818,6 +824,27 @@ button {
   height: 100%;
   object-fit: contain;
   display: block;
+}
+
+.sidebar-score {
+  margin-bottom: 4px;
+  padding: 0;
+}
+
+.sidebar-score h2 {
+  margin: 0 0 10px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyber-pink);
+}
+
+.sidebar-score-value {
+  margin: 0;
+  color: #d7dbe6;
+  font-size: 30px;
+  line-height: 1.2;
 }
 
 .inv-item:hover::after {
@@ -849,11 +876,11 @@ button {
   background: rgba(8, 9, 15, 0.95);
   color: #a6aec0;
   border-radius: 999px;
-  padding: 10px 18px;
+  padding: 20px 24px 18px;
   font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 25px;
+  font-size: 14px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -874,7 +901,7 @@ button {
 .inspect-box {
   min-height: 220px;
   max-height: 220px;
-  padding: 16px;
+  padding: 24px;
   overflow: auto;
 }
 
@@ -892,7 +919,7 @@ button {
 }
 
 .detail-title {
-  margin: 0 0 6px;
+  margin: 0 0 20px;
   font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -923,19 +950,19 @@ button {
 }
 
 .conversation-speaker {
-  margin: 0 0 8px;
+  margin: 0 0 22px;
   font-family: "Press Start 2P", monospace;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--cyber-blue);
-  font-size: 26px;
+  font-size: 16px;
 }
 
 .conversation-quote {
   margin: 0;
   font-style: italic;
   color: #b8bfd1;
-  font-size: 25px;
+  font-size: 14px;
   line-height: 1.45;
   min-height: 72px;
   white-space: pre-wrap;
@@ -963,7 +990,7 @@ button {
   text-align: left;
   padding: 4px 8px;
   font-family: "Press Start 2P", monospace;
-  font-size: 25px;
+  font-size: 13px;
   line-height: 1.45;
   transition: color 120ms ease, background-color 120ms ease;
 }
@@ -1041,8 +1068,16 @@ button {
   }
 
   .talk-option {
-    font-size: 12px;
-  }
+  border: 0;
+  background: transparent;
+  color: #97a3bb;
+  text-align: left;
+  padding: 4px 8px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  transition: color 120ms ease, background-color 120ms ease;
+}
 }
 
 @media (max-width: 900px) {
@@ -1092,12 +1127,22 @@ button {
   }
 
   .topbar-location-title {
-    font-size: 30px;
-  }
+  margin: 0;
+  color: #eceff6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 30px;
+  line-height: 0.95;
+  margin-bottom: 12px;
+}
 
   .topbar-location-description {
-    font-size: 13px;
-  }
+  margin: 0;
+  color: #8f9bb1;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.02em;
+}
 
   .topbar-meta {
     width: 100%;
@@ -1145,12 +1190,24 @@ button {
   }
 
   .inspect-box {
-    min-height: 180px;
-    max-height: 180px;
-    padding: 16px;
-  }
+  min-height: 220px;
+  max-height: 220px;
+  padding: 24px;
+  overflow: auto;
+}
 
   .pill-btn {
-    width: 100%;
-  }
+  border: 1px solid rgba(61, 73, 94, 0.9);
+  background: rgba(8, 9, 15, 0.95);
+  color: #a6aec0;
+  border-radius: 999px;
+  padding: 20px 24px 18px;
+  font-family: "Press Start 2P", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 }

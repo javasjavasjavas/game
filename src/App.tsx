@@ -75,6 +75,7 @@ export default function App() {
       <Sidebar
         characters={game.characterMemories}
         expandedCharacter={game.expandedCharacterMemory}
+        score={game.clues.length * 100}
         money={game.game.money}
         clock={game.formattedTime}
         dateLabel="Monday, March 15"
