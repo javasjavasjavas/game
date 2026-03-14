@@ -193,7 +193,7 @@ export const ENDINGS = {
 };
 
 export const INVENTORY_ITEMS = [
-  { id: "key", label: "Rusty key" },
-  { id: "paper", label: "Old newspaper" },
-  { id: "cup", label: "Coffee cup" },
+  { id: "key", label: "Key", image: "/game-assets/item_key.png" },
+  { id: "paper", label: "Beer can", image: "/game-assets/item_beer.png" },
+  { id: "cup", label: "Cassette", image: "/game-assets/item_cassete.png" },
 ];

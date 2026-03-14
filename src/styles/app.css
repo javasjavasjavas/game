@@ -66,6 +66,7 @@ button {
   margin-top: 0;
   background: #111;
   border-right: 1px solid var(--line);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9);
   padding: var(--stage-top-offset) 16px 18px;
   display: flex;
   flex-direction: column;
@@ -676,8 +677,8 @@ button {
 .inv-item {
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(61, 73, 94, 0.8);
-  background: rgba(8, 9, 15, 0.95);
+  border: 0;
+  background: transparent;
   color: #d1d6e0;
   display: grid;
   place-items: center;
@@ -687,8 +688,14 @@ button {
 }
 
 .inv-item.active {
-  border-color: rgba(201, 35, 78, 0.9);
-  box-shadow: 0 0 10px rgba(201, 35, 78, 0.25);
+  box-shadow: 0 0 12px rgba(8, 145, 168, 0.5);
+}
+
+.inv-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .inv-item:hover::after {
@@ -711,6 +718,7 @@ button {
   flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-end;
+  margin-left: auto;
 }
 
 .pill-btn {
@@ -722,7 +730,7 @@ button {
   font-family: "VT323", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 12px;
+  font-size: 25px;
   display: inline-flex;
   align-items: center;
   gap: 8px;

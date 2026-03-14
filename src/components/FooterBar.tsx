@@ -1,4 +1,4 @@
-import { Coffee, KeyRound, Map, Newspaper, Search } from "lucide-react";
+import { Map, Search } from "lucide-react";
 import { INVENTORY_ITEMS } from "../game/data";
 
 interface Props {
@@ -13,12 +13,6 @@ interface Props {
 export function FooterBar({ showNav, mapOpen, selectedInventoryId, onToggleInventory, onInspect, onMap }: Props) {
   if (!showNav) return null;
 
-  const iconForItem = (id: string) => {
-    if (id === "key") return <KeyRound size={16} />;
-    if (id === "paper") return <Newspaper size={16} />;
-    return <Coffee size={16} />;
-  };
-
   return (
     <div className="footer-row" id="footer-navigation">
       <div className="inv-wrap">
@@ -30,7 +24,7 @@ export function FooterBar({ showNav, mapOpen, selectedInventoryId, onToggleInven
             data-label={item.label}
             onClick={() => onToggleInventory(item.id)}
           >
-            {iconForItem(item.id)}
+            <img className="inv-item-image" src={item.image} alt={item.label} />
           </button>
         ))}
       </div>
