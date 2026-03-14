@@ -57,8 +57,9 @@ export function Sidebar({
         <h2>Money</h2>
         <p className="sidebar-money-value">
           <DollarSign size={16} className="inline-icon" />
-          {money} available
+          {money}
         </p>
+        <p className="sidebar-money-label">Available</p>
       </section>
 
       <section className="panel">

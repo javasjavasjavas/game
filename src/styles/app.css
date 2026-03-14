@@ -589,10 +589,19 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 24px;
+  font-size: 60px;
   color: #d6f2ff;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.sidebar-money-label {
+  margin-top: 6px;
+  color: #03bad4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 27px;
 }
 
 .sidebar-time-block {
@@ -602,8 +611,8 @@ button {
 }
 
 .sidebar-analog-clock {
-  width: 62px;
-  height: 62px;
+  width: 81px;
+  height: 81px;
   border-radius: 50%;
   border: 1px solid rgba(8, 145, 168, 0.45);
   background: radial-gradient(circle at 50% 45%, rgba(8, 145, 168, 0.08), rgba(2, 2, 5, 0.9));
@@ -621,13 +630,13 @@ button {
 
 .sidebar-clock-hour {
   width: 2.5px;
-  height: 16px;
+  height: 21px;
   background: #d8dee8;
 }
 
 .sidebar-clock-minute {
   width: 2px;
-  height: 22px;
+  height: 29px;
   background: #03bad4;
 }
 
@@ -652,7 +661,7 @@ button {
 .sidebar-time-value {
   margin: 0;
   color: #ebeaf3;
-  font-size: 32px;
+  font-size: 60px;
   line-height: 1;
 }
 
@@ -661,7 +670,7 @@ button {
   color: #03bad4;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-size: 16px;
+  font-size: 27px;
 }
 
 .map-overlay {
@@ -717,8 +726,7 @@ button {
   inset: 32px;
   background:
     linear-gradient(rgba(8, 145, 168, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(8, 145, 168, 0.03) 1px, transparent 1px),
-    #020205;
+    linear-gradient(90deg, rgba(8, 145, 168, 0.03) 1px, transparent 1px);
   background-size: 30px 30px;
   pointer-events: none;
 }
@@ -772,8 +780,8 @@ button {
 }
 
 .inv-item {
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
   border: 0;
   background: transparent;
   color: #d1d6e0;
@@ -967,6 +975,14 @@ button {
 .cursor-icon {
   font-size: 34px;
   line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(8, 145, 168, 0.4));
+}
+
+.cursor-item-image {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
   filter: drop-shadow(0 0 6px rgba(8, 145, 168, 0.4));
 }
 

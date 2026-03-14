@@ -31,6 +31,8 @@ export default function App() {
   const cursorIcon =
     game.cursorMode === "talk" ? (
       <MessageSquareText size={26} />
+    ) : game.selectedItem?.image ? (
+      <img className="cursor-item-image" src={game.selectedItem.image} alt={game.selectedItem.label} />
     ) : game.selectedInventoryId === "key" ? (
       <KeyRound size={26} />
     ) : game.selectedInventoryId === "paper" ? (
