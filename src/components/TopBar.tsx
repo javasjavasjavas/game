@@ -1,13 +1,11 @@
-import { MapPin, Moon } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 interface Props {
   roomName: string;
   roomDescription: string;
-  clock: string;
-  dateLabel: string;
 }
 
-export function TopBar({ roomName, roomDescription, clock, dateLabel }: Props) {
+export function TopBar({ roomName, roomDescription }: Props) {
   return (
     <header className="topbar">
       <div className="topbar-location-block">
@@ -19,16 +17,6 @@ export function TopBar({ roomName, roomDescription, clock, dateLabel }: Props) {
       </div>
 
       <div className="topbar-spacer" />
-
-      <div className="topbar-meta">
-        <div className="topbar-clock-block">
-          <div className="topbar-clock-row">
-            <Moon size={18} className="topbar-wifi-icon" />
-            <div className="topbar-clock">{clock}</div>
-          </div>
-          <div className="topbar-date">{dateLabel}</div>
-        </div>
-      </div>
     </header>
   );
 }

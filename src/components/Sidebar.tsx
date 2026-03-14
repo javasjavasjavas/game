@@ -7,6 +7,8 @@ interface Props {
   characters: CharacterMemory[];
   expandedCharacter: CharacterMemory | null;
   money: number;
+  clock: string;
+  dateLabel: string;
   onToggleCharacter: (npcId: string) => void;
   onWait: () => void;
   onTakeCab: () => void;
@@ -20,6 +22,8 @@ export function Sidebar({
   characters,
   expandedCharacter,
   money,
+  clock,
+  dateLabel,
   onToggleCharacter,
   onWait,
   onTakeCab,
@@ -28,8 +32,27 @@ export function Sidebar({
   showAccuseList,
   mobileOpen,
 }: Props) {
+  const [hours, minutes] = clock.split(":").map((value) => Number(value) || 0);
+  const hourRotation = ((hours % 12) + minutes / 60) * 30;
+  const minuteRotation = minutes * 6;
+
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
+      <section className="panel blue">
+        <h2>Time</h2>
+        <div className="sidebar-time-block">
+          <div className="sidebar-analog-clock" aria-hidden="true">
+            <span className="sidebar-clock-center-dot" />
+            <span className="sidebar-clock-hand sidebar-clock-hour" style={{ transform: `translateX(-50%) rotate(${hourRotation}deg)` }} />
+            <span className="sidebar-clock-hand sidebar-clock-minute" style={{ transform: `translateX(-50%) rotate(${minuteRotation}deg)` }} />
+          </div>
+          <div className="sidebar-time-readout">
+            <p className="sidebar-time-value">{clock}</p>
+            <p className="sidebar-date-value">{dateLabel}</p>
+          </div>
+        </div>
+      </section>
+
       <section className="panel blue">
         <h2>Money</h2>
         <p className="sidebar-money-value">
