@@ -30,6 +30,8 @@ export function StageView({
   onMapSelect,
 }: Props) {
   const hasPreloadedOtherSprite = useRef(false);
+  const hasPreloadedOtherBackgrounds = useRef(false);
+  const preloadedBackgrounds = useRef<Set<string>>(new Set());
   const hitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hitContextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [displayedRoom, setDisplayedRoom] = useState<RoomId>(currentRoom);
@@ -38,12 +40,14 @@ export function StageView({
   const [firstSpriteLoaded, setFirstSpriteLoaded] = useState(false);
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const showStageCharacter = displayedRoom !== "cab" && displayedRoom !== "apartment";
-  const backgroundByRoom: Partial<Record<RoomId, string>> = {
+  const backgroundByRoom: Record<RoomId, string> = {
     bar: "/game-assets/background_bar.jpg",
     cab: "/game-assets/background_cab.jpg",
     apartment: "/game-assets/background_apartment.jpg",
+    store: "/game-assets/background_bar.jpg",
+    alley: "/game-assets/background_bar.jpg",
   };
-  const backgroundSrc = backgroundByRoom[displayedRoom] ?? "/game-assets/background_bar.jpg";
+  const backgroundSrc = backgroundByRoom[displayedRoom];
   const stageLoading = useMemo(
     () => !(backgroundLoaded && (showStageCharacter ? firstSpriteLoaded : true)),
     [backgroundLoaded, firstSpriteLoaded, showStageCharacter]
@@ -70,7 +74,7 @@ export function StageView({
   }, [currentRoom, displayedRoom]);
 
   useEffect(() => {
-    setBackgroundLoaded(false);
+    setBackgroundLoaded(preloadedBackgrounds.current.has(backgroundSrc));
   }, [backgroundSrc]);
 
   useEffect(() => {
@@ -109,6 +113,20 @@ export function StageView({
     const preloadImage = new Image();
     preloadImage.src = alternateSrc;
   };
+
+  useEffect(() => {
+    if (!(backgroundLoaded && firstSpriteLoaded)) return;
+    if (hasPreloadedOtherBackgrounds.current) return;
+    hasPreloadedOtherBackgrounds.current = true;
+
+    const uniqueBackgrounds = Array.from(new Set(Object.values(backgroundByRoom))).filter((src) => src !== backgroundSrc);
+    uniqueBackgrounds.forEach((src) => {
+      const image = new Image();
+      image.onload = () => preloadedBackgrounds.current.add(src);
+      image.onerror = () => preloadedBackgrounds.current.add(src);
+      image.src = src;
+    });
+  }, [backgroundLoaded, firstSpriteLoaded, backgroundByRoom, backgroundSrc]);
 
   const setPixelHover = (value: boolean) => {
     setCharacterPixelHover((prev) => {
@@ -162,8 +180,14 @@ export function StageView({
         className="scene-image"
         src={backgroundSrc}
         alt="Night city scene"
-        onLoad={() => setBackgroundLoaded(true)}
-        onError={() => setBackgroundLoaded(true)}
+        onLoad={() => {
+          preloadedBackgrounds.current.add(backgroundSrc);
+          setBackgroundLoaded(true);
+        }}
+        onError={() => {
+          preloadedBackgrounds.current.add(backgroundSrc);
+          setBackgroundLoaded(true);
+        }}
       />
       <div className="stage-overlay" />
       {stageLoading && (

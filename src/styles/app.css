@@ -673,6 +673,23 @@ button {
   font-size: 27px;
 }
 
+.panel .sidebar-time-value {
+  font-size: 60px;
+  line-height: 1;
+}
+
+.panel .sidebar-date-value {
+  font-size: 27px;
+}
+
+.panel .sidebar-money-value {
+  font-size: 60px;
+}
+
+.panel .sidebar-money-label {
+  font-size: 27px;
+}
+
 .map-overlay {
   position: absolute;
   inset: 0;
@@ -823,6 +840,7 @@ button {
   flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-end;
+  align-items: center;
   margin-left: auto;
 }
 
