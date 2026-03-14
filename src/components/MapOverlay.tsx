@@ -105,7 +105,7 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
                       textAnchor="middle"
                       fill={labelColor}
                       fontSize="2.2"
-                      fontFamily="VT323, monospace"
+                      fontFamily="Press Start 2P, monospace"
                       fontWeight="700"
                       className="map-node-label"
                       initial={{ opacity: 0 }}

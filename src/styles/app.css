@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 :root {
   --noir-900: #020205;
@@ -25,7 +25,7 @@ body,
   margin: 0;
   background: #000;
   color: var(--ink);
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   cursor: crosshair;
 }
 
@@ -96,7 +96,7 @@ button {
 
 .sidebar-meta h1 {
   margin: 0;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 34px;
   letter-spacing: 0.08em;
   color: #d7dbe6;
@@ -124,7 +124,7 @@ button {
 
 .panel h2 {
   margin: 0 0 12px;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 18px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -187,7 +187,7 @@ button {
 }
 
 .character-name {
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 18px;
 }
 
@@ -196,7 +196,7 @@ button {
   transform: translateX(-10px);
   border: 1px solid rgba(201, 35, 78, 0.7);
   color: #ff9ab0;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 9px;
@@ -219,7 +219,7 @@ button {
 
 .character-clues-title {
   margin: 0 0 6px;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--cyber-blue);
@@ -256,7 +256,7 @@ button {
   color: var(--ink);
   text-align: left;
   padding: 8px;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 12px;
 }
 
@@ -280,7 +280,7 @@ button {
   color: var(--cyber-blue);
   text-align: center;
   padding: 9px;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   font-size: 18px;
@@ -312,7 +312,7 @@ button {
   margin-top: 8px;
   padding-top: 8px;
   color: rgba(8, 145, 168, 0.5);
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 12px;
   min-height: 32px;
 }
@@ -418,7 +418,7 @@ button {
 }
 
 .topbar-clock {
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 50px;
   line-height: 1;
   font-weight: 400;
@@ -429,7 +429,7 @@ button {
   margin-top: 8px;
   text-align: center;
   text-transform: uppercase;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   letter-spacing: 0.16em;
   color: #03bad4;
   font-size: 19px;
@@ -448,7 +448,7 @@ button {
   align-items: center;
   gap: 10px;
   color: #f4be1e;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 50px;
   line-height: 1;
 }
@@ -533,7 +533,7 @@ button {
 }
 
 .stage-loading-text {
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -789,7 +789,7 @@ button {
 }
 
 .inv-title {
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 12px;
   color: rgba(8, 145, 168, 0.75);
   text-transform: uppercase;
@@ -832,7 +832,7 @@ button {
   padding: 4px 8px;
   font-size: 11px;
   color: #d7dde7;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
 }
 
 .nav-actions {
@@ -850,7 +850,7 @@ button {
   color: #a6aec0;
   border-radius: 999px;
   padding: 10px 18px;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 25px;
@@ -893,7 +893,7 @@ button {
 
 .detail-title {
   margin: 0 0 6px;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--cyber-pink);
@@ -924,7 +924,7 @@ button {
 
 .conversation-speaker {
   margin: 0 0 8px;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--cyber-blue);
@@ -962,7 +962,7 @@ button {
   color: #97a3bb;
   text-align: left;
   padding: 4px 8px;
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   font-size: 25px;
   line-height: 1.45;
   transition: color 120ms ease, background-color 120ms ease;
@@ -1008,7 +1008,7 @@ button {
   border: 1px solid rgba(201, 35, 78, 0.75);
   background: rgba(8, 9, 15, 0.95);
   color: var(--cyber-pink);
-  font-family: "VT323", monospace;
+  font-family: "Press Start 2P", monospace;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 14px;
