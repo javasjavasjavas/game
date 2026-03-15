@@ -56,32 +56,41 @@ export function StageView({
   onMapSelect,
 }: Props) {
   const loadedImagesRef = useRef<Set<string>>(new Set());
-  const initialRoomRef = useRef<RoomId>(currentRoom);
+  const wasMapOpenRef = useRef(mapOpen);
   const hitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hitContextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [displayedRoom, setDisplayedRoom] = useState<RoomId>(currentRoom);
   const [fadePhase, setFadePhase] = useState<"idle" | "fadeOut" | "fadeIn">("idle");
-  const [initialAssetsReady, setInitialAssetsReady] = useState(false);
+  const [bootLoading, setBootLoading] = useState(true);
   const [activeBackgroundReady, setActiveBackgroundReady] = useState(false);
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const showStageCharacter = displayedRoom !== "cab" && displayedRoom !== "apartment";
   const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
-  const initialRoom = initialRoomRef.current;
-  const initialBackgroundSrc = BACKGROUND_BY_ROOM[initialRoom];
-  const defaultSpriteSrc = CHARACTER_BY_EMOTION[STAGE_CHARACTER.defaultEmotion];
-  const stageLoading = useMemo(
-    () => !activeBackgroundReady || (displayedRoom === initialRoom && !initialAssetsReady),
-    [activeBackgroundReady, displayedRoom, initialAssetsReady, initialRoom]
-  );
+  const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
+  const loadingLabel = bootLoading ? "Loading Game" : "Loading Scene";
 
   useEffect(() => {
     if (currentRoom === displayedRoom) return;
+    const targetBackgroundSrc = BACKGROUND_BY_ROOM[currentRoom];
+    const changedFromMap = mapOpen || wasMapOpenRef.current;
+
+    if (changedFromMap) {
+      setDisplayedRoom(currentRoom);
+      setFadePhase("idle");
+      setActiveBackgroundReady(loadedImagesRef.current.has(targetBackgroundSrc));
+      if (!loadedImagesRef.current.has(targetBackgroundSrc)) {
+        preloadImage(targetBackgroundSrc, loadedImagesRef.current).then(() => {
+          setActiveBackgroundReady(true);
+        });
+      }
+      return;
+    }
 
     let fadeInTimer: number | null = null;
     setFadePhase("fadeOut");
     const fadeOutTimer = window.setTimeout(() => {
       setDisplayedRoom(currentRoom);
-      setActiveBackgroundReady(loadedImagesRef.current.has(BACKGROUND_BY_ROOM[currentRoom]));
+      setActiveBackgroundReady(loadedImagesRef.current.has(targetBackgroundSrc));
       setFadePhase("fadeIn");
       fadeInTimer = window.setTimeout(() => {
         setFadePhase("idle");
@@ -92,7 +101,7 @@ export function StageView({
       window.clearTimeout(fadeOutTimer);
       if (fadeInTimer !== null) window.clearTimeout(fadeInTimer);
     };
-  }, [currentRoom, displayedRoom]);
+  }, [currentRoom, displayedRoom, mapOpen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -114,33 +123,30 @@ export function StageView({
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      // Boot: first scene background + default sprite.
-      await preloadImage(initialBackgroundSrc, loadedImagesRef.current);
-      await preloadImage(defaultSpriteSrc, loadedImagesRef.current);
-      if (cancelled) return;
-      setInitialAssetsReady(true);
-
-      // Then load remaining character variants.
-      const remainingSprites = Object.values(CHARACTER_BY_EMOTION).filter((src) => src !== defaultSpriteSrc);
-      for (const spriteSrc of remainingSprites) {
-        await preloadImage(spriteSrc, loadedImagesRef.current);
-        if (cancelled) return;
-      }
-
-      // Then map background.
-      await preloadImage(MAP_BACKGROUND_SRC, loadedImagesRef.current);
-      if (cancelled) return;
-
-      // Then all other scene backgrounds in parallel.
-      const otherBackgrounds = Array.from(new Set(Object.values(BACKGROUND_BY_ROOM))).filter(
-        (src) => src !== initialBackgroundSrc
+      const allAssets = Array.from(
+        new Set([
+          ...Object.values(BACKGROUND_BY_ROOM),
+          MAP_BACKGROUND_SRC,
+          ...Object.values(CHARACTER_BY_EMOTION),
+        ])
       );
-      await Promise.all(otherBackgrounds.map((src) => preloadImage(src, loadedImagesRef.current)));
+      const minBootDelay = new Promise<void>((resolve) => {
+        window.setTimeout(resolve, 5000);
+      });
+      const preloadAll = Promise.all(allAssets.map((src) => preloadImage(src, loadedImagesRef.current)));
+      await Promise.all([preloadAll, minBootDelay]);
+      if (cancelled) return;
+      setBootLoading(false);
+      setActiveBackgroundReady(loadedImagesRef.current.has(BACKGROUND_BY_ROOM[displayedRoom]));
     })();
     return () => {
       cancelled = true;
     };
-  }, [defaultSpriteSrc, initialBackgroundSrc]);
+  }, [displayedRoom]);
+
+  useEffect(() => {
+    wasMapOpenRef.current = mapOpen;
+  }, [mapOpen]);
 
   useEffect(() => {
     if (showStageCharacter) return;
@@ -230,8 +236,7 @@ export function StageView({
       <div className="stage-overlay" />
       {stageLoading && (
         <div className="stage-loading">
-          <span className="stage-loading-spinner" />
-          <span className="stage-loading-text">Loading assets...</span>
+          <span className="stage-loading-text">{loadingLabel}</span>
         </div>
       )}
       <motion.div
