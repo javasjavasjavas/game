@@ -34,7 +34,7 @@ export function Sidebar({
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
       <section className="sidebar-score">
         <div className="sidebar-score-row">
-          <img className="sidebar-logo" src="/game-assets/logo.png" alt="Game logo" />
+          <img className="sidebar-logo" src="/game-assets/icon_settings.png" alt="Settings icon" />
           <p className="sidebar-score-value">Score: {score}</p>
         </div>
       </section>
