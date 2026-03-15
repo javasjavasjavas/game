@@ -43,9 +43,8 @@ export function Sidebar({
         <h2>Money</h2>
         <p className="sidebar-money-value">
           <img className="sidebar-wallet-icon" src="/game-assets/item_wallet.png" alt="Wallet" />
-          {money}
+          ${money}
         </p>
-        <p className="sidebar-money-label">Available</p>
       </section>
 
       <section className="panel">
