@@ -3,9 +3,11 @@ import { MapPin } from "lucide-react";
 interface Props {
   roomName: string;
   roomDescription: string;
+  clock: string;
+  dateLabel: string;
 }
 
-export function TopBar({ roomName, roomDescription }: Props) {
+export function TopBar({ roomName, roomDescription, clock, dateLabel }: Props) {
   return (
     <header className="topbar">
       <div className="topbar-location-block">
@@ -17,6 +19,11 @@ export function TopBar({ roomName, roomDescription }: Props) {
       </div>
 
       <div className="topbar-spacer" />
+
+      <div className="topbar-time-plain">
+        <p className="topbar-time-value">{clock}</p>
+        <p className="topbar-time-date">{dateLabel}</p>
+      </div>
     </header>
   );
 }

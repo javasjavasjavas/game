@@ -1,4 +1,4 @@
-import { Clock3, DollarSign, MapPin, Zap } from "lucide-react";
+import { Clock3, MapPin, Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
@@ -8,8 +8,6 @@ interface Props {
   expandedCharacter: CharacterMemory | null;
   score: number;
   money: number;
-  clock: string;
-  dateLabel: string;
   onToggleCharacter: (npcId: string) => void;
   onWait: () => void;
   onTakeCab: () => void;
@@ -24,8 +22,6 @@ export function Sidebar({
   expandedCharacter,
   score,
   money,
-  clock,
-  dateLabel,
   onToggleCharacter,
   onWait,
   onTakeCab,
@@ -34,10 +30,6 @@ export function Sidebar({
   showAccuseList,
   mobileOpen,
 }: Props) {
-  const [hours, minutes] = clock.split(":").map((value) => Number(value) || 0);
-  const hourRotation = ((hours % 12) + minutes / 60) * 30;
-  const minuteRotation = minutes * 6;
-
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
       <section className="sidebar-score">
@@ -46,24 +38,9 @@ export function Sidebar({
       </section>
 
       <section className="panel blue">
-        <h2>Time</h2>
-        <div className="sidebar-time-block">
-          <div className="sidebar-analog-clock" aria-hidden="true">
-            <span className="sidebar-clock-center-dot" />
-            <span className="sidebar-clock-hand sidebar-clock-hour" style={{ transform: `translateX(-50%) rotate(${hourRotation}deg)` }} />
-            <span className="sidebar-clock-hand sidebar-clock-minute" style={{ transform: `translateX(-50%) rotate(${minuteRotation}deg)` }} />
-          </div>
-          <div className="sidebar-time-readout">
-            <p className="sidebar-time-value">{clock}</p>
-            <p className="sidebar-date-value">{dateLabel}</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="panel blue">
         <h2>Money</h2>
         <p className="sidebar-money-value">
-          <DollarSign size={16} className="inline-icon" />
+          <img className="sidebar-wallet-icon" src="/game-assets/item_wallet.png" alt="Wallet" />
           {money}
         </p>
         <p className="sidebar-money-label">Available</p>

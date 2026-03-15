@@ -77,8 +77,6 @@ export default function App() {
         expandedCharacter={game.expandedCharacterMemory}
         score={game.clues.length * 100}
         money={game.game.money}
-        clock={game.formattedTime}
-        dateLabel="Monday, March 15"
         onToggleCharacter={game.toggleCharacterMemory}
         onWait={() => {
           setShowAccuseList(false);
@@ -101,7 +99,7 @@ export default function App() {
       />
 
       <main className={rootClass} onContextMenu={handleContextMenu}>
-        <TopBar roomName={game.room.name} roomDescription={game.room.description} />
+        <TopBar roomName={game.room.name} roomDescription={game.room.description} clock={game.formattedTime} dateLabel="Monday, March 15" />
 
         <StageView
           emotion={game.game.characterEmotion}

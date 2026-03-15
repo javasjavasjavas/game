@@ -67,7 +67,7 @@ button {
   background: #020205f2;
   border-right: 1px solid #111;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9);
-  padding: var(--stage-top-offset) 16px 18px;
+  padding: 32px 16px 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -347,6 +347,28 @@ button {
   margin-right: auto;
 }
 
+.topbar-time-plain {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.topbar-time-value {
+  margin: 0;
+  color: #fff;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.topbar-time-date {
+  margin: 0;
+  color: #03bad4;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .topbar-location-block {
   display: flex;
   flex-direction: column;
@@ -601,6 +623,13 @@ button {
   line-height: 1;
 }
 
+.sidebar-wallet-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: inline-block;
+}
+
 .sidebar-money-label {
   margin-top: 6px;
   color: #03bad4;
@@ -720,6 +749,13 @@ button {
   place-items: center;
   border-radius: 6px;
   transition: color 130ms ease, border-color 130ms ease;
+}
+
+.map-close-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
 }
 
 .map-close:hover {

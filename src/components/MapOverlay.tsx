@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ROOM_MAP_LAYOUT, ROOM_ORDER, ROOMS } from "../game/data";
 import type { RoomId } from "../game/types";
@@ -37,7 +36,7 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
           transition={{ duration: 0.4 }}
         >
           <button className="map-close" onClick={onClose} aria-label="Close map">
-            <X size={18} />
+            <img className="map-close-icon" src="/game-assets/icon_cross.png" alt="Close" />
           </button>
 
           <div className="map-canvas">
