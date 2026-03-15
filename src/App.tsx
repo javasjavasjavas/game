@@ -1,5 +1,5 @@
 import { Coffee, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEventHandler } from "react";
 import { ConversationPanel } from "./components/panels/ConversationPanel";
 import { InspectPanel } from "./components/panels/InspectPanel";
@@ -16,6 +16,8 @@ export default function App() {
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: -9999, y: -9999 });
   const [showAccuseList, setShowAccuseList] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const musicRef = useRef<HTMLAudioElement | null>(null);
 
   const game = useGame();
 
@@ -48,6 +50,35 @@ export default function App() {
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", onMouseMove);
   }, []);
+
+  useEffect(() => {
+    const audio = new Audio("/game-assets/music_theme.mp3");
+    audio.loop = true;
+    audio.volume = 0.45;
+    musicRef.current = audio;
+    return () => {
+      audio.pause();
+      audio.src = "";
+      musicRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = musicRef.current;
+    if (!audio) return;
+    if (soundEnabled) {
+      audio.muted = false;
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          // Autoplay can be blocked until the first user interaction.
+        });
+      }
+      return;
+    }
+    audio.muted = true;
+    audio.pause();
+  }, [soundEnabled]);
 
   const handleContextMenu: MouseEventHandler<HTMLElement> = (event) => {
     if (!game.selectedInventoryId) return;
@@ -92,6 +123,8 @@ export default function App() {
         }}
         showAccuseList={showAccuseList}
         mobileOpen={mobileSidebar}
+        soundEnabled={soundEnabled}
+        onToggleSound={() => setSoundEnabled((prev) => !prev)}
       />
 
       <main className={rootClass} onContextMenu={handleContextMenu}>

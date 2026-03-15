@@ -15,6 +15,8 @@ interface Props {
   onAccuse: (npcId: string) => void;
   showAccuseList: boolean;
   mobileOpen: boolean;
+  soundEnabled: boolean;
+  onToggleSound: () => void;
 }
 
 export function Sidebar({
@@ -29,12 +31,23 @@ export function Sidebar({
   onAccuse,
   showAccuseList,
   mobileOpen,
+  soundEnabled,
+  onToggleSound,
 }: Props) {
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
       <section className="sidebar-score">
         <div className="sidebar-score-row">
-          <img className="sidebar-logo" src="/game-assets/icon_settings.png" alt="Settings icon" />
+          <div className="sidebar-tools">
+            <img className="sidebar-logo" src="/game-assets/icon_settings.png" alt="Settings icon" />
+            <button className="sidebar-sound-btn" onClick={onToggleSound} aria-label={soundEnabled ? "Disable sound" : "Enable sound"}>
+              <img
+                className="sidebar-logo"
+                src={soundEnabled ? "/game-assets/icon_sound.png" : "/game-assets/icon_no_sound.png"}
+                alt={soundEnabled ? "Sound on" : "Sound off"}
+              />
+            </button>
+          </div>
           <p className="sidebar-score-value">Score: {score}</p>
         </div>
       </section>
