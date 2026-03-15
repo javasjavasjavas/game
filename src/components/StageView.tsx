@@ -62,12 +62,14 @@ export function StageView({
   const [displayedRoom, setDisplayedRoom] = useState<RoomId>(currentRoom);
   const [fadePhase, setFadePhase] = useState<"idle" | "fadeOut" | "fadeIn">("idle");
   const [bootLoading, setBootLoading] = useState(true);
+  const [bootProgress, setBootProgress] = useState(0);
   const [activeBackgroundReady, setActiveBackgroundReady] = useState(false);
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const showStageCharacter = displayedRoom !== "cab" && displayedRoom !== "apartment";
   const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
   const loadingLabel = bootLoading ? "Loading Game" : "Loading Scene";
+  const bootSegments = 14;
 
   useEffect(() => {
     if (currentRoom === displayedRoom) return;
@@ -122,6 +124,9 @@ export function StageView({
 
   useEffect(() => {
     let cancelled = false;
+    let ticker: number | null = null;
+    const startedAt = performance.now();
+    const minBootMs = 5000;
     (async () => {
       const allAssets = Array.from(
         new Set([
@@ -130,19 +135,44 @@ export function StageView({
           ...Object.values(CHARACTER_BY_EMOTION),
         ])
       );
+      let loadedCount = 0;
+      const totalCount = Math.max(1, allAssets.length);
+
+      const updateProgress = () => {
+        const elapsed = performance.now() - startedAt;
+        const timeProgress = Math.min(elapsed / minBootMs, 1);
+        const assetProgress = loadedCount / totalCount;
+        const combined = Math.max(timeProgress * 0.9, assetProgress * 0.95);
+        if (!cancelled) {
+          setBootProgress(Math.min(combined, 0.98));
+        }
+      };
+
+      ticker = window.setInterval(updateProgress, 80);
       const minBootDelay = new Promise<void>((resolve) => {
-        window.setTimeout(resolve, 5000);
+        window.setTimeout(resolve, minBootMs);
       });
-      const preloadAll = Promise.all(allAssets.map((src) => preloadImage(src, loadedImagesRef.current)));
+      const preloadAll = Promise.all(
+        allAssets.map(async (src) => {
+          await preloadImage(src, loadedImagesRef.current);
+          loadedCount += 1;
+          updateProgress();
+        })
+      );
       await Promise.all([preloadAll, minBootDelay]);
       if (cancelled) return;
+      if (ticker !== null) window.clearInterval(ticker);
+      setBootProgress(1);
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 140));
+      if (cancelled) return;
       setBootLoading(false);
-      setActiveBackgroundReady(loadedImagesRef.current.has(BACKGROUND_BY_ROOM[displayedRoom]));
+      setActiveBackgroundReady(true);
     })();
     return () => {
       cancelled = true;
+      if (ticker !== null) window.clearInterval(ticker);
     };
-  }, [displayedRoom]);
+  }, []);
 
   useEffect(() => {
     wasMapOpenRef.current = mapOpen;
@@ -219,7 +249,7 @@ export function StageView({
   };
 
   return (
-    <section className="stage">
+    <section className="stage scanlines">
       <img
         className="scene-image"
         src={backgroundSrc}
@@ -236,7 +266,17 @@ export function StageView({
       <div className="stage-overlay" />
       {stageLoading && (
         <div className="stage-loading">
-          <span className="stage-loading-text">{loadingLabel}</span>
+          <div className="stage-loading-inner">
+            <span className="stage-loading-text">{loadingLabel}</span>
+            {bootLoading && (
+              <div className="stage-loading-bar" aria-hidden>
+                {Array.from({ length: bootSegments }).map((_, index) => {
+                  const filled = index < Math.round(bootProgress * bootSegments);
+                  return <span key={`boot-seg-${index}`} className={`stage-loading-segment ${filled ? "filled" : ""}`} />;
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
       <motion.div
