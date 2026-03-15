@@ -336,7 +336,7 @@ button {
   display: flex;
   justify-content: flex-start;
   gap: 14px;
-  align-items: flex-start;
+  align-items: center;
   min-height: 88px;
   padding: 30px var(--lane-side);
   z-index: 35;
@@ -374,7 +374,7 @@ button {
   flex-direction: column;
   gap: 7px;
   min-width: 320px;
-  max-width: 560px;
+  width: calc(100% - 200px);
   padding-top: 4px;
 }
 
@@ -616,7 +616,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 60px;
+  font-size: 28px;
   color: #d6f2ff;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -718,7 +718,7 @@ button {
 }
 
 .panel .sidebar-money-value {
-  font-size: 60px;
+  font-size: 28px;
 }
 
 .panel .sidebar-money-label {
@@ -805,6 +805,8 @@ button {
 }
 
 .footer {
+  display: flex;
+  align-items: center;
   z-index: 30;
   position: relative;
   padding: 12px var(--lane-side) 16px;
@@ -867,20 +869,27 @@ button {
   padding: 0;
 }
 
-.sidebar-score h2 {
-  margin: 0 0 10px;
-  font-family: "Press Start 2P", monospace;
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--cyber-pink);
+.sidebar-score-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  white-space: nowrap;
+}
+
+.sidebar-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
 }
 
 .sidebar-score-value {
   margin: 0;
   color: #d7dbe6;
-  font-size: 30px;
-  line-height: 1.2;
+  font-size: 14px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .inv-item:hover::after {
@@ -952,6 +961,13 @@ button {
   color: #93a0b8;
   display: grid;
   place-items: center;
+}
+
+.detail-close-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  display: block;
 }
 
 .detail-title {

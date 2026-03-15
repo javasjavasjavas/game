@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -19,7 +18,7 @@ export function InspectPanel({ open, text, onClose }: Props) {
           transition={{ duration: 0.2 }}
         >
           <button className="detail-close" onClick={onClose}>
-            <X size={12} />
+            <img className="detail-close-icon" src="/game-assets/icon_cross.png" alt="Close" />
           </button>
           <h3 className="detail-title">Inspection</h3>
           <p className="detail-text">{text}</p>

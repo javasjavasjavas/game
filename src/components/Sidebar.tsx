@@ -33,8 +33,10 @@ export function Sidebar({
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
       <section className="sidebar-score">
-        <h2>Score</h2>
-        <p className="sidebar-score-value">{score}</p>
+        <div className="sidebar-score-row">
+          <img className="sidebar-logo" src="/game-assets/logo.png" alt="Game logo" />
+          <p className="sidebar-score-value">Score: {score}</p>
+        </div>
       </section>
 
       <section className="panel blue">
