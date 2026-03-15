@@ -26,6 +26,7 @@ export function useGame() {
   const [characterMemoryByNpc, setCharacterMemoryByNpc] = useState<Record<string, CharacterMemory>>({});
   const [expandedCharacterMemoryId, setExpandedCharacterMemoryId] = useState<string | null>(null);
   const [conversationHasClue, setConversationHasClue] = useState(false);
+  const [roomBeforeCab, setRoomBeforeCab] = useState<RoomId>("bar");
 
   const room = ROOMS[game.currentRoom];
   const clues = game.getClueEntries();
@@ -160,21 +161,35 @@ export function useGame() {
 
   const takeCab = () => {
     const fare = 18;
-    mutate((draft) => {
-      if (draft.finished) return;
-      if (draft.currentRoom === "cab") {
-        draft.lastMessage = "You are already in the cab.";
-        return;
-      }
-      if (draft.money < fare) {
+    if (game.finished) return;
+    if (game.currentRoom === "cab") return;
+    if (game.money < fare) {
+      mutate((draft) => {
         draft.lastMessage = "Not enough cash for a cab ride.";
-        return;
-      }
+      });
+      return;
+    }
+
+    setRoomBeforeCab(game.currentRoom);
+    mutate((draft) => {
       draft.money -= fare;
       draft.expenses = [`Cab fare: -$${fare}`, ...draft.expenses].slice(0, 12);
       draft.currentRoom = "cab";
       draft.advanceTime(10);
       draft.lastMessage = `You took a cab for $${fare}.`;
+    });
+    setCurrentTalkNpcId(null);
+    setInspectOpen(false);
+    setConversationHasClue(false);
+  };
+
+  const leaveCab = () => {
+    mutate((draft) => {
+      if (draft.finished) return;
+      if (draft.currentRoom !== "cab") return;
+      draft.currentRoom = roomBeforeCab;
+      draft.advanceTime(10);
+      draft.lastMessage = `You left the cab and returned to ${ROOMS[roomBeforeCab].name}.`;
     });
     setCurrentTalkNpcId(null);
     setInspectOpen(false);
@@ -243,6 +258,7 @@ export function useGame() {
     solve,
     openAccusationPrompt,
     takeCab,
+    leaveCab,
     toggleInventoryItem,
     clearInventorySelection,
     characterMemories,

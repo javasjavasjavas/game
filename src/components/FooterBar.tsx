@@ -33,7 +33,7 @@ export function FooterBar({ showNav, mapOpen, selectedInventoryId, onToggleInven
           <Search size={14} /> Inspect area
         </button>
         <button className="pill-btn" onClick={onMap}>
-          <Map size={14} /> {mapOpen ? "Close map" : "Open City Map"}
+          <Map size={14} /> {mapOpen ? "Close City Map" : "Open City Map"}
         </button>
       </div>
     </div>

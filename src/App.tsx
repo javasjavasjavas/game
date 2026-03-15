@@ -111,7 +111,11 @@ export default function App() {
         }}
         onTakeCab={() => {
           setShowAccuseList(false);
-          game.takeCab();
+          if (game.game.currentRoom === "cab") {
+            game.leaveCab();
+          } else {
+            game.takeCab();
+          }
         }}
         onSolveClick={() => {
           game.openAccusationPrompt();
@@ -125,6 +129,10 @@ export default function App() {
         mobileOpen={mobileSidebar}
         soundEnabled={soundEnabled}
         onToggleSound={() => setSoundEnabled((prev) => !prev)}
+        onSettingsClick={() => {
+          // Placeholder: behavior will be added in a next step.
+        }}
+        inCab={game.game.currentRoom === "cab"}
       />
 
       <main className={rootClass} onContextMenu={handleContextMenu}>

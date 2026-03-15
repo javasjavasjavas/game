@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CompassIcon } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ROOMS } from "../game/data";
 import type { RoomId } from "../game/types";
 
@@ -20,6 +21,8 @@ interface MapLocation {
 }
 
 const MAP_BG = "/game-assets/map_bg.jpg";
+const MAP_WIDTH = 3200;
+const MAP_HEIGHT = 1829;
 
 const MAP_LOCATIONS: MapLocation[] = [
   { roomId: "bar", x: 22, y: 35, distance: "0.8 km", walkTime: "10 min", walkMinutes: 10 },
@@ -29,6 +32,46 @@ const MAP_LOCATIONS: MapLocation[] = [
 ];
 
 export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) {
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const [frameSize, setFrameSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const element = frameRef.current;
+    if (!element) return;
+
+    const updateSize = () => {
+      const rect = element.getBoundingClientRect();
+      setFrameSize({ width: rect.width, height: rect.height });
+    };
+    updateSize();
+
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  const adjustedLocations = useMemo(() => {
+    if (frameSize.width <= 0 || frameSize.height <= 0) {
+      return MAP_LOCATIONS.map((loc) => ({ ...loc, drawX: loc.x, drawY: loc.y }));
+    }
+
+    const scale = Math.max(frameSize.width / MAP_WIDTH, frameSize.height / MAP_HEIGHT);
+    const renderedWidth = MAP_WIDTH * scale;
+    const renderedHeight = MAP_HEIGHT * scale;
+    const offsetX = (frameSize.width - renderedWidth) / 2;
+    const offsetY = (frameSize.height - renderedHeight) / 2;
+
+    return MAP_LOCATIONS.map((loc) => {
+      const xPx = (loc.x / 100) * MAP_WIDTH * scale + offsetX;
+      const yPx = (loc.y / 100) * MAP_HEIGHT * scale + offsetY;
+      return {
+        ...loc,
+        drawX: (xPx / frameSize.width) * 100,
+        drawY: (yPx / frameSize.height) * 100,
+      };
+    });
+  }, [frameSize.height, frameSize.width]);
+
   return (
     <AnimatePresence mode="wait">
       {open && (
@@ -56,12 +99,12 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
           </motion.div>
 
           <div className="map-canvas">
-            <div className="map-frame">
+            <div className="map-frame" ref={frameRef}>
               <img className="map-bg-image" src={MAP_BG} alt="City Map" />
               <div className="map-bg-dark" />
               <div className="map-vignette" />
 
-            {MAP_LOCATIONS.map((location, index) => {
+            {adjustedLocations.map((location, index) => {
               const roomName = ROOMS[location.roomId].name;
               const active = location.roomId === currentRoom;
 
@@ -78,8 +121,8 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
                   }}
                   className="map-pin group"
                   style={{
-                    left: `${location.x}%`,
-                    top: `${location.y}%`,
+                    left: `${location.drawX}%`,
+                    top: `${location.drawY}%`,
                     transform: "translate(-50%, -50%)",
                   }}
                 >
@@ -88,6 +131,7 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
                     animate={{ scale: [1, 2.2, 1], opacity: [0.5, 0, 0.5] }}
                     transition={{ duration: 2.5, repeat: Infinity, delay: index * 0.4 }}
                   />
+                  <span className="map-pin-hover-halo" />
 
                   <button
                     className={`map-pin-dot ${active ? "active" : ""} reachable`}

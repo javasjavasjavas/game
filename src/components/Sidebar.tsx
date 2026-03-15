@@ -17,6 +17,8 @@ interface Props {
   mobileOpen: boolean;
   soundEnabled: boolean;
   onToggleSound: () => void;
+  onSettingsClick: () => void;
+  inCab: boolean;
 }
 
 export function Sidebar({
@@ -33,13 +35,17 @@ export function Sidebar({
   mobileOpen,
   soundEnabled,
   onToggleSound,
+  onSettingsClick,
+  inCab,
 }: Props) {
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
       <section className="sidebar-score">
         <div className="sidebar-score-row">
           <div className="sidebar-tools">
-            <img className="sidebar-logo" src="/game-assets/icon_settings.png" alt="Settings icon" />
+            <button className="sidebar-settings-btn" onClick={onSettingsClick} aria-label="Open settings">
+              <img className="sidebar-logo" src="/game-assets/icon_settings.png" alt="Settings icon" />
+            </button>
             <button className="sidebar-sound-btn" onClick={onToggleSound} aria-label={soundEnabled ? "Disable sound" : "Enable sound"}>
               <img
                 className="sidebar-logo"
@@ -106,7 +112,7 @@ export function Sidebar({
           <Clock3 size={14} /> Wait 30 minutes
         </button>
         <button className="action-btn" onClick={onTakeCab}>
-          <MapPin size={14} /> Take a cab
+          <MapPin size={14} /> {inCab ? "Leave the cab" : "Take a cab"}
         </button>
         <button className="action-btn warn" onClick={onSolveClick}>
           <Zap size={14} /> Submit accusation
