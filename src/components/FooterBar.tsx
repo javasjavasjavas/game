@@ -1,4 +1,4 @@
-import { Map, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { INVENTORY_ITEMS } from "../game/data";
 
 interface Props {
@@ -33,7 +33,7 @@ export function FooterBar({ showNav, mapOpen, selectedInventoryId, onToggleInven
           <Search size={14} /> Inspect area
         </button>
         <button className="pill-btn" onClick={onMap}>
-          <Map size={14} /> {mapOpen ? "Close City Map" : "Open City Map"}
+          <img className="pill-icon-image" src="/game-assets/icon_map.png" alt="Map" /> {mapOpen ? "Close City Map" : "Open City Map"}
         </button>
       </div>
     </div>

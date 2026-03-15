@@ -291,6 +291,13 @@ button {
   gap: 8px;
 }
 
+.action-icon-image {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  display: inline-block;
+}
+
 .action-btn:hover {
   border-color: rgba(8, 145, 168, 0.7);
   background: rgba(8, 145, 168, 0.14);
@@ -1214,6 +1221,13 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.pill-icon-image {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  display: inline-block;
 }
 
 .detail-box {

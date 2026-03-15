@@ -1,4 +1,4 @@
-import { Clock3, MapPin, Zap } from "lucide-react";
+import { Clock3, Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
@@ -112,7 +112,7 @@ export function Sidebar({
           <Clock3 size={14} /> Wait 30 minutes
         </button>
         <button className="action-btn" onClick={onTakeCab}>
-          <MapPin size={14} /> {inCab ? "Leave the cab" : "Take a cab"}
+          <img className="action-icon-image" src="/game-assets/icon_cab.png" alt="Cab" /> {inCab ? "Leave the cab" : "Take a cab"}
         </button>
         <button className="action-btn warn" onClick={onSolveClick}>
           <Zap size={14} /> Submit accusation
