@@ -1,5 +1,3 @@
-import { MapPin } from "lucide-react";
-
 interface Props {
   roomName: string;
   roomDescription: string;
@@ -12,7 +10,7 @@ export function TopBar({ roomName, roomDescription, clock, dateLabel }: Props) {
     <header className="topbar">
       <div className="topbar-location-block">
         <div className="topbar-location-row">
-          <MapPin size={30} className="topbar-location-icon" />
+          <img className="topbar-location-icon" src="/game-assets/icon_location.png" alt="Location" />
           <h1 className="topbar-location-title">{roomName}</h1>
         </div>
         <p className="topbar-location-description">{roomDescription}</p>
