@@ -55,12 +55,8 @@ export default function App() {
     game.clearInventorySelection();
   };
 
-  const handleMapSelect = (roomId: RoomId) => {
-    const canGo = game.game.currentRoom === roomId || game.room.exits.includes(roomId);
-    if (!canGo) {
-      return;
-    }
-    game.moveRoom(roomId);
+  const handleMapSelect = (roomId: RoomId, walkMinutes: number) => {
+    game.moveRoom(roomId, walkMinutes);
     game.setMapOpen(false);
   };
 

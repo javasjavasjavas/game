@@ -780,6 +780,19 @@ button {
   width: 100%;
   height: 100%;
   z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+}
+
+.map-frame {
+  position: relative;
+  width: min(100%, 1220px);
+  aspect-ratio: 3200 / 1829;
+  overflow: hidden;
+  border: 1px solid rgba(41, 51, 74, 0.38);
+  border-radius: 6px;
 }
 
 .map-title-badge {
@@ -839,6 +852,8 @@ button {
 }
 
 .map-pin-dot {
+  position: relative;
+  z-index: 3;
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -866,6 +881,7 @@ button {
 
 .map-pin-label {
   position: absolute;
+  z-index: 3;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
@@ -883,6 +899,7 @@ button {
 
 .map-tooltip {
   position: absolute;
+  z-index: 4;
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%) scale(0.9);
@@ -907,6 +924,18 @@ button {
   backdrop-filter: blur(6px);
   box-shadow: 0 0 20px rgba(8, 145, 168, 0.15);
   white-space: nowrap;
+}
+
+.map-pin-hit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 170px;
+  height: 120px;
+  border: 0;
+  background: transparent;
+  cursor: crosshair;
 }
 
 .map-tooltip-title {
@@ -1036,7 +1065,7 @@ button {
 }
 
 .sidebar-logo {
-  width: 165px;
+  width: 30px;
   height: auto;
   object-fit: contain;
   display: block;

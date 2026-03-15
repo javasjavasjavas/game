@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CompassIcon } from "lucide-react";
-import { useMemo } from "react";
 import { ROOMS } from "../game/data";
 import type { RoomId } from "../game/types";
 
@@ -8,7 +7,7 @@ interface Props {
   open: boolean;
   currentRoom: RoomId;
   onClose: () => void;
-  onSelectRoom: (roomId: RoomId) => void;
+  onSelectRoom: (roomId: RoomId, walkMinutes: number) => void;
 }
 
 interface MapLocation {
@@ -17,20 +16,19 @@ interface MapLocation {
   y: number;
   distance: string;
   walkTime: string;
+  walkMinutes: number;
 }
 
 const MAP_BG = "/game-assets/map_bg.jpg";
 
 const MAP_LOCATIONS: MapLocation[] = [
-  { roomId: "bar", x: 22, y: 35, distance: "0.8 km", walkTime: "10 min" },
-  { roomId: "apartment", x: 48, y: 22, distance: "1.2 km", walkTime: "15 min" },
-  { roomId: "store", x: 72, y: 55, distance: "2.1 km", walkTime: "26 min" },
-  { roomId: "alley", x: 35, y: 72, distance: "0.4 km", walkTime: "5 min" },
+  { roomId: "bar", x: 22, y: 35, distance: "0.8 km", walkTime: "10 min", walkMinutes: 10 },
+  { roomId: "apartment", x: 48, y: 22, distance: "1.2 km", walkTime: "15 min", walkMinutes: 15 },
+  { roomId: "store", x: 72, y: 55, distance: "2.1 km", walkTime: "26 min", walkMinutes: 26 },
+  { roomId: "alley", x: 35, y: 72, distance: "0.4 km", walkTime: "5 min", walkMinutes: 5 },
 ];
 
 export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) {
-  const reachableRooms = useMemo(() => new Set([currentRoom, ...ROOMS[currentRoom].exits]), [currentRoom]);
-
   return (
     <AnimatePresence mode="wait">
       {open && (
@@ -45,10 +43,6 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
             <img className="map-close-icon" src="/game-assets/icon_cross.png" alt="Close" />
           </button>
 
-          <img className="map-bg-image" src={MAP_BG} alt="City Map" />
-          <div className="map-bg-dark" />
-          <div className="map-vignette" />
-
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -62,10 +56,14 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
           </motion.div>
 
           <div className="map-canvas">
+            <div className="map-frame">
+              <img className="map-bg-image" src={MAP_BG} alt="City Map" />
+              <div className="map-bg-dark" />
+              <div className="map-vignette" />
+
             {MAP_LOCATIONS.map((location, index) => {
               const roomName = ROOMS[location.roomId].name;
               const active = location.roomId === currentRoom;
-              const reachable = reachableRooms.has(location.roomId);
 
               return (
                 <motion.div
@@ -92,8 +90,14 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
                   />
 
                   <button
-                    className={`map-pin-dot ${active ? "active" : ""} ${reachable ? "reachable" : "disabled"}`}
-                    onClick={() => reachable && onSelectRoom(location.roomId)}
+                    className={`map-pin-dot ${active ? "active" : ""} reachable`}
+                    onClick={() => onSelectRoom(location.roomId, location.walkMinutes)}
+                    aria-label={`Go to ${roomName}`}
+                  />
+
+                  <button
+                    className="map-pin-hit"
+                    onClick={() => onSelectRoom(location.roomId, location.walkMinutes)}
                     aria-label={`Go to ${roomName}`}
                   />
 
@@ -122,6 +126,7 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
               );
             })}
             <div className="map-grid-overlay" />
+            </div>
           </div>
         </motion.div>
       )}

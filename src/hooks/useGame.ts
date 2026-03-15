@@ -52,11 +52,11 @@ export function useGame() {
     });
   };
 
-  const moveRoom = (roomId: RoomId) => {
+  const moveRoom = (roomId: RoomId, travelMinutes = 15) => {
     mutate((draft) => {
       if (draft.finished || draft.currentRoom === roomId) return;
       draft.currentRoom = roomId;
-      draft.advanceTime(15);
+      draft.advanceTime(travelMinutes);
       draft.lastMessage = `You moved to ${ROOMS[roomId].name}.`;
     });
     setCurrentTalkNpcId(null);

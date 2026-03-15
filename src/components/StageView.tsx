@@ -7,6 +7,32 @@ import type { CharacterEmotion, RoomId } from "../game/types";
 
 const STAGE_CHARACTER = CHARACTER_BY_ID[STAGE_CHARACTER_ID];
 const CHARACTER_BY_EMOTION: Record<CharacterEmotion, string> = STAGE_CHARACTER.emotions;
+const MAP_BACKGROUND_SRC = "/game-assets/map_bg.jpg";
+const BACKGROUND_BY_ROOM: Record<RoomId, string> = {
+  bar: "/game-assets/background_bar.jpg",
+  cab: "/game-assets/background_cab.jpg",
+  apartment: "/game-assets/background_apartment.jpg",
+  store: "/game-assets/background_bar.jpg",
+  alley: "/game-assets/background_bar.jpg",
+};
+
+function preloadImage(src: string, cache: Set<string>): Promise<void> {
+  if (cache.has(src)) return Promise.resolve();
+  return new Promise((resolve) => {
+    const image = new Image();
+    let settled = false;
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      cache.add(src);
+      resolve();
+    };
+    image.onload = done;
+    image.onerror = done;
+    image.src = src;
+    if (image.complete) done();
+  });
+}
 
 interface Props {
   emotion: CharacterEmotion;
@@ -16,7 +42,7 @@ interface Props {
   mapOpen: boolean;
   currentRoom: RoomId;
   onMapClose: () => void;
-  onMapSelect: (roomId: RoomId) => void;
+  onMapSelect: (roomId: RoomId, walkMinutes: number) => void;
 }
 
 export function StageView({
@@ -29,28 +55,23 @@ export function StageView({
   onMapClose,
   onMapSelect,
 }: Props) {
-  const hasPreloadedOtherSprite = useRef(false);
-  const hasPreloadedOtherBackgrounds = useRef(false);
-  const preloadedBackgrounds = useRef<Set<string>>(new Set());
+  const loadedImagesRef = useRef<Set<string>>(new Set());
+  const initialRoomRef = useRef<RoomId>(currentRoom);
   const hitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hitContextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [displayedRoom, setDisplayedRoom] = useState<RoomId>(currentRoom);
   const [fadePhase, setFadePhase] = useState<"idle" | "fadeOut" | "fadeIn">("idle");
-  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
-  const [firstSpriteLoaded, setFirstSpriteLoaded] = useState(false);
+  const [initialAssetsReady, setInitialAssetsReady] = useState(false);
+  const [activeBackgroundReady, setActiveBackgroundReady] = useState(false);
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const showStageCharacter = displayedRoom !== "cab" && displayedRoom !== "apartment";
-  const backgroundByRoom: Record<RoomId, string> = {
-    bar: "/game-assets/background_bar.jpg",
-    cab: "/game-assets/background_cab.jpg",
-    apartment: "/game-assets/background_apartment.jpg",
-    store: "/game-assets/background_bar.jpg",
-    alley: "/game-assets/background_bar.jpg",
-  };
-  const backgroundSrc = backgroundByRoom[displayedRoom];
+  const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
+  const initialRoom = initialRoomRef.current;
+  const initialBackgroundSrc = BACKGROUND_BY_ROOM[initialRoom];
+  const defaultSpriteSrc = CHARACTER_BY_EMOTION[STAGE_CHARACTER.defaultEmotion];
   const stageLoading = useMemo(
-    () => !(backgroundLoaded && (showStageCharacter ? firstSpriteLoaded : true)),
-    [backgroundLoaded, firstSpriteLoaded, showStageCharacter]
+    () => !activeBackgroundReady || (displayedRoom === initialRoom && !initialAssetsReady),
+    [activeBackgroundReady, displayedRoom, initialAssetsReady, initialRoom]
   );
 
   useEffect(() => {
@@ -60,7 +81,7 @@ export function StageView({
     setFadePhase("fadeOut");
     const fadeOutTimer = window.setTimeout(() => {
       setDisplayedRoom(currentRoom);
-      setBackgroundLoaded(false);
+      setActiveBackgroundReady(loadedImagesRef.current.has(BACKGROUND_BY_ROOM[currentRoom]));
       setFadePhase("fadeIn");
       fadeInTimer = window.setTimeout(() => {
         setFadePhase("idle");
@@ -74,19 +95,60 @@ export function StageView({
   }, [currentRoom, displayedRoom]);
 
   useEffect(() => {
-    setBackgroundLoaded(preloadedBackgrounds.current.has(backgroundSrc));
+    let cancelled = false;
+    if (loadedImagesRef.current.has(backgroundSrc)) {
+      setActiveBackgroundReady(true);
+      return () => {
+        cancelled = true;
+      };
+    }
+    setActiveBackgroundReady(false);
+    preloadImage(backgroundSrc, loadedImagesRef.current).then(() => {
+      if (!cancelled) setActiveBackgroundReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [backgroundSrc]);
 
   useEffect(() => {
-    if (!showStageCharacter) {
-      setFirstSpriteLoaded(true);
-      setCharacterPixelHover(false);
-      onCharacterLeave();
-    }
-  }, [showStageCharacter, onCharacterLeave]);
+    let cancelled = false;
+    (async () => {
+      // Boot: first scene background + default sprite.
+      await preloadImage(initialBackgroundSrc, loadedImagesRef.current);
+      await preloadImage(defaultSpriteSrc, loadedImagesRef.current);
+      if (cancelled) return;
+      setInitialAssetsReady(true);
+
+      // Then load remaining character variants.
+      const remainingSprites = Object.values(CHARACTER_BY_EMOTION).filter((src) => src !== defaultSpriteSrc);
+      for (const spriteSrc of remainingSprites) {
+        await preloadImage(spriteSrc, loadedImagesRef.current);
+        if (cancelled) return;
+      }
+
+      // Then map background.
+      await preloadImage(MAP_BACKGROUND_SRC, loadedImagesRef.current);
+      if (cancelled) return;
+
+      // Then all other scene backgrounds in parallel.
+      const otherBackgrounds = Array.from(new Set(Object.values(BACKGROUND_BY_ROOM))).filter(
+        (src) => src !== initialBackgroundSrc
+      );
+      await Promise.all(otherBackgrounds.map((src) => preloadImage(src, loadedImagesRef.current)));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [defaultSpriteSrc, initialBackgroundSrc]);
+
+  useEffect(() => {
+    if (showStageCharacter) return;
+    setCharacterPixelHover(false);
+    onCharacterLeave();
+  }, [onCharacterLeave, showStageCharacter]);
 
   const handleActiveSpriteLoad = (event: SyntheticEvent<HTMLImageElement>) => {
-    setFirstSpriteLoaded(true);
     const image = event.currentTarget;
     const width = image.naturalWidth;
     const height = image.naturalHeight;
@@ -102,31 +164,7 @@ export function StageView({
         hitContextRef.current = ctx;
       }
     }
-
-    if (hasPreloadedOtherSprite.current) return;
-    hasPreloadedOtherSprite.current = true;
-
-    const activeSrc = CHARACTER_BY_EMOTION[emotion];
-    const alternateSrc = Object.values(CHARACTER_BY_EMOTION).find((src) => src !== activeSrc);
-    if (!alternateSrc) return;
-
-    const preloadImage = new Image();
-    preloadImage.src = alternateSrc;
   };
-
-  useEffect(() => {
-    if (!(backgroundLoaded && firstSpriteLoaded)) return;
-    if (hasPreloadedOtherBackgrounds.current) return;
-    hasPreloadedOtherBackgrounds.current = true;
-
-    const uniqueBackgrounds = Array.from(new Set(Object.values(backgroundByRoom))).filter((src) => src !== backgroundSrc);
-    uniqueBackgrounds.forEach((src) => {
-      const image = new Image();
-      image.onload = () => preloadedBackgrounds.current.add(src);
-      image.onerror = () => preloadedBackgrounds.current.add(src);
-      image.src = src;
-    });
-  }, [backgroundLoaded, firstSpriteLoaded, backgroundByRoom, backgroundSrc]);
 
   const setPixelHover = (value: boolean) => {
     setCharacterPixelHover((prev) => {
@@ -181,12 +219,12 @@ export function StageView({
         src={backgroundSrc}
         alt="Night city scene"
         onLoad={() => {
-          preloadedBackgrounds.current.add(backgroundSrc);
-          setBackgroundLoaded(true);
+          loadedImagesRef.current.add(backgroundSrc);
+          setActiveBackgroundReady(true);
         }}
         onError={() => {
-          preloadedBackgrounds.current.add(backgroundSrc);
-          setBackgroundLoaded(true);
+          loadedImagesRef.current.add(backgroundSrc);
+          setActiveBackgroundReady(true);
         }}
       />
       <div className="stage-overlay" />
@@ -221,7 +259,6 @@ export function StageView({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0.05 }}
                 onLoad={handleActiveSpriteLoad}
-                onError={() => setFirstSpriteLoaded(true)}
                 transition={{ duration: 0.28, ease: "easeOut" }}
               />
             </AnimatePresence>
