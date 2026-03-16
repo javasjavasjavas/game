@@ -69,9 +69,14 @@ export function StageView({
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const stageCharacterId = STAGE_CHARACTER_BY_ROOM[displayedRoom] ?? null;
   const stageCharacter = stageCharacterId ? CHARACTER_BY_ID[stageCharacterId] : null;
-  const activeCharacterEmotion: CharacterEmotion =
-    stageCharacterId === "bigboss" ? emotion : stageCharacter?.defaultEmotion ?? "serious";
-  const activeCharacterSrc = stageCharacter ? stageCharacter.emotions[activeCharacterEmotion] ?? stageCharacter.emotions[stageCharacter.defaultEmotion] : null;
+  const activeCharacterEmotion: CharacterEmotion = stageCharacter
+    ? stageCharacter.emotions[emotion]
+      ? emotion
+      : stageCharacter.defaultEmotion
+    : "serious";
+  const activeCharacterSrc = stageCharacter
+    ? stageCharacter.emotions[activeCharacterEmotion] ?? stageCharacter.emotions[stageCharacter.defaultEmotion]
+    : null;
   const showStageCharacter = Boolean(stageCharacter && activeCharacterSrc);
   const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
@@ -315,7 +320,7 @@ export function StageView({
             <AnimatePresence mode="wait">
               <motion.img
                 key={`${stageCharacterId}-${activeCharacterEmotion}`}
-                className="character-image"
+                className={`character-image ${stageCharacterId === "lucy" ? "character-image-lucy" : ""}`.trim()}
                 src={activeCharacterSrc ?? ""}
                 alt={stageCharacter ? `${stageCharacter.name} portrait` : "Character portrait"}
                 initial={{ opacity: 0.1 }}

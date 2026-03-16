@@ -18,7 +18,7 @@ export const CHARACTERS: CharacterDefinition[] = [
     id: "lucy",
     name: "Lucy",
     description:
-      "A sharp-eyed tenant who notices more than she admits and never speaks without purpose.",
+      "A mysterious woman who appears in your apartment, and somehow you cannot remember ever meeting her.",
     defaultEmotion: "serious",
     emotions: {
       serious: "/game-assets/character_lucy_serious.png",
@@ -146,30 +146,30 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
     ],
   },
   lucy: {
-    intro: "\"You look lost. That's dangerous around here.\"",
+    intro: "\"You looked right through me, like we never met. That's interesting.\"",
     options: [
       {
         id: "lucy-who",
-        text: "Who are you?",
-        emotion: "serious",
-        onPick: () => "\"Lucy. I keep records and avoid trouble.\"",
+        text: "Who are you and what are you doing in my apartment??",
+        emotion: "angry",
+        onPick: () => "\"Keep your voice down. I'm Lucy. I came to make sure you were still breathing.\"",
       },
       {
-        id: "lucy-suit",
-        text: "I like your suit",
+        id: "lucy-undressed",
+        text: "Why are you naked?",
         emotion: "happy",
-        onPick: () => "\"Thanks, detective. Someone has to look alive at this hour.\"",
+        onPick: () => "\"Comfort beats fashion tonight. Relax, detective, you're too tense.\"",
       },
       {
-        id: "lucy-rumour",
-        text: "Any new rumour?",
-        emotion: "serious",
+        id: "lucy-alone",
+        text: "I need to be alone.",
+        emotion: "sad",
         onPick: (state) => {
           if (!state.hasClue("witness")) {
             state.addClue("witness");
-            return "\"I saw Big Boss leaving the alley at 21:10. He looked nervous.\"";
+            return "\"Then remember this before I go: Big Boss left the alley at 21:10, and he was shaking.\"";
           }
-          return "\"Only old stories and bad alibis.\"";
+          return "\"Alone won't help if your memory keeps bleeding.\"";
         },
       },
     ],

@@ -618,6 +618,14 @@ button {
   pointer-events: none;
 }
 
+.stage-boot-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: #000;
+  pointer-events: none;
+}
+
 @keyframes stage-spin {
   to {
     transform: rotate(360deg);
@@ -653,6 +661,11 @@ button {
   filter: drop-shadow(0 0 22px rgba(0, 0, 0, 0.95));
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.character-image-lucy {
+  transform: scale(0.7);
+  transform-origin: bottom center;
 }
 
 .sidebar-money-value {
