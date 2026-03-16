@@ -1,4 +1,4 @@
-export type RoomId = "bar" | "cab" | "apartment" | "store" | "alley";
+export type RoomId = "bar" | "cab" | "apartment" | "store" | "alley" | "pharmacy" | "arcade";
 
 export interface Room {
   id: RoomId;
