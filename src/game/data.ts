@@ -44,7 +44,7 @@ export const ROOMS: Record<RoomId, Room> = {
     id: "bar",
     name: "The Bar",
     description: "Neon lights, old jazz, and whispers nobody repeats twice.",
-    exits: ["cab", "apartment", "store", "alley"],
+    exits: ["cab", "apartment", "store", "alley", "pharmacy", "arcade"],
   },
   cab: {
     id: "cab",
@@ -56,23 +56,35 @@ export const ROOMS: Record<RoomId, Room> = {
     id: "apartment",
     name: "Apartment",
     description: "A narrow hallway, broken intercom, and sleepless windows.",
-    exits: ["bar", "cab", "alley"],
+    exits: ["bar", "cab", "alley", "pharmacy", "arcade"],
   },
   store: {
     id: "store",
     name: "Store",
     description: "Half-closed shutters, humming fridges, and nervous eyes behind glass.",
-    exits: ["bar", "alley"],
+    exits: ["bar", "alley", "pharmacy", "arcade"],
   },
   alley: {
     id: "alley",
     name: "Alley",
     description: "Wet concrete, flickering signs, and footsteps that stop when you turn.",
-    exits: ["bar", "apartment", "store"],
+    exits: ["bar", "apartment", "store", "pharmacy", "arcade"],
+  },
+  pharmacy: {
+    id: "pharmacy",
+    name: "Pharmacy",
+    description: "Cold fluorescent aisles, late-shift silence, and receipts no one keeps.",
+    exits: ["bar", "apartment", "store", "alley", "arcade"],
+  },
+  arcade: {
+    id: "arcade",
+    name: "Arcade Room",
+    description: "Flickering cabinets, token clinks, and static from forgotten high scores.",
+    exits: ["bar", "apartment", "store", "alley", "pharmacy"],
   },
 };
 
-export const ROOM_ORDER: RoomId[] = ["bar", "cab", "apartment", "store", "alley"];
+export const ROOM_ORDER: RoomId[] = ["bar", "cab", "apartment", "store", "alley", "pharmacy", "arcade"];
 
 export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
   bar: { x: 48, y: 48 },
@@ -80,6 +92,8 @@ export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
   apartment: { x: 22, y: 24 },
   store: { x: 78, y: 26 },
   alley: { x: 52, y: 78 },
+  pharmacy: { x: 84, y: 72 },
+  arcade: { x: 14, y: 66 },
 };
 
 export const NPCS: Npc[] = [
