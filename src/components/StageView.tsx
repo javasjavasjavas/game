@@ -1,12 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent, SyntheticEvent } from "react";
-import { CHARACTER_BY_ID, STAGE_CHARACTER_ID } from "../game/data";
+import { CHARACTER_BY_ID, CHARACTERS, STAGE_CHARACTER_BY_ROOM } from "../game/data";
 import { MapOverlay } from "./MapOverlay";
 import type { CharacterEmotion, RoomId } from "../game/types";
 
-const STAGE_CHARACTER = CHARACTER_BY_ID[STAGE_CHARACTER_ID];
-const CHARACTER_BY_EMOTION: Record<CharacterEmotion, string> = STAGE_CHARACTER.emotions;
+const ALL_CHARACTER_SPRITES = CHARACTERS.flatMap((character) => Object.values(character.emotions));
 const MAP_BACKGROUND_SRC = "/game-assets/map_bg.jpg";
 const BACKGROUND_BY_ROOM: Record<RoomId, string> = {
   bar: "/game-assets/background_bar.jpg",
@@ -57,15 +56,23 @@ export function StageView({
 }: Props) {
   const loadedImagesRef = useRef<Set<string>>(new Set());
   const wasMapOpenRef = useRef(mapOpen);
+  const hasPlayedBootIntroRef = useRef(false);
   const hitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hitContextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [displayedRoom, setDisplayedRoom] = useState<RoomId>(currentRoom);
   const [fadePhase, setFadePhase] = useState<"idle" | "fadeOut" | "fadeIn">("idle");
   const [bootLoading, setBootLoading] = useState(true);
   const [bootProgress, setBootProgress] = useState(0);
+  const [playBootSceneFade, setPlayBootSceneFade] = useState(false);
+  const [holdCharacterIntro, setHoldCharacterIntro] = useState(false);
   const [activeBackgroundReady, setActiveBackgroundReady] = useState(false);
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
-  const showStageCharacter = displayedRoom !== "cab" && displayedRoom !== "apartment";
+  const stageCharacterId = STAGE_CHARACTER_BY_ROOM[displayedRoom] ?? null;
+  const stageCharacter = stageCharacterId ? CHARACTER_BY_ID[stageCharacterId] : null;
+  const activeCharacterEmotion: CharacterEmotion =
+    stageCharacterId === "bigboss" ? emotion : stageCharacter?.defaultEmotion ?? "serious";
+  const activeCharacterSrc = stageCharacter ? stageCharacter.emotions[activeCharacterEmotion] ?? stageCharacter.emotions[stageCharacter.defaultEmotion] : null;
+  const showStageCharacter = Boolean(stageCharacter && activeCharacterSrc);
   const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
   const loadingLabel = bootLoading ? "Loading Game" : "Loading Scene";
@@ -132,7 +139,7 @@ export function StageView({
         new Set([
           ...Object.values(BACKGROUND_BY_ROOM),
           MAP_BACKGROUND_SRC,
-          ...Object.values(CHARACTER_BY_EMOTION),
+          ...ALL_CHARACTER_SPRITES,
         ])
       );
       let loadedCount = 0;
@@ -177,6 +184,17 @@ export function StageView({
   useEffect(() => {
     wasMapOpenRef.current = mapOpen;
   }, [mapOpen]);
+
+  useEffect(() => {
+    if (bootLoading || hasPlayedBootIntroRef.current) return;
+    hasPlayedBootIntroRef.current = true;
+    setPlayBootSceneFade(true);
+    setHoldCharacterIntro(true);
+    const timer = window.setTimeout(() => {
+      setHoldCharacterIntro(false);
+    }, 1000);
+    return () => window.clearTimeout(timer);
+  }, [bootLoading]);
 
   useEffect(() => {
     if (showStageCharacter) return;
@@ -285,7 +303,7 @@ export function StageView({
         transition={{ duration: 0.23, ease: "easeInOut" }}
       />
 
-      {showStageCharacter && (
+      {showStageCharacter && !holdCharacterIntro && (
         <div className="character-wrap">
           <button
             className="character-hitbox"
@@ -296,10 +314,10 @@ export function StageView({
           >
             <AnimatePresence mode="wait">
               <motion.img
-                key={emotion}
+                key={`${stageCharacterId}-${activeCharacterEmotion}`}
                 className="character-image"
-                src={CHARACTER_BY_EMOTION[emotion]}
-                alt="Main character portrait"
+                src={activeCharacterSrc ?? ""}
+                alt={stageCharacter ? `${stageCharacter.name} portrait` : "Character portrait"}
                 initial={{ opacity: 0.1 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0.05 }}
@@ -309,6 +327,16 @@ export function StageView({
             </AnimatePresence>
           </button>
         </div>
+      )}
+
+      {playBootSceneFade && (
+        <motion.div
+          className="stage-boot-fade"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 0.85, ease: "easeOut" }}
+          onAnimationComplete={() => setPlayBootSceneFade(false)}
+        />
       )}
 
       <MapOverlay open={mapOpen} currentRoom={currentRoom} onClose={onMapClose} onSelectRoom={onMapSelect} />

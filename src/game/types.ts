@@ -19,7 +19,7 @@ export interface Npc {
   schedule: NpcScheduleSlot[];
 }
 
-export type CharacterEmotion = "serious" | "happy";
+export type CharacterEmotion = "serious" | "happy" | "sad" | "angry";
 
 export interface CharacterDefinition {
   id: string;

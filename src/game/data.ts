@@ -10,6 +10,21 @@ export const CHARACTERS: CharacterDefinition[] = [
     emotions: {
       serious: "/game-assets/character_big_boss_serious.png",
       happy: "/game-assets/character_big_boss_happy.png",
+      sad: "/game-assets/character_big_boss_serious.png",
+      angry: "/game-assets/character_big_boss_serious.png",
+    },
+  },
+  {
+    id: "lucy",
+    name: "Lucy",
+    description:
+      "A sharp-eyed tenant who notices more than she admits and never speaks without purpose.",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: "/game-assets/character_lucy_serious.png",
+      happy: "/game-assets/character_lucy_happy.png",
+      sad: "/game-assets/character_lucy_sad.png",
+      angry: "/game-assets/character_lucy_angry.png",
     },
   },
 ];
@@ -19,6 +34,10 @@ export const CHARACTER_BY_ID: Record<string, CharacterDefinition> = Object.fromE
 );
 
 export const STAGE_CHARACTER_ID = "bigboss";
+export const STAGE_CHARACTER_BY_ROOM: Partial<Record<RoomId, string>> = {
+  bar: "bigboss",
+  apartment: "lucy",
+};
 
 export const ROOMS: Record<RoomId, Room> = {
   bar: {
@@ -73,8 +92,8 @@ export const NPCS: Npc[] = [
     ],
   },
   {
-    id: "nina",
-    name: "Nina Cole",
+    id: "lucy",
+    name: "Lucy",
     schedule: [
       { from: "20:00", to: "21:00", room: "apartment" },
       { from: "21:00", to: "22:00", room: "bar" },
@@ -93,7 +112,7 @@ export const NPCS: Npc[] = [
 export const CLUES: Record<string, string> = {
   tornJacket: "Torn jacket with neon paint from the alley wall.",
   keyLog: "Store shutter log was edited during the blackout window.",
-  witness: "Nina's statement: Big Boss rushed out of the alley at 21:10.",
+  witness: "Lucy's statement: Big Boss rushed out of the alley at 21:10.",
 };
 
 export const DIALOGUE: Record<string, DialogueEntry> = {
@@ -126,23 +145,23 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
       },
     ],
   },
-  nina: {
+  lucy: {
     intro: "\"You look lost. That's dangerous around here.\"",
     options: [
       {
-        id: "nina-who",
+        id: "lucy-who",
         text: "Who are you?",
         emotion: "serious",
-        onPick: () => "\"Nina Cole. I keep records and avoid trouble.\"",
+        onPick: () => "\"Lucy. I keep records and avoid trouble.\"",
       },
       {
-        id: "nina-suit",
+        id: "lucy-suit",
         text: "I like your suit",
         emotion: "happy",
         onPick: () => "\"Thanks, detective. Someone has to look alive at this hour.\"",
       },
       {
-        id: "nina-rumour",
+        id: "lucy-rumour",
         text: "Any new rumour?",
         emotion: "serious",
         onPick: (state) => {
