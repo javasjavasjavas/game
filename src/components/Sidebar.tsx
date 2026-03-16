@@ -1,4 +1,4 @@
-import { Clock3, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 import { NPCS } from "../game/data";
 import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
@@ -109,7 +109,7 @@ export function Sidebar({
       <section className="panel" style={{ marginTop: "auto" }}>
         <h2>Actions</h2>
         <button className="action-btn" onClick={onWait}>
-          <Clock3 size={14} /> Wait 30 minutes
+          <img className="action-icon-image" src="/game-assets/icon_clock.png" alt="Clock" /> Wait 30 minutes
         </button>
         <button className="action-btn" onClick={onTakeCab}>
           <img className="action-icon-image" src="/game-assets/icon_cab.png" alt="Cab" /> {inCab ? "Leave the cab" : "Take a cab"}
