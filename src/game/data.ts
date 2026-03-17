@@ -12,6 +12,7 @@ export const CHARACTERS: CharacterDefinition[] = [
       happy: "/game-assets/character_big_boss_happy.png",
       sad: "/game-assets/character_big_boss_serious.png",
       angry: "/game-assets/character_big_boss_serious.png",
+      suspicious: "/game-assets/character_big_boss_serious.png",
     },
   },
   {
@@ -25,6 +26,21 @@ export const CHARACTERS: CharacterDefinition[] = [
       happy: "/game-assets/character_lucy_happy.png",
       sad: "/game-assets/character_lucy_sad.png",
       angry: "/game-assets/character_lucy_angry.png",
+      suspicious: "/game-assets/character_lucy_serious.png",
+    },
+  },
+  {
+    id: "mysteriouskid",
+    name: "Mysterious Kid",
+    description:
+      "A strange kid in the Arcade Room who reads people too quickly and smiles at the wrong moments.",
+    defaultEmotion: "happy",
+    emotions: {
+      serious: "/game-assets/character_mind_reader_happy.png",
+      happy: "/game-assets/character_mind_reader_happy.png",
+      sad: "/game-assets/character_mind_reader_suspicious.png",
+      angry: "/game-assets/character_mind_reader_amgry.png",
+      suspicious: "/game-assets/character_mind_reader_suspicious.png",
     },
   },
 ];
@@ -37,6 +53,7 @@ export const STAGE_CHARACTER_ID = "bigboss";
 export const STAGE_CHARACTER_BY_ROOM: Partial<Record<RoomId, string>> = {
   bar: "bigboss",
   apartment: "lucy",
+  arcade: "mysteriouskid",
 };
 
 export const ROOMS: Record<RoomId, Room> = {
@@ -119,6 +136,14 @@ export const NPCS: Npc[] = [
     schedule: [
       { from: "20:00", to: "21:00", room: "store" },
       { from: "21:00", to: "22:00", room: "bar" },
+    ],
+  },
+  {
+    id: "mysteriouskid",
+    name: "Mysterious Kid",
+    schedule: [
+      { from: "20:00", to: "21:00", room: "arcade" },
+      { from: "21:00", to: "22:00", room: "arcade" },
     ],
   },
 ];
@@ -214,6 +239,29 @@ export const DIALOGUE: Record<string, DialogueEntry> = {
           }
           return "\"Rumors are cheap, facts are expensive.\"";
         },
+      },
+    ],
+  },
+  mysteriouskid: {
+    intro: "\"You look older than yesterday, detective.\"",
+    options: [
+      {
+        id: "kid-who",
+        text: "Who are you?",
+        emotion: "suspicious",
+        onPick: () => "\"People call me the mind reader. I call myself bored.\"",
+      },
+      {
+        id: "kid-why-here",
+        text: "What are you doing in this arcade?",
+        emotion: "happy",
+        onPick: () => "\"Listening to machine noise. It hides true thoughts.\"",
+      },
+      {
+        id: "kid-stop",
+        text: "Stop playing games with me.",
+        emotion: "angry",
+        onPick: () => "\"Then stop asking questions you fear the answers to.\"",
       },
     ],
   },

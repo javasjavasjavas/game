@@ -199,6 +199,7 @@ export function useGame() {
   const ensureCharacterMemory = (npcId: string) => {
     const npc = NPCS.find((item) => item.id === npcId);
     if (!npc) return;
+    const characterData = CHARACTER_BY_ID[npcId];
 
     setCharacterMemoryByNpc((prev) => {
       if (prev[npcId]) return prev;
@@ -207,8 +208,8 @@ export function useGame() {
         [npcId]: {
           npcId,
           name: npc.name,
-          description: CHARACTER_BY_ID[npcId]?.description ?? `${npc.name} is a person of interest in this district.`,
-          portrait: CHARACTER_BY_ID[npcId]?.emotions.serious ?? "/game-assets/character_big_boss_serious.png",
+          description: characterData?.description ?? `${npc.name} is a person of interest in this district.`,
+          portrait: characterData?.emotions[characterData.defaultEmotion] ?? "/game-assets/character_big_boss_serious.png",
           clues: [],
           hasNewClue: false,
         },
