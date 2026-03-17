@@ -29,6 +29,15 @@ export interface CharacterDefinition {
   emotions: Record<CharacterEmotion, string>;
 }
 
+export interface HotspotDefinition {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface DialogueOption {
   id: string;
   text: string;

@@ -1,4 +1,4 @@
-import type { CharacterDefinition, DialogueEntry, Npc, Room, RoomId } from "./types";
+import type { CharacterDefinition, DialogueEntry, HotspotDefinition, Npc, Room, RoomId } from "./types";
 
 export const CHARACTERS: CharacterDefinition[] = [
   {
@@ -111,6 +111,27 @@ export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
   alley: { x: 52, y: 78 },
   pharmacy: { x: 84, y: 72 },
   arcade: { x: 14, y: 66 },
+};
+
+export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>> = {
+  bar: [
+    {
+      id: "bar-register",
+      label: "Cash Register",
+      x: 1015,
+      y: 615,
+      width: 100,
+      height: 100,
+    },
+    {
+      id: "bar-beer-mug",
+      label: "Beer Mug",
+      x: 1595,
+      y: 770,
+      width: 100,
+      height: 100,
+    },
+  ],
 };
 
 export const NPCS: Npc[] = [

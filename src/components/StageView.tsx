@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent, SyntheticEvent } from "react";
-import { CHARACTER_BY_ID, CHARACTERS, STAGE_CHARACTER_BY_ROOM } from "../game/data";
+import { CHARACTER_BY_ID, CHARACTERS, STAGE_CHARACTER_BY_ROOM, STAGE_HOTSPOTS_BY_ROOM } from "../game/data";
 import { MapOverlay } from "./MapOverlay";
 import type { CharacterEmotion, RoomId } from "../game/types";
 
@@ -57,8 +57,8 @@ export function StageView({
   onMapSelect,
 }: Props) {
   const loadedImagesRef = useRef<Set<string>>(new Set());
+  const stageRef = useRef<HTMLElement | null>(null);
   const wasMapOpenRef = useRef(mapOpen);
-  const hasPlayedBootIntroRef = useRef(false);
   const hitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hitContextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [displayedRoom, setDisplayedRoom] = useState<RoomId>(currentRoom);
@@ -68,6 +68,8 @@ export function StageView({
   const [playBootSceneFade, setPlayBootSceneFade] = useState(false);
   const [holdCharacterIntro, setHoldCharacterIntro] = useState(false);
   const [activeBackgroundReady, setActiveBackgroundReady] = useState(false);
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const [backgroundNaturalSize, setBackgroundNaturalSize] = useState({ width: 0, height: 0 });
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const stageCharacterId = STAGE_CHARACTER_BY_ROOM[displayedRoom] ?? null;
   const stageCharacter = stageCharacterId ? CHARACTER_BY_ID[stageCharacterId] : null;
@@ -81,9 +83,53 @@ export function StageView({
     : null;
   const showStageCharacter = Boolean(stageCharacter && activeCharacterSrc);
   const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
+  const roomHotspots = STAGE_HOTSPOTS_BY_ROOM[displayedRoom] ?? [];
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
   const loadingLabel = bootLoading ? "Loading Game" : "Loading Scene";
   const bootSegments = 14;
+  const renderedHotspots = useMemo(() => {
+    if (
+      roomHotspots.length === 0 ||
+      stageSize.width <= 0 ||
+      stageSize.height <= 0 ||
+      backgroundNaturalSize.width <= 0 ||
+      backgroundNaturalSize.height <= 0
+    ) {
+      return [];
+    }
+
+    const scale = Math.max(
+      stageSize.width / backgroundNaturalSize.width,
+      stageSize.height / backgroundNaturalSize.height
+    );
+    const renderedWidth = backgroundNaturalSize.width * scale;
+    const renderedHeight = backgroundNaturalSize.height * scale;
+    const offsetX = (stageSize.width - renderedWidth) / 2;
+    const offsetY = (stageSize.height - renderedHeight) / 2;
+
+    return roomHotspots.map((hotspot) => ({
+      ...hotspot,
+      left: offsetX + hotspot.x * scale,
+      top: offsetY + hotspot.y * scale,
+      widthPx: hotspot.width * scale,
+      heightPx: hotspot.height * scale,
+    }));
+  }, [backgroundNaturalSize.height, backgroundNaturalSize.width, roomHotspots, stageSize.height, stageSize.width]);
+
+  useEffect(() => {
+    const element = stageRef.current;
+    if (!element) return;
+
+    const updateSize = () => {
+      const rect = element.getBoundingClientRect();
+      setStageSize({ width: rect.width, height: rect.height });
+    };
+
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (currentRoom === displayedRoom) return;
@@ -193,15 +239,26 @@ export function StageView({
   }, [mapOpen]);
 
   useEffect(() => {
-    if (bootLoading || hasPlayedBootIntroRef.current) return;
-    hasPlayedBootIntroRef.current = true;
-    setPlayBootSceneFade(true);
-    setHoldCharacterIntro(true);
+    if (!bootLoading) {
+      setPlayBootSceneFade(true);
+    }
+  }, [bootLoading]);
+
+  useEffect(() => {
+    setHoldCharacterIntro(showStageCharacter);
+  }, [displayedRoom, showStageCharacter]);
+
+  useEffect(() => {
+    if (!showStageCharacter) {
+      setHoldCharacterIntro(false);
+      return;
+    }
+    if (!activeBackgroundReady) return;
     const timer = window.setTimeout(() => {
       setHoldCharacterIntro(false);
     }, 1000);
     return () => window.clearTimeout(timer);
-  }, [bootLoading]);
+  }, [activeBackgroundReady, displayedRoom, showStageCharacter]);
 
   useEffect(() => {
     if (showStageCharacter) return;
@@ -273,22 +330,46 @@ export function StageView({
     onCharacterClick();
   };
 
+  const handleBackgroundLoad = (event: SyntheticEvent<HTMLImageElement>) => {
+    const image = event.currentTarget;
+    loadedImagesRef.current.add(backgroundSrc);
+    setBackgroundNaturalSize({
+      width: image.naturalWidth,
+      height: image.naturalHeight,
+    });
+    setActiveBackgroundReady(true);
+  };
+
   return (
-    <section className="stage scanlines">
+    <section className="stage scanlines" ref={stageRef}>
       <img
         className="scene-image"
         src={backgroundSrc}
         alt="Night city scene"
-        onLoad={() => {
-          loadedImagesRef.current.add(backgroundSrc);
-          setActiveBackgroundReady(true);
-        }}
+        onLoad={handleBackgroundLoad}
         onError={() => {
           loadedImagesRef.current.add(backgroundSrc);
           setActiveBackgroundReady(true);
         }}
       />
       <div className="stage-overlay" />
+      {renderedHotspots.length > 0 && (
+        <div className="hotspot-layer" aria-hidden>
+          {renderedHotspots.map((hotspot) => (
+            <div
+              key={hotspot.id}
+              className="stage-hotspot-debug"
+              style={{
+                left: `${hotspot.left}px`,
+                top: `${hotspot.top}px`,
+                width: `${hotspot.widthPx}px`,
+                height: `${hotspot.heightPx}px`,
+              }}
+              title={hotspot.label}
+            />
+          ))}
+        </div>
+      )}
       {stageLoading && (
         <div className="stage-loading">
           <div className="stage-loading-inner">
