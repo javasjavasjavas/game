@@ -101,8 +101,16 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
           </motion.div>
 
           <div className="map-canvas">
-            <div className="map-frame" ref={frameRef}>
-              <img className="map-bg-image" src={MAP_BG} alt="City Map" />
+            <div
+              className="map-frame"
+              ref={frameRef}
+              style={{
+                backgroundImage: `url(${MAP_BG})`,
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+              }}
+            >
               <div className="map-bg-dark" />
               <div className="map-vignette" />
 
