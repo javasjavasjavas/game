@@ -186,6 +186,48 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
         "The dark space beneath the table is packed with shadow. Dust is broken in one corner, like something was dragged or hastily shoved underneath.",
     },
   ],
+  apartment: [
+    {
+      id: "apartment-jacket-pocket",
+      label: "Jacket on Chair",
+      x: 470,
+      y: 640,
+      width: 560,
+      height: 820,
+      inspectText:
+        "A jacket hangs over the chair back, one sleeve nearly touching the floor. The inside pocket looks heavy, like it is hiding paper or a small metal object.",
+    },
+    {
+      id: "apartment-videogame-screen",
+      label: "Videogame Screen",
+      x: 960,
+      y: 300,
+      width: 500,
+      height: 330,
+      inspectText:
+        "The game screen is frozen mid-scene. Someone left it running, but the image glows like the machine was abandoned in a hurry.",
+    },
+    {
+      id: "apartment-computer-screen",
+      label: "Computer Screen",
+      x: 1710,
+      y: 280,
+      width: 510,
+      height: 320,
+      inspectText:
+        "The computer monitor throws a cold light across the room. A window is open on the desktop, but from here you can only make out blurred blocks of text.",
+    },
+    {
+      id: "apartment-window-city",
+      label: "Window and City",
+      x: 2340,
+      y: 120,
+      width: 700,
+      height: 900,
+      inspectText:
+        "Beyond the glass, the city is all neon haze and distant sirens. The skyline feels close enough to touch, but the room still feels sealed off.",
+    },
+  ],
 };
 
 export const NPCS: Npc[] = [
