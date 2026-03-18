@@ -33,7 +33,6 @@ const MAP_LOCATIONS: MapLocation[] = [
   { roomId: "arcade", x: 14, y: 66, distance: "1.0 km", walkTime: "12 min", walkMinutes: 12 },
   { roomId: "garage", x: 70, y: 88, distance: "2.6 km", walkTime: "30 min", walkMinutes: 30 },
   { roomId: "restooutside", x: 82, y: 40, distance: "1.7 km", walkTime: "20 min", walkMinutes: 20 },
-  { roomId: "restoinside", x: 90, y: 24, distance: "1.9 km", walkTime: "23 min", walkMinutes: 23 },
   { roomId: "street", x: 56, y: 42, distance: "0.6 km", walkTime: "7 min", walkMinutes: 7 },
 ];
 
