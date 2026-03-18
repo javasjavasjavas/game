@@ -456,6 +456,7 @@ export function StageView({
             className="character-hitbox"
             title="Talk"
             style={characterHitboxStyle}
+            onMouseEnter={handleCharacterPointerMove}
             onMouseMove={handleCharacterPointerMove}
             onMouseLeave={handleCharacterMouseLeave}
             onClick={handleCharacterClick}

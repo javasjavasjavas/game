@@ -660,6 +660,7 @@ button {
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  pointer-events: none;
 }
 
 .character-hitbox {
@@ -669,6 +670,7 @@ button {
   cursor: none;
   padding: 0;
   z-index: 14;
+  pointer-events: auto;
 }
 
 .character-image {
@@ -679,6 +681,7 @@ button {
   filter: drop-shadow(0 0 22px rgba(0, 0, 0, 0.95));
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  pointer-events: none;
 }
 
 .character-image-lucy {
