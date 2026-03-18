@@ -1440,6 +1440,13 @@ button {
   justify-content: center;
 }
 
+.cursor-tag-icon-image {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+}
+
 @media (max-width: 1080px) {
   .conversation-layout {
     grid-template-columns: 1fr;

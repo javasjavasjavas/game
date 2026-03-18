@@ -1,4 +1,4 @@
-import { Coffee, Eye, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
+import { Coffee, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEventHandler } from "react";
 import { ConversationPanel } from "./components/panels/ConversationPanel";
@@ -39,7 +39,7 @@ export default function App() {
     game.cursorMode === "talk" ? (
       <MessageSquareText size={26} />
     ) : game.cursorMode === "inspect" ? (
-      <Eye size={26} />
+      <img className="cursor-tag-icon-image" src="/game-assets/icon_eye.png" alt="Inspect" />
     ) : game.selectedItem?.image ? (
       <img className="cursor-item-image" src={game.selectedItem.image} alt={game.selectedItem.label} />
     ) : game.selectedInventoryId === "key" ? (
