@@ -185,6 +185,44 @@ export function StageView({
   }, [showStageCharacter]);
 
   useEffect(() => {
+    if (!activeCharacterSrc) {
+      setCharacterNaturalSize({ width: 0, height: 0 });
+      hitCanvasRef.current = null;
+      hitContextRef.current = null;
+      return;
+    }
+
+    let cancelled = false;
+    const image = new Image();
+    image.onload = () => {
+      if (cancelled) return;
+      const width = image.naturalWidth;
+      const height = image.naturalHeight;
+      if (width <= 0 || height <= 0) return;
+
+      setCharacterNaturalSize({ width, height });
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (ctx) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(image, 0, 0);
+        hitCanvasRef.current = canvas;
+        hitContextRef.current = ctx;
+      }
+    };
+    image.src = activeCharacterSrc;
+    if (image.complete) {
+      image.onload?.(new Event("load") as unknown as Event);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeCharacterSrc]);
+
+  useEffect(() => {
     if (currentRoom === displayedRoom) return;
     const targetBackgroundSrc = BACKGROUND_BY_ROOM[currentRoom];
     const changedFromMap = mapOpen || wasMapOpenRef.current;
@@ -319,25 +357,6 @@ export function StageView({
     onCharacterLeave();
   }, [onCharacterLeave, showStageCharacter]);
 
-  const handleActiveSpriteLoad = (event: SyntheticEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-    const width = image.naturalWidth;
-    const height = image.naturalHeight;
-    if (width > 0 && height > 0) {
-      setCharacterNaturalSize({ width, height });
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d", { willReadFrequently: true });
-      if (ctx) {
-        ctx.clearRect(0, 0, width, height);
-        ctx.drawImage(image, 0, 0);
-        hitCanvasRef.current = canvas;
-        hitContextRef.current = ctx;
-      }
-    }
-  };
-
   const setPixelHover = (value: boolean) => {
     setCharacterPixelHover((prev) => {
       if (prev === value) return prev;
@@ -470,7 +489,6 @@ export function StageView({
               initial={{ opacity: 0.1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0.05 }}
-              onLoad={handleActiveSpriteLoad}
               transition={{ duration: 0.28, ease: "easeOut" }}
             />
           </AnimatePresence>
