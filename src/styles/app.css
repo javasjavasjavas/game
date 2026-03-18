@@ -571,9 +571,13 @@ button {
 
 .stage-hotspot-debug {
   position: absolute;
+  padding: 0;
+  margin: 0;
   border: 2px solid rgba(255, 38, 38, 0.95);
   background: rgba(255, 38, 38, 0.14);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  pointer-events: auto;
+  cursor: none;
 }
 
 .stage-loading {

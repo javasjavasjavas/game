@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
-import { CHARACTER_BY_ID, CLUES, INVENTORY_ITEMS, NPCS, ROOMS } from "../game/data";
+import { CHARACTER_BY_ID, CLUES, INVENTORY_ITEMS, NPCS, ROOMS, STAGE_HOTSPOTS_BY_ROOM } from "../game/data";
 import { formatTime, GameState } from "../game/state";
-import type { RoomId } from "../game/types";
+import type { HotspotDefinition, RoomId } from "../game/types";
 
-export type CursorMode = "none" | "talk" | "use";
+export type CursorMode = "none" | "talk" | "use" | "inspect";
 
 export interface CharacterMemory {
   npcId: string;
@@ -22,11 +22,13 @@ export function useGame() {
   const [mapOpen, setMapOpen] = useState(false);
   const [selectedInventoryId, setSelectedInventoryId] = useState<string | null>(null);
   const [hoverCharacter, setHoverCharacter] = useState(false);
+  const [hoverHotspot, setHoverHotspot] = useState(false);
   const [moneyDetailsOpen, setMoneyDetailsOpen] = useState(false);
   const [characterMemoryByNpc, setCharacterMemoryByNpc] = useState<Record<string, CharacterMemory>>({});
   const [expandedCharacterMemoryId, setExpandedCharacterMemoryId] = useState<string | null>(null);
   const [conversationHasClue, setConversationHasClue] = useState(false);
   const [roomBeforeCab, setRoomBeforeCab] = useState<RoomId>("bar");
+  const [inspectedHotspotId, setInspectedHotspotId] = useState<string | null>(null);
 
   const room = ROOMS[game.currentRoom];
   const clues = game.getClueEntries();
@@ -42,8 +44,19 @@ export function useGame() {
   const selectedItem = INVENTORY_ITEMS.find((item) => item.id === selectedInventoryId) ?? null;
   const characterMemories = useMemo(() => Object.values(characterMemoryByNpc), [characterMemoryByNpc]);
   const expandedCharacterMemory = expandedCharacterMemoryId ? characterMemoryByNpc[expandedCharacterMemoryId] ?? null : null;
+  const inspectedHotspot: HotspotDefinition | null = useMemo(() => {
+    if (!inspectedHotspotId) return null;
+    const hotspots = STAGE_HOTSPOTS_BY_ROOM[game.currentRoom] ?? [];
+    return hotspots.find((hotspot) => hotspot.id === inspectedHotspotId) ?? null;
+  }, [game.currentRoom, inspectedHotspotId]);
 
-  const cursorMode: CursorMode = selectedInventoryId ? "use" : hoverCharacter && !game.finished ? "talk" : "none";
+  const cursorMode: CursorMode = selectedInventoryId
+    ? "use"
+    : hoverCharacter && !game.finished
+      ? "talk"
+      : hoverHotspot && !game.finished
+        ? "inspect"
+        : "none";
 
   const mutate = (fn: (draft: GameState) => void) => {
     setGame((prev) => {
@@ -62,6 +75,8 @@ export function useGame() {
     });
     setCurrentTalkNpcId(null);
     setInspectOpen(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
   };
 
   const wait = () => {
@@ -72,6 +87,8 @@ export function useGame() {
     });
     setCurrentTalkNpcId(null);
     setInspectOpen(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
   };
 
   const talkToNpc = (npcId: string) => {
@@ -81,6 +98,7 @@ export function useGame() {
     setConversationHasClue(false);
     ensureCharacterMemory(npcId);
     setInspectOpen(false);
+    setInspectedHotspotId(null);
     setCurrentTalkNpcId(npcId);
     const dialogue = game.getDialogue(npcId);
     setConversationText(dialogue?.intro || "They do not seem willing to talk.");
@@ -98,6 +116,7 @@ export function useGame() {
       return;
     }
     setInspectOpen(false);
+    setInspectedHotspotId(null);
     setCurrentTalkNpcId("selector");
     setConversationText("Who do you want to talk to?");
   };
@@ -159,6 +178,27 @@ export function useGame() {
     setSelectedInventoryId(null);
   };
 
+  const openRoomInspect = () => {
+    setCurrentTalkNpcId(null);
+    setConversationText("");
+    setConversationHasClue(false);
+    setInspectedHotspotId(null);
+    setInspectOpen(true);
+  };
+
+  const openHotspotInspect = (hotspotId: string) => {
+    setCurrentTalkNpcId(null);
+    setConversationText("");
+    setConversationHasClue(false);
+    setInspectOpen(false);
+    setInspectedHotspotId(hotspotId);
+  };
+
+  const closeInspect = () => {
+    setInspectOpen(false);
+    setInspectedHotspotId(null);
+  };
+
   const takeCab = () => {
     const fare = 18;
     if (game.finished) return;
@@ -181,6 +221,8 @@ export function useGame() {
     setCurrentTalkNpcId(null);
     setInspectOpen(false);
     setConversationHasClue(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
   };
 
   const leaveCab = () => {
@@ -194,6 +236,8 @@ export function useGame() {
     setCurrentTalkNpcId(null);
     setInspectOpen(false);
     setConversationHasClue(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
   };
 
   const ensureCharacterMemory = (npcId: string) => {
@@ -249,6 +293,7 @@ export function useGame() {
     setMapOpen,
     setInspectOpen,
     setHoverCharacter,
+    setHoverHotspot,
     toggleMoneyDetails: () => setMoneyDetailsOpen((prev) => !prev),
     moveRoom,
     wait,
@@ -262,11 +307,15 @@ export function useGame() {
     leaveCab,
     toggleInventoryItem,
     clearInventorySelection,
+    openRoomInspect,
+    openHotspotInspect,
+    closeInspect,
     characterMemories,
     expandedCharacterMemory,
     toggleCharacterMemory,
     conversationHasClue,
     moneyExpenses: game.expenses,
     formattedTime: formatTime(game.timeMinutes),
+    inspectedHotspot,
   };
 }

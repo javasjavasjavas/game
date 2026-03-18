@@ -2,11 +2,12 @@ import { AnimatePresence, motion } from "framer-motion";
 
 interface Props {
   open: boolean;
+  title?: string;
   text: string;
   onClose: () => void;
 }
 
-export function InspectPanel({ open, text, onClose }: Props) {
+export function InspectPanel({ open, title = "Inspection", text, onClose }: Props) {
   return (
     <AnimatePresence>
       {open && (
@@ -20,7 +21,7 @@ export function InspectPanel({ open, text, onClose }: Props) {
           <button className="detail-close" onClick={onClose}>
             <img className="detail-close-icon" src="/game-assets/icon_cross.png" alt="Close" />
           </button>
-          <h3 className="detail-title">Inspection</h3>
+          <h3 className="detail-title">{title}</h3>
           <p className="detail-text">{text}</p>
         </motion.div>
       )}

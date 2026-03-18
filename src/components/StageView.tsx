@@ -44,6 +44,9 @@ interface Props {
   onCharacterClick: () => void;
   onCharacterEnter: () => void;
   onCharacterLeave: () => void;
+  onHotspotClick: (hotspotId: string) => void;
+  onHotspotEnter: () => void;
+  onHotspotLeave: () => void;
   mapOpen: boolean;
   currentRoom: RoomId;
   onMapClose: () => void;
@@ -55,6 +58,9 @@ export function StageView({
   onCharacterClick,
   onCharacterEnter,
   onCharacterLeave,
+  onHotspotClick,
+  onHotspotEnter,
+  onHotspotLeave,
   mapOpen,
   currentRoom,
   onMapClose,
@@ -358,10 +364,11 @@ export function StageView({
       />
       <div className="stage-overlay" />
       {renderedHotspots.length > 0 && (
-        <div className="hotspot-layer" aria-hidden>
+        <div className="hotspot-layer">
           {renderedHotspots.map((hotspot) => (
-            <div
+            <button
               key={hotspot.id}
+              type="button"
               className="stage-hotspot-debug"
               style={{
                 left: `${hotspot.left}px`,
@@ -369,7 +376,11 @@ export function StageView({
                 width: `${hotspot.widthPx}px`,
                 height: `${hotspot.heightPx}px`,
               }}
+              aria-label={`Inspect ${hotspot.label}`}
               title={hotspot.label}
+              onMouseEnter={onHotspotEnter}
+              onMouseLeave={onHotspotLeave}
+              onClick={() => onHotspotClick(hotspot.id)}
             />
           ))}
         </div>

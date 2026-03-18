@@ -1,4 +1,4 @@
-import { Coffee, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
+import { Coffee, Eye, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEventHandler } from "react";
 import { ConversationPanel } from "./components/panels/ConversationPanel";
@@ -22,17 +22,24 @@ export default function App() {
   const game = useGame();
 
   const inspectText = useMemo(() => {
+    if (game.inspectedHotspot) {
+      return game.inspectedHotspot.inspectText;
+    }
     const exitNames = game.room.exits.map((id) => ROOMS[id].name).join(", ");
     return `${game.room.description} Visible exits: ${exitNames}. Traffic noise covers whispers; inspect clues and question whoever is present.`;
-  }, [game.room]);
+  }, [game.inspectedHotspot, game.room]);
+  const inspectTitle = game.inspectedHotspot?.label ?? "Inspection";
 
   const conversationOpen = Boolean(game.currentTalkNpcId);
   const selectingNpc = game.currentTalkNpcId === "selector";
-  const showNavigation = !game.inspectOpen && !conversationOpen;
+  const inspectionVisible = (game.inspectOpen || Boolean(game.inspectedHotspot)) && !conversationOpen;
+  const showNavigation = !inspectionVisible && !conversationOpen;
 
   const cursorIcon =
     game.cursorMode === "talk" ? (
       <MessageSquareText size={26} />
+    ) : game.cursorMode === "inspect" ? (
+      <Eye size={26} />
     ) : game.selectedItem?.image ? (
       <img className="cursor-item-image" src={game.selectedItem.image} alt={game.selectedItem.label} />
     ) : game.selectedInventoryId === "key" ? (
@@ -146,6 +153,12 @@ export default function App() {
           }}
           onCharacterEnter={() => game.setHoverCharacter(true)}
           onCharacterLeave={() => game.setHoverCharacter(false)}
+          onHotspotClick={(hotspotId) => {
+            setShowAccuseList(false);
+            game.openHotspotInspect(hotspotId);
+          }}
+          onHotspotEnter={() => game.setHoverHotspot(true)}
+          onHotspotLeave={() => game.setHoverHotspot(false)}
           mapOpen={game.mapOpen}
           currentRoom={game.game.currentRoom}
           onMapClose={() => game.setMapOpen(false)}
@@ -160,14 +173,14 @@ export default function App() {
             onToggleInventory={game.toggleInventoryItem}
             onInspect={() => {
               setShowAccuseList(false);
-              game.setInspectOpen(true);
+              game.openRoomInspect();
             }}
             onMap={() => game.setMapOpen((prev) => !prev)}
           />
 
         </footer>
 
-        <InspectPanel open={game.inspectOpen && !conversationOpen} text={inspectText} onClose={() => game.setInspectOpen(false)} />
+        <InspectPanel open={inspectionVisible} title={inspectTitle} text={inspectText} onClose={game.closeInspect} />
 
         <ConversationPanel
           open={conversationOpen}

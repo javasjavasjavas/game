@@ -47,6 +47,7 @@ export interface HotspotDefinition {
   y: number;
   width: number;
   height: number;
+  inspectText: string;
 }
 
 export interface DialogueOption {

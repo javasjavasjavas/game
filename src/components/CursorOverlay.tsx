@@ -12,7 +12,7 @@ interface Props {
 export function CursorOverlay({ mode, icon, x, y }: Props) {
   if (mode === "none") return null;
 
-  const label = mode === "talk" ? "TALK" : "USE WITH";
+  const label = mode === "talk" ? "TALK" : mode === "inspect" ? "INSPECT" : "USE WITH";
 
   return (
     <motion.div
@@ -23,7 +23,7 @@ export function CursorOverlay({ mode, icon, x, y }: Props) {
       className="cursor-overlay"
       style={{ left: x, top: y }}
     >
-      {mode === "talk" ? (
+      {mode === "talk" || mode === "inspect" ? (
         <span className="cursor-tag cursor-tag-talk">
           <span className="cursor-tag-icon">{icon}</span>
           <span>{label}</span>
