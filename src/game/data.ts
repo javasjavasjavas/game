@@ -228,6 +228,102 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
         "Beyond the glass, the city is all neon haze and distant sirens. The skyline feels close enough to touch, but the room still feels sealed off.",
     },
   ],
+  arcade: [
+    {
+      id: "arcade-counter-computer",
+      label: "Counter Computer",
+      x: 360,
+      y: 340,
+      width: 520,
+      height: 360,
+      inspectText:
+        "An old computer hums behind the counter. The casing is scratched, but the screen still throws out a stubborn blue glow.",
+    },
+    {
+      id: "arcade-machine-one",
+      label: "Arcade Machine",
+      x: 1080,
+      y: 250,
+      width: 460,
+      height: 980,
+      inspectText:
+        "The cabinet art is faded under years of fingerprints. One of the side buttons looks newer than the others.",
+    },
+    {
+      id: "arcade-machine-two",
+      label: "Arcade Machine 2",
+      x: 1770,
+      y: 240,
+      width: 500,
+      height: 1010,
+      inspectText:
+        "Another arcade machine stands beside it, louder and brighter. Somebody wedged a token into the return slot and left it there.",
+    },
+  ],
+  store: [
+    {
+      id: "store-left-fridge",
+      label: "Left Fridge",
+      x: 120,
+      y: 250,
+      width: 620,
+      height: 1180,
+      inspectText:
+        "The fridge on the left rattles under weak fluorescent light. Condensation hides the glass, but a few silhouettes of bottles still show through.",
+    },
+    {
+      id: "store-counter",
+      label: "Counter",
+      x: 1240,
+      y: 760,
+      width: 920,
+      height: 560,
+      inspectText:
+        "The counter is cluttered with receipts, wrappers, and a register that has been opened too many times tonight.",
+    },
+    {
+      id: "store-middle-ice-cream-fridge",
+      label: "Ice Cream Fridge",
+      x: 1040,
+      y: 470,
+      width: 660,
+      height: 500,
+      inspectText:
+        "The ice cream freezer in the middle gives off a tired mechanical buzz. Frost clings to the lid as if it has not closed properly in days.",
+    },
+  ],
+  garage: [
+    {
+      id: "garage-license-plate-pile",
+      label: "License Plate Pile",
+      x: 220,
+      y: 1120,
+      width: 660,
+      height: 400,
+      inspectText:
+        "A pile of old license plates leans against the wall. Some are bent clean through, and a few numbers have been scratched away on purpose.",
+    },
+    {
+      id: "garage-tool-bench",
+      label: "Tool Bench",
+      x: 1160,
+      y: 420,
+      width: 760,
+      height: 500,
+      inspectText:
+        "The tool bench is crowded with wrenches, oil rags, and half-finished repairs. One drawer sits slightly open, like someone stopped mid-search.",
+    },
+    {
+      id: "garage-car",
+      label: "Car",
+      x: 1840,
+      y: 600,
+      width: 1180,
+      height: 760,
+      inspectText:
+        "The car takes up most of the bay, polished in places and filthy in others. It looks ready to leave fast, if it has not already been waiting too long.",
+    },
+  ],
 };
 
 export const NPCS: Npc[] = [
