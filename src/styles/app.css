@@ -660,7 +660,6 @@ button {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  pointer-events: none;
 }
 
 .character-hitbox {
