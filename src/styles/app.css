@@ -663,14 +663,12 @@ button {
 }
 
 .character-hitbox {
+  position: absolute;
   border: 0;
   background: transparent;
   cursor: none;
   padding: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  flex: 0 0 auto;
+  z-index: 14;
 }
 
 .character-image {
@@ -681,6 +679,11 @@ button {
   filter: drop-shadow(0 0 22px rgba(0, 0, 0, 0.95));
   -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.character-image-lucy {
+  transform: scale(0.7);
+  transform-origin: bottom center;
 }
 
 .sidebar-money-value {

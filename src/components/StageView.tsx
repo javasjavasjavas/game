@@ -115,10 +115,14 @@ export function StageView({
       characterWrapSize.height / characterNaturalSize.height
     );
     const sizeFactor = stageCharacterId === "lucy" ? 0.7 : 1;
+    const renderedWidth = characterNaturalSize.width * baseScale * sizeFactor;
+    const renderedHeight = characterNaturalSize.height * baseScale * sizeFactor;
 
     return {
-      width: `${characterNaturalSize.width * baseScale * sizeFactor}px`,
-      height: `${characterNaturalSize.height * baseScale * sizeFactor}px`,
+      width: `${renderedWidth}px`,
+      height: `${renderedHeight}px`,
+      left: `${(characterWrapSize.width - renderedWidth) / 2}px`,
+      bottom: "0px",
     };
   }, [characterNaturalSize.height, characterNaturalSize.width, characterWrapSize.height, characterWrapSize.width, stageCharacterId]);
   const renderedHotspots = useMemo(() => {
@@ -455,21 +459,20 @@ export function StageView({
             onMouseMove={handleCharacterPointerMove}
             onMouseLeave={handleCharacterMouseLeave}
             onClick={handleCharacterClick}
-          >
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={`${stageCharacterId}-${activeCharacterEmotion}`}
-                className="character-image"
-                src={activeCharacterSrc ?? ""}
-                alt={stageCharacter ? `${stageCharacter.name} portrait` : "Character portrait"}
-                initial={{ opacity: 0.1 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0.05 }}
-                onLoad={handleActiveSpriteLoad}
-                transition={{ duration: 0.28, ease: "easeOut" }}
-              />
-            </AnimatePresence>
-          </button>
+          />
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={`${stageCharacterId}-${activeCharacterEmotion}`}
+              className={`character-image ${stageCharacterId === "lucy" ? "character-image-lucy" : ""}`.trim()}
+              src={activeCharacterSrc ?? ""}
+              alt={stageCharacter ? `${stageCharacter.name} portrait` : "Character portrait"}
+              initial={{ opacity: 0.1 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0.05 }}
+              onLoad={handleActiveSpriteLoad}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+            />
+          </AnimatePresence>
         </div>
       )}
 
