@@ -158,10 +158,10 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
     {
       id: "bar-poster-wall",
       label: "Wall Poster",
-      x: 1760,
-      y: 280,
-      width: 360,
-      height: 520,
+      x: 1860,
+      y: 340,
+      width: 260,
+      height: 470,
       inspectText:
         "A faded poster clings to the brick wall. The corners are water-warped and someone scratched a small symbol into the lower edge.",
     },
@@ -179,9 +179,9 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       id: "bar-under-table",
       label: "Under Table",
       x: 360,
-      y: 910,
-      width: 920,
-      height: 500,
+      y: 980,
+      width: 700,
+      height: 430,
       inspectText:
         "The dark space beneath the table is packed with shadow. Dust is broken in one corner, like something was dragged or hastily shoved underneath.",
     },
