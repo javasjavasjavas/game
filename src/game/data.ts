@@ -158,10 +158,10 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
     {
       id: "bar-poster-wall",
       label: "Wall Poster",
-      x: 1340,
-      y: 120,
-      width: 520,
-      height: 520,
+      x: 1460,
+      y: 150,
+      width: 280,
+      height: 430,
     },
     {
       id: "bar-bottle-zone",
@@ -174,10 +174,10 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
     {
       id: "bar-under-table",
       label: "Under Table",
-      x: 1110,
-      y: 1110,
-      width: 560,
-      height: 300,
+      x: 860,
+      y: 980,
+      width: 760,
+      height: 430,
     },
   ],
 };
