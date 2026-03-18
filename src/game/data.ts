@@ -61,47 +61,83 @@ export const ROOMS: Record<RoomId, Room> = {
     id: "bar",
     name: "The Bar",
     description: "Neon lights, old jazz, and whispers nobody repeats twice.",
-    exits: ["cab", "apartment", "store", "alley", "pharmacy", "arcade"],
+    exits: ["cab", "apartment", "store", "alley", "pharmacy", "arcade", "street"],
   },
   cab: {
     id: "cab",
     name: "Cab",
     description: "Rain on the windshield, city lights stretched into blurred streaks.",
-    exits: ["bar", "apartment"],
+    exits: ["bar", "apartment", "street", "garage"],
   },
   apartment: {
     id: "apartment",
     name: "Apartment",
     description: "A narrow hallway, broken intercom, and sleepless windows.",
-    exits: ["bar", "cab", "alley", "pharmacy", "arcade"],
+    exits: ["bar", "cab", "alley", "pharmacy", "arcade", "street"],
   },
   store: {
     id: "store",
     name: "Store",
     description: "Half-closed shutters, humming fridges, and nervous eyes behind glass.",
-    exits: ["bar", "alley", "pharmacy", "arcade"],
+    exits: ["bar", "alley", "pharmacy", "arcade", "street"],
   },
   alley: {
     id: "alley",
     name: "Alley",
     description: "Wet concrete, flickering signs, and footsteps that stop when you turn.",
-    exits: ["bar", "apartment", "store", "pharmacy", "arcade"],
+    exits: ["bar", "apartment", "store", "pharmacy", "arcade", "street"],
   },
   pharmacy: {
     id: "pharmacy",
     name: "Pharmacy",
     description: "Cold fluorescent aisles, late-shift silence, and receipts no one keeps.",
-    exits: ["bar", "apartment", "store", "alley", "arcade"],
+    exits: ["bar", "apartment", "store", "alley", "arcade", "street"],
   },
   arcade: {
     id: "arcade",
     name: "Arcade Room",
     description: "Flickering cabinets, token clinks, and static from forgotten high scores.",
-    exits: ["bar", "apartment", "store", "alley", "pharmacy"],
+    exits: ["bar", "apartment", "store", "alley", "pharmacy", "street"],
+  },
+  garage: {
+    id: "garage",
+    name: "Underground Garage",
+    description: "Concrete pillars, oil slicks, and engines ticking in the dark.",
+    exits: ["street", "cab"],
+  },
+  restooutside: {
+    id: "restooutside",
+    name: "Italian Restaurant Outside",
+    description: "Warm window light spills onto wet pavement and polished parked cars.",
+    exits: ["street", "restoinside"],
+  },
+  restoinside: {
+    id: "restoinside",
+    name: "Italian Restaurant Inside",
+    description: "Low chandeliers, red velvet booths, and conversations hidden behind wine glasses.",
+    exits: ["restooutside"],
+  },
+  street: {
+    id: "street",
+    name: "Street",
+    description: "Traffic hiss, neon reflections, and strangers moving like static.",
+    exits: ["bar", "apartment", "store", "alley", "pharmacy", "arcade", "garage", "restooutside", "cab"],
   },
 };
 
-export const ROOM_ORDER: RoomId[] = ["bar", "cab", "apartment", "store", "alley", "pharmacy", "arcade"];
+export const ROOM_ORDER: RoomId[] = [
+  "bar",
+  "cab",
+  "apartment",
+  "store",
+  "alley",
+  "pharmacy",
+  "arcade",
+  "garage",
+  "restooutside",
+  "restoinside",
+  "street",
+];
 
 export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
   bar: { x: 48, y: 48 },
@@ -111,6 +147,10 @@ export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
   alley: { x: 52, y: 78 },
   pharmacy: { x: 84, y: 72 },
   arcade: { x: 14, y: 66 },
+  garage: { x: 72, y: 88 },
+  restooutside: { x: 85, y: 40 },
+  restoinside: { x: 92, y: 22 },
+  street: { x: 56, y: 42 },
 };
 
 export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>> = {

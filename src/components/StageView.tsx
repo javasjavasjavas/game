@@ -11,10 +11,14 @@ const BACKGROUND_BY_ROOM: Record<RoomId, string> = {
   bar: "/game-assets/background_bar.jpg",
   cab: "/game-assets/background_cab.jpg",
   apartment: "/game-assets/background_apartment.jpg",
-  store: "/game-assets/background_bar.jpg",
+  store: "/game-assets/background_store.jpg",
   alley: "/game-assets/background_bar.jpg",
   pharmacy: "/game-assets/background_pharmacy.jpg",
   arcade: "/game-assets/background_arcades.jpg",
+  garage: "/game-assets/background_garage.jpg",
+  restooutside: "/game-assets/background_resto_outside.jpg",
+  restoinside: "/game-assets/background_resto_inside.jpg",
+  street: "/game-assets/background_street.jpg",
 };
 
 function preloadImage(src: string, cache: Set<string>): Promise<void> {
