@@ -68,6 +68,7 @@ export function StageView({
 }: Props) {
   const loadedImagesRef = useRef<Set<string>>(new Set());
   const stageRef = useRef<HTMLElement | null>(null);
+  const characterWrapRef = useRef<HTMLDivElement | null>(null);
   const wasMapOpenRef = useRef(mapOpen);
   const hitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hitContextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -80,6 +81,8 @@ export function StageView({
   const [activeBackgroundReady, setActiveBackgroundReady] = useState(false);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
   const [backgroundNaturalSize, setBackgroundNaturalSize] = useState({ width: 0, height: 0 });
+  const [characterWrapSize, setCharacterWrapSize] = useState({ width: 0, height: 0 });
+  const [characterNaturalSize, setCharacterNaturalSize] = useState({ width: 0, height: 0 });
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const stageCharacterId = STAGE_CHARACTER_BY_ROOM[displayedRoom] ?? null;
   const stageCharacter = stageCharacterId ? CHARACTER_BY_ID[stageCharacterId] : null;
@@ -97,6 +100,27 @@ export function StageView({
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
   const loadingLabel = bootLoading ? "Loading Game" : "Loading Scene";
   const bootSegments = 14;
+  const characterHitboxStyle = useMemo(() => {
+    if (
+      characterWrapSize.width <= 0 ||
+      characterWrapSize.height <= 0 ||
+      characterNaturalSize.width <= 0 ||
+      characterNaturalSize.height <= 0
+    ) {
+      return undefined;
+    }
+
+    const baseScale = Math.min(
+      characterWrapSize.width / characterNaturalSize.width,
+      characterWrapSize.height / characterNaturalSize.height
+    );
+    const sizeFactor = stageCharacterId === "lucy" ? 0.7 : 1;
+
+    return {
+      width: `${characterNaturalSize.width * baseScale * sizeFactor}px`,
+      height: `${characterNaturalSize.height * baseScale * sizeFactor}px`,
+    };
+  }, [characterNaturalSize.height, characterNaturalSize.width, characterWrapSize.height, characterWrapSize.width, stageCharacterId]);
   const renderedHotspots = useMemo(() => {
     if (
       roomHotspots.length === 0 ||
@@ -140,6 +164,21 @@ export function StageView({
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    const element = characterWrapRef.current;
+    if (!element) return;
+
+    const updateSize = () => {
+      const rect = element.getBoundingClientRect();
+      setCharacterWrapSize({ width: rect.width, height: rect.height });
+    };
+
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [showStageCharacter]);
 
   useEffect(() => {
     if (currentRoom === displayedRoom) return;
@@ -281,6 +320,7 @@ export function StageView({
     const width = image.naturalWidth;
     const height = image.naturalHeight;
     if (width > 0 && height > 0) {
+      setCharacterNaturalSize({ width, height });
       const canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
@@ -407,10 +447,11 @@ export function StageView({
       />
 
       {showStageCharacter && !holdCharacterIntro && (
-        <div className="character-wrap">
+        <div className="character-wrap" ref={characterWrapRef}>
           <button
             className="character-hitbox"
             title="Talk"
+            style={characterHitboxStyle}
             onMouseMove={handleCharacterPointerMove}
             onMouseLeave={handleCharacterMouseLeave}
             onClick={handleCharacterClick}
@@ -418,7 +459,7 @@ export function StageView({
             <AnimatePresence mode="wait">
               <motion.img
                 key={`${stageCharacterId}-${activeCharacterEmotion}`}
-                className={`character-image ${stageCharacterId === "lucy" ? "character-image-lucy" : ""}`.trim()}
+                className="character-image"
                 src={activeCharacterSrc ?? ""}
                 alt={stageCharacter ? `${stageCharacter.name} portrait` : "Character portrait"}
                 initial={{ opacity: 0.1 }}
