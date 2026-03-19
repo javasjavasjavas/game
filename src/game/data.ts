@@ -324,6 +324,102 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
         "The car takes up most of the bay, polished in places and filthy in others. It looks ready to leave fast, if it has not already been waiting too long.",
     },
   ],
+  pharmacy: [
+    {
+      id: "pharmacy-medicine-shelf-one",
+      label: "Medicine Shelf I",
+      x: 430,
+      y: 220,
+      width: 585,
+      height: 1145,
+      inspectText:
+        "The left medicine shelf is packed with painkillers, sleep aids, and generic bottles with half-peeled labels. Somebody has been browsing in a hurry.",
+    },
+    {
+      id: "pharmacy-diploma",
+      label: "Diploma",
+      x: 1325,
+      y: 945,
+      width: 240,
+      height: 180,
+      inspectText:
+        "A framed diploma hangs below the counter line. The paper has yellowed at the edges, but the official seal still catches the light.",
+    },
+    {
+      id: "pharmacy-medicine-shelf-two",
+      label: "Medicine Shelf II",
+      x: 2065,
+      y: 100,
+      width: 450,
+      height: 1280,
+      inspectText:
+        "The right medicine shelf is taller and more orderly, stacked with boxed treatments and locked cases. One row looks recently disturbed.",
+    },
+  ],
+  restooutside: [
+    {
+      id: "restooutside-delivery-bike",
+      label: "Delivery Bike",
+      x: 20,
+      y: 840,
+      width: 860,
+      height: 790,
+      inspectText:
+        "The delivery bike is still warm from its last run. Rain beads on the seat, and the cargo box smells faintly of garlic, gasoline, and wet cardboard.",
+    },
+    {
+      id: "restooutside-entrance-door",
+      label: "Entrance Door",
+      x: 1125,
+      y: 505,
+      width: 290,
+      height: 720,
+      inspectText:
+        "The restaurant door glows under the neon sign. Fingerprints cloud the glass where customers have pushed their way inside all evening.",
+    },
+    {
+      id: "restooutside-menu-board",
+      label: "Menu Board",
+      x: 1790,
+      y: 1010,
+      width: 285,
+      height: 430,
+      inspectText:
+        "A chalkboard menu leans toward the street. The specials have been rewritten so many times the surface is dusted white with old decisions.",
+    },
+  ],
+  street: [
+    {
+      id: "street-vending-machine",
+      label: "Vending Machine",
+      x: 485,
+      y: 785,
+      width: 295,
+      height: 550,
+      inspectText:
+        "The vending machine hums under a weak streetlight. Most rows are half-empty, and one slot has been jammed open with a bent coin.",
+    },
+    {
+      id: "street-alley-entrance",
+      label: "Alley Entrance",
+      x: 1825,
+      y: 785,
+      width: 95,
+      height: 315,
+      inspectText:
+        "The alley entrance is narrow enough to miss at a glance. Neon from deeper inside flickers across the wet wall like a warning.",
+    },
+    {
+      id: "street-ramen-store",
+      label: "Ramen Store",
+      x: 2485,
+      y: 450,
+      width: 750,
+      height: 700,
+      inspectText:
+        "The ramen storefront is loud with pink signage and warm interior light. Steam fogs the glass, but silhouettes still drift behind the counter.",
+    },
+  ],
 };
 
 export const NPCS: Npc[] = [
