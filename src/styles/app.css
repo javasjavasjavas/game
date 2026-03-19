@@ -655,21 +655,16 @@ button {
   right: 2%;
   bottom: 0;
   width: min(51vw, 750px);
-  height: min(95vh, 1230px);
   z-index: 12;
   display: flex;
-  align-items: flex-end;
   justify-content: center;
 }
 
 .character-hitbox {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   border: 0;
   background: transparent;
-  cursor: none;
+  cursor: crosshair;
   padding: 0;
   z-index: 14;
   pointer-events: auto;
@@ -677,7 +672,8 @@ button {
 
 .character-image {
   width: 100%;
-  height: 100%;
+  height: auto;
+  display: block;
   object-fit: contain;
   object-position: bottom;
   filter: drop-shadow(0 0 22px rgba(0, 0, 0, 0.95));
@@ -687,8 +683,7 @@ button {
 }
 
 .character-image-lucy {
-  transform: scale(0.7);
-  transform-origin: bottom center;
+  width: 70%;
 }
 
 .sidebar-money-value {
@@ -1568,7 +1563,6 @@ button {
 
   .character-wrap {
     width: min(52vw, 320px);
-    height: min(46vh, 380px);
     right: -3%;
   }
 

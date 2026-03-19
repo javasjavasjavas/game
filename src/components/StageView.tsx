@@ -83,8 +83,6 @@ export function StageView({
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
   const [backgroundNaturalSize, setBackgroundNaturalSize] = useState({ width: 0, height: 0 });
   const [characterImageBox, setCharacterImageBox] = useState({ left: 0, top: 0, width: 0, height: 0 });
-  const [characterNaturalSize, setCharacterNaturalSize] = useState({ width: 0, height: 0 });
-  const [characterOpaqueBounds, setCharacterOpaqueBounds] = useState({ left: 0, top: 0, width: 0, height: 0 });
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const stageCharacterId = STAGE_CHARACTER_BY_ROOM[displayedRoom] ?? null;
   const stageCharacter = stageCharacterId ? CHARACTER_BY_ID[stageCharacterId] : null;
@@ -134,7 +132,6 @@ export function StageView({
     const height = image.naturalHeight;
     if (width <= 0 || height <= 0) return;
 
-    setCharacterNaturalSize({ width, height });
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
@@ -142,70 +139,20 @@ export function StageView({
     if (!ctx) return;
     ctx.clearRect(0, 0, width, height);
     ctx.drawImage(image, 0, 0);
-    const imageData = ctx.getImageData(0, 0, width, height).data;
-    let minX = width;
-    let minY = height;
-    let maxX = -1;
-    let maxY = -1;
-
-    for (let y = 0; y < height; y += 1) {
-      for (let x = 0; x < width; x += 1) {
-        const alpha = imageData[(y * width + x) * 4 + 3];
-        if (alpha <= 20) continue;
-        if (x < minX) minX = x;
-        if (y < minY) minY = y;
-        if (x > maxX) maxX = x;
-        if (y > maxY) maxY = y;
-      }
-    }
-
-    if (maxX >= minX && maxY >= minY) {
-      setCharacterOpaqueBounds({
-        left: minX,
-        top: minY,
-        width: maxX - minX + 1,
-        height: maxY - minY + 1,
-      });
-    } else {
-      setCharacterOpaqueBounds({ left: 0, top: 0, width, height });
-    }
     hitCanvasRef.current = canvas;
     hitContextRef.current = ctx;
   };
 
   const characterHitboxStyle = useMemo(() => {
-    if (
-      characterImageBox.width <= 0 ||
-      characterImageBox.height <= 0 ||
-      characterNaturalSize.width <= 0 ||
-      characterNaturalSize.height <= 0 ||
-      characterOpaqueBounds.width <= 0 ||
-      characterOpaqueBounds.height <= 0
-    ) {
-      return undefined;
-    }
-
-    const scaleX = characterImageBox.width / characterNaturalSize.width;
-    const scaleY = characterImageBox.height / characterNaturalSize.height;
+    if (characterImageBox.width <= 0 || characterImageBox.height <= 0) return undefined;
 
     return {
-      left: `${characterImageBox.left + characterOpaqueBounds.left * scaleX}px`,
-      top: `${characterImageBox.top + characterOpaqueBounds.top * scaleY}px`,
-      width: `${characterOpaqueBounds.width * scaleX}px`,
-      height: `${characterOpaqueBounds.height * scaleY}px`,
+      left: `${characterImageBox.left}px`,
+      top: `${characterImageBox.top}px`,
+      width: `${characterImageBox.width}px`,
+      height: `${characterImageBox.height}px`,
     };
-  }, [
-    characterImageBox.height,
-    characterImageBox.left,
-    characterImageBox.top,
-    characterImageBox.width,
-    characterNaturalSize.height,
-    characterNaturalSize.width,
-    characterOpaqueBounds.height,
-    characterOpaqueBounds.left,
-    characterOpaqueBounds.top,
-    characterOpaqueBounds.width,
-  ]);
+  }, [characterImageBox.height, characterImageBox.left, characterImageBox.top, characterImageBox.width]);
   const renderedHotspots = useMemo(() => {
     if (
       roomHotspots.length === 0 ||
@@ -291,8 +238,6 @@ export function StageView({
   useEffect(() => {
     if (!activeCharacterSrc) {
       setCharacterImageBox({ left: 0, top: 0, width: 0, height: 0 });
-      setCharacterNaturalSize({ width: 0, height: 0 });
-      setCharacterOpaqueBounds({ left: 0, top: 0, width: 0, height: 0 });
       hitCanvasRef.current = null;
       hitContextRef.current = null;
     }
@@ -460,20 +405,8 @@ export function StageView({
 
     const xRatio = (event.clientX - buttonRect.left) / buttonRect.width;
     const yRatio = (event.clientY - buttonRect.top) / buttonRect.height;
-    const x = Math.max(
-      0,
-      Math.min(
-        ctx.canvas.width - 1,
-        Math.floor(characterOpaqueBounds.left + xRatio * characterOpaqueBounds.width)
-      )
-    );
-    const y = Math.max(
-      0,
-      Math.min(
-        ctx.canvas.height - 1,
-        Math.floor(characterOpaqueBounds.top + yRatio * characterOpaqueBounds.height)
-      )
-    );
+    const x = Math.max(0, Math.min(ctx.canvas.width - 1, Math.floor(xRatio * ctx.canvas.width)));
+    const y = Math.max(0, Math.min(ctx.canvas.height - 1, Math.floor(yRatio * ctx.canvas.height)));
     const alpha = ctx.getImageData(x, y, 1, 1).data[3];
     setPixelHover(alpha > 20);
   };
