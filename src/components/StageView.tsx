@@ -82,7 +82,7 @@ export function StageView({
   const [activeBackgroundReady, setActiveBackgroundReady] = useState(false);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
   const [backgroundNaturalSize, setBackgroundNaturalSize] = useState({ width: 0, height: 0 });
-  const [characterWrapSize, setCharacterWrapSize] = useState({ width: 0, height: 0 });
+  const [characterImageBox, setCharacterImageBox] = useState({ left: 0, top: 0, width: 0, height: 0 });
   const [characterNaturalSize, setCharacterNaturalSize] = useState({ width: 0, height: 0 });
   const [characterPixelHover, setCharacterPixelHover] = useState(false);
   const stageCharacterId = STAGE_CHARACTER_BY_ROOM[displayedRoom] ?? null;
@@ -102,6 +102,32 @@ export function StageView({
   const loadingLabel = bootLoading ? "Loading Game" : "Loading Scene";
   const bootSegments = 14;
 
+  const syncCharacterBox = () => {
+    const wrap = characterWrapRef.current;
+    const image = characterImageRef.current;
+    if (!wrap || !image) {
+      setCharacterImageBox({ left: 0, top: 0, width: 0, height: 0 });
+      return;
+    }
+
+    const wrapRect = wrap.getBoundingClientRect();
+    const imageRect = image.getBoundingClientRect();
+    const width = imageRect.width;
+    const height = imageRect.height;
+
+    if (width <= 0 || height <= 0) {
+      setCharacterImageBox({ left: 0, top: 0, width: 0, height: 0 });
+      return;
+    }
+
+    setCharacterImageBox({
+      left: imageRect.left - wrapRect.left,
+      top: imageRect.top - wrapRect.top,
+      width,
+      height,
+    });
+  };
+
   const syncCharacterMetrics = (image: HTMLImageElement) => {
     const width = image.naturalWidth;
     const height = image.naturalHeight;
@@ -119,34 +145,16 @@ export function StageView({
     hitContextRef.current = ctx;
   };
 
-  const renderedCharacterRect = useMemo(() => {
-    if (
-      characterWrapSize.width <= 0 ||
-      characterWrapSize.height <= 0 ||
-      characterNaturalSize.width <= 0 ||
-      characterNaturalSize.height <= 0
-    ) {
-      return undefined;
-    }
-
-    const baseScale = Math.min(
-      characterWrapSize.width / characterNaturalSize.width,
-      characterWrapSize.height / characterNaturalSize.height
-    );
-    const sizeFactor = stageCharacterId === "lucy" ? 0.7 : 1;
-    const renderedWidth = characterNaturalSize.width * baseScale * sizeFactor;
-    const renderedHeight = characterNaturalSize.height * baseScale * sizeFactor;
-
-    const left = (characterWrapSize.width - renderedWidth) / 2;
-    const top = characterWrapSize.height - renderedHeight;
+  const characterHitboxStyle = useMemo(() => {
+    if (characterImageBox.width <= 0 || characterImageBox.height <= 0) return undefined;
 
     return {
-      width: renderedWidth,
-      height: renderedHeight,
-      left,
-      top,
+      left: `${characterImageBox.left}px`,
+      top: `${characterImageBox.top}px`,
+      width: `${characterImageBox.width}px`,
+      height: `${characterImageBox.height}px`,
     };
-  }, [characterNaturalSize.height, characterNaturalSize.width, characterWrapSize.height, characterWrapSize.width, stageCharacterId]);
+  }, [characterImageBox.height, characterImageBox.left, characterImageBox.top, characterImageBox.width]);
   const renderedHotspots = useMemo(() => {
     if (
       roomHotspots.length === 0 ||
@@ -197,26 +205,41 @@ export function StageView({
     if (!image) return;
     if (image.complete && image.naturalWidth > 0 && image.naturalHeight > 0) {
       syncCharacterMetrics(image);
+      window.requestAnimationFrame(syncCharacterBox);
     }
   }, [activeCharacterSrc, holdCharacterIntro, showStageCharacter]);
 
   useEffect(() => {
-    const element = characterWrapRef.current;
-    if (!element) return;
+    if (!showStageCharacter || holdCharacterIntro) {
+      setCharacterImageBox({ left: 0, top: 0, width: 0, height: 0 });
+      return;
+    }
 
-    const updateSize = () => {
-      const rect = element.getBoundingClientRect();
-      setCharacterWrapSize({ width: rect.width, height: rect.height });
+    const wrap = characterWrapRef.current;
+    const image = characterImageRef.current;
+    if (!wrap || !image) return;
+
+    const updateBox = () => {
+      window.requestAnimationFrame(syncCharacterBox);
     };
 
-    updateSize();
-    const observer = new ResizeObserver(updateSize);
-    observer.observe(element);
-    return () => observer.disconnect();
+    updateBox();
+    const wrapObserver = new ResizeObserver(updateBox);
+    const imageObserver = new ResizeObserver(updateBox);
+    wrapObserver.observe(wrap);
+    imageObserver.observe(image);
+    window.addEventListener("resize", updateBox);
+
+    return () => {
+      wrapObserver.disconnect();
+      imageObserver.disconnect();
+      window.removeEventListener("resize", updateBox);
+    };
   }, [holdCharacterIntro, showStageCharacter]);
 
   useEffect(() => {
     if (!activeCharacterSrc) {
+      setCharacterImageBox({ left: 0, top: 0, width: 0, height: 0 });
       setCharacterNaturalSize({ width: 0, height: 0 });
       hitCanvasRef.current = null;
       hitContextRef.current = null;
@@ -377,34 +400,14 @@ export function StageView({
       return;
     }
 
-    const localX = event.clientX - buttonRect.left;
-    const localY = event.clientY - buttonRect.top;
-    const spriteRect = renderedCharacterRect;
-
-    if (!spriteRect) {
-      setPixelHover(false);
-      return;
-    }
-
-    const insideSpriteBounds =
-      localX >= spriteRect.left &&
-      localX <= spriteRect.left + spriteRect.width &&
-      localY >= spriteRect.top &&
-      localY <= spriteRect.top + spriteRect.height;
-
-    if (!insideSpriteBounds) {
-      setPixelHover(false);
-      return;
-    }
-
     const ctx = hitContextRef.current;
     if (!ctx) {
       setPixelHover(true);
       return;
     }
 
-    const xRatio = (localX - spriteRect.left) / spriteRect.width;
-    const yRatio = (localY - spriteRect.top) / spriteRect.height;
+    const xRatio = (event.clientX - buttonRect.left) / buttonRect.width;
+    const yRatio = (event.clientY - buttonRect.top) / buttonRect.height;
     const x = Math.max(0, Math.min(ctx.canvas.width - 1, Math.floor(xRatio * ctx.canvas.width)));
     const y = Math.max(0, Math.min(ctx.canvas.height - 1, Math.floor(yRatio * ctx.canvas.height)));
     const alpha = ctx.getImageData(x, y, 1, 1).data[3];
@@ -494,6 +497,7 @@ export function StageView({
           <button
             className="character-hitbox"
             title="Talk"
+            style={characterHitboxStyle}
             onMouseEnter={handleCharacterPointerMove}
             onMouseMove={handleCharacterPointerMove}
             onMouseLeave={handleCharacterMouseLeave}
@@ -509,7 +513,10 @@ export function StageView({
               initial={{ opacity: 0.1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0.05 }}
-              onLoad={(event) => syncCharacterMetrics(event.currentTarget)}
+              onLoad={(event) => {
+                syncCharacterMetrics(event.currentTarget);
+                window.requestAnimationFrame(syncCharacterBox);
+              }}
               transition={{ duration: 0.28, ease: "easeOut" }}
             />
           </AnimatePresence>
