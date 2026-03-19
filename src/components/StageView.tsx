@@ -119,7 +119,7 @@ export function StageView({
     hitContextRef.current = ctx;
   };
 
-  const characterHitboxStyle = useMemo(() => {
+  const renderedCharacterRect = useMemo(() => {
     if (
       characterWrapSize.width <= 0 ||
       characterWrapSize.height <= 0 ||
@@ -137,11 +137,14 @@ export function StageView({
     const renderedWidth = characterNaturalSize.width * baseScale * sizeFactor;
     const renderedHeight = characterNaturalSize.height * baseScale * sizeFactor;
 
+    const left = (characterWrapSize.width - renderedWidth) / 2;
+    const top = characterWrapSize.height - renderedHeight;
+
     return {
-      width: `${renderedWidth}px`,
-      height: `${renderedHeight}px`,
-      left: `${(characterWrapSize.width - renderedWidth) / 2}px`,
-      bottom: "0px",
+      width: renderedWidth,
+      height: renderedHeight,
+      left,
+      top,
     };
   }, [characterNaturalSize.height, characterNaturalSize.width, characterWrapSize.height, characterWrapSize.width, stageCharacterId]);
   const renderedHotspots = useMemo(() => {
@@ -210,7 +213,7 @@ export function StageView({
     const observer = new ResizeObserver(updateSize);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [showStageCharacter]);
+  }, [holdCharacterIntro, showStageCharacter]);
 
   useEffect(() => {
     if (!activeCharacterSrc) {
@@ -368,21 +371,40 @@ export function StageView({
   };
 
   const handleCharacterPointerMove = (event: MouseEvent<HTMLButtonElement>) => {
-    const ctx = hitContextRef.current;
-    if (!ctx) {
-      setPixelHover(true);
-      return;
-    }
-
     const buttonRect = event.currentTarget.getBoundingClientRect();
     if (buttonRect.width <= 0 || buttonRect.height <= 0) {
       setPixelHover(false);
       return;
     }
 
-    const xRatio = (event.clientX - buttonRect.left) / buttonRect.width;
-    const yRatio = (event.clientY - buttonRect.top) / buttonRect.height;
+    const localX = event.clientX - buttonRect.left;
+    const localY = event.clientY - buttonRect.top;
+    const spriteRect = renderedCharacterRect;
 
+    if (!spriteRect) {
+      setPixelHover(false);
+      return;
+    }
+
+    const insideSpriteBounds =
+      localX >= spriteRect.left &&
+      localX <= spriteRect.left + spriteRect.width &&
+      localY >= spriteRect.top &&
+      localY <= spriteRect.top + spriteRect.height;
+
+    if (!insideSpriteBounds) {
+      setPixelHover(false);
+      return;
+    }
+
+    const ctx = hitContextRef.current;
+    if (!ctx) {
+      setPixelHover(true);
+      return;
+    }
+
+    const xRatio = (localX - spriteRect.left) / spriteRect.width;
+    const yRatio = (localY - spriteRect.top) / spriteRect.height;
     const x = Math.max(0, Math.min(ctx.canvas.width - 1, Math.floor(xRatio * ctx.canvas.width)));
     const y = Math.max(0, Math.min(ctx.canvas.height - 1, Math.floor(yRatio * ctx.canvas.height)));
     const alpha = ctx.getImageData(x, y, 1, 1).data[3];
@@ -472,7 +494,6 @@ export function StageView({
           <button
             className="character-hitbox"
             title="Talk"
-            style={characterHitboxStyle}
             onMouseEnter={handleCharacterPointerMove}
             onMouseMove={handleCharacterPointerMove}
             onMouseLeave={handleCharacterMouseLeave}
