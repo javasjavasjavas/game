@@ -69,6 +69,7 @@ export function StageView({
   const loadedImagesRef = useRef<Set<string>>(new Set());
   const stageRef = useRef<HTMLElement | null>(null);
   const characterWrapRef = useRef<HTMLDivElement | null>(null);
+  const characterImageRef = useRef<HTMLImageElement | null>(null);
   const wasMapOpenRef = useRef(mapOpen);
   const hitCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hitContextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -100,6 +101,24 @@ export function StageView({
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
   const loadingLabel = bootLoading ? "Loading Game" : "Loading Scene";
   const bootSegments = 14;
+
+  const syncCharacterMetrics = (image: HTMLImageElement) => {
+    const width = image.naturalWidth;
+    const height = image.naturalHeight;
+    if (width <= 0 || height <= 0) return;
+
+    setCharacterNaturalSize({ width, height });
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return;
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(image, 0, 0);
+    hitCanvasRef.current = canvas;
+    hitContextRef.current = ctx;
+  };
+
   const characterHitboxStyle = useMemo(() => {
     if (
       characterWrapSize.width <= 0 ||
@@ -170,6 +189,15 @@ export function StageView({
   }, []);
 
   useEffect(() => {
+    if (!showStageCharacter || holdCharacterIntro) return;
+    const image = characterImageRef.current;
+    if (!image) return;
+    if (image.complete && image.naturalWidth > 0 && image.naturalHeight > 0) {
+      syncCharacterMetrics(image);
+    }
+  }, [activeCharacterSrc, holdCharacterIntro, showStageCharacter]);
+
+  useEffect(() => {
     const element = characterWrapRef.current;
     if (!element) return;
 
@@ -189,37 +217,7 @@ export function StageView({
       setCharacterNaturalSize({ width: 0, height: 0 });
       hitCanvasRef.current = null;
       hitContextRef.current = null;
-      return;
     }
-
-    let cancelled = false;
-    const image = new Image();
-    image.onload = () => {
-      if (cancelled) return;
-      const width = image.naturalWidth;
-      const height = image.naturalHeight;
-      if (width <= 0 || height <= 0) return;
-
-      setCharacterNaturalSize({ width, height });
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d", { willReadFrequently: true });
-      if (ctx) {
-        ctx.clearRect(0, 0, width, height);
-        ctx.drawImage(image, 0, 0);
-        hitCanvasRef.current = canvas;
-        hitContextRef.current = ctx;
-      }
-    };
-    image.src = activeCharacterSrc;
-    if (image.complete) {
-      image.onload?.(new Event("load") as unknown as Event);
-    }
-
-    return () => {
-      cancelled = true;
-    };
   }, [activeCharacterSrc]);
 
   useEffect(() => {
@@ -482,6 +480,7 @@ export function StageView({
           />
           <AnimatePresence mode="wait">
             <motion.img
+              ref={characterImageRef}
               key={`${stageCharacterId}-${activeCharacterEmotion}`}
               className={`character-image ${stageCharacterId === "lucy" ? "character-image-lucy" : ""}`.trim()}
               src={activeCharacterSrc ?? ""}
@@ -489,6 +488,7 @@ export function StageView({
               initial={{ opacity: 0.1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0.05 }}
+              onLoad={(event) => syncCharacterMetrics(event.currentTarget)}
               transition={{ duration: 0.28, ease: "easeOut" }}
             />
           </AnimatePresence>
