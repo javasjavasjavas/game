@@ -12,12 +12,23 @@ import { ROOMS } from "./game/data";
 import type { RoomId } from "./game/types";
 import { useGame } from "./hooks/useGame";
 
+const SCENE_MUSIC: Partial<Record<RoomId, string>> = {
+  bar: "/game-assets/audio/the_bar.mp3",
+  apartment: "/game-assets/audio/apartment.mp3",
+};
+
+const MUSIC_VOLUME = 0.45;
+const MUSIC_FADE_MS = 650;
+const MUSIC_FADE_STEP_MS = 50;
+
 export default function App() {
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: -9999, y: -9999 });
   const [showAccuseList, setShowAccuseList] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const musicRef = useRef<HTMLAudioElement | null>(null);
+  const fadeIntervalRef = useRef<number | null>(null);
+  const activeTrackRef = useRef<string | null>(null);
 
   const game = useGame();
 
@@ -59,11 +70,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const audio = new Audio("/game-assets/music_theme.mp3");
+    const audio = new Audio();
     audio.loop = true;
-    audio.volume = 0.45;
+    audio.preload = "auto";
+    audio.volume = 0;
     musicRef.current = audio;
     return () => {
+      if (fadeIntervalRef.current !== null) {
+        window.clearInterval(fadeIntervalRef.current);
+      }
       audio.pause();
       audio.src = "";
       musicRef.current = null;
@@ -73,19 +88,79 @@ export default function App() {
   useEffect(() => {
     const audio = musicRef.current;
     if (!audio) return;
-    if (soundEnabled) {
-      audio.muted = false;
+    const targetTrack = soundEnabled ? SCENE_MUSIC[game.game.currentRoom] ?? null : null;
+
+    const clearFade = () => {
+      if (fadeIntervalRef.current !== null) {
+        window.clearInterval(fadeIntervalRef.current);
+        fadeIntervalRef.current = null;
+      }
+    };
+
+    const fadeTo = (targetVolume: number, onDone?: () => void) => {
+      clearFade();
+      const steps = Math.max(1, Math.round(MUSIC_FADE_MS / MUSIC_FADE_STEP_MS));
+      const startVolume = audio.volume;
+      let currentStep = 0;
+
+      fadeIntervalRef.current = window.setInterval(() => {
+        currentStep += 1;
+        const progress = Math.min(currentStep / steps, 1);
+        audio.volume = startVolume + (targetVolume - startVolume) * progress;
+
+        if (progress >= 1) {
+          clearFade();
+          if (onDone) onDone();
+        }
+      }, MUSIC_FADE_STEP_MS);
+    };
+
+    const playCurrentTrack = () => {
+      audio.currentTime = 0;
+      audio.loop = true;
       const playPromise = audio.play();
       if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch(() => {
           // Autoplay can be blocked until the first user interaction.
         });
       }
-      return;
+    };
+
+    if (!targetTrack) {
+      if (!audio.paused || audio.volume > 0) {
+        fadeTo(0, () => {
+          audio.pause();
+          activeTrackRef.current = null;
+        });
+      } else {
+        activeTrackRef.current = null;
+      }
+      return () => clearFade();
     }
-    audio.muted = true;
-    audio.pause();
-  }, [soundEnabled]);
+
+    if (activeTrackRef.current === targetTrack && !audio.paused) {
+      fadeTo(MUSIC_VOLUME);
+      return () => clearFade();
+    }
+
+    const switchTrack = () => {
+      audio.pause();
+      audio.src = targetTrack;
+      audio.load();
+      activeTrackRef.current = targetTrack;
+      audio.volume = 0;
+      playCurrentTrack();
+      fadeTo(MUSIC_VOLUME);
+    };
+
+    if (!audio.paused && activeTrackRef.current) {
+      fadeTo(0, switchTrack);
+    } else {
+      switchTrack();
+    }
+
+    return () => clearFade();
+  }, [game.game.currentRoom, soundEnabled]);
 
   const handleContextMenu: MouseEventHandler<HTMLElement> = (event) => {
     if (!game.selectedInventoryId) return;
