@@ -79,6 +79,19 @@ export function useGame() {
     setInspectedHotspotId(null);
   };
 
+  const setCurrentRoomInstant = (roomId: RoomId) => {
+    mutate((draft) => {
+      if (draft.currentRoom === roomId) return;
+      draft.currentRoom = roomId;
+      draft.lastMessage = `You arrived at ${ROOMS[roomId].name}.`;
+    });
+    setCurrentTalkNpcId(null);
+    setInspectOpen(false);
+    setConversationHasClue(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
+  };
+
   const wait = () => {
     mutate((draft) => {
       if (draft.finished) return;
@@ -294,6 +307,7 @@ export function useGame() {
     setInspectOpen,
     setHoverCharacter,
     setHoverHotspot,
+    setCurrentRoomInstant,
     toggleMoneyDetails: () => setMoneyDetailsOpen((prev) => !prev),
     moveRoom,
     wait,

@@ -5,6 +5,7 @@ import { ConversationPanel } from "./components/panels/ConversationPanel";
 import { InspectPanel } from "./components/panels/InspectPanel";
 import { CursorOverlay } from "./components/CursorOverlay";
 import { FooterBar } from "./components/FooterBar";
+import { IntroScreen } from "./components/IntroScreen";
 import { Sidebar } from "./components/Sidebar";
 import { StartScreen } from "./components/StartScreen";
 import { StageView } from "./components/StageView";
@@ -22,10 +23,11 @@ const INTRO_MUSIC = "/game-assets/audio/Intro.mp3";
 const MUSIC_VOLUME = 0.45;
 const MUSIC_FADE_MS = 650;
 const MUSIC_FADE_STEP_MS = 50;
+type FlowScreen = "start" | "chapter" | "game";
 
 export default function App() {
   const [audioUnlocked, setAudioUnlocked] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [screen, setScreen] = useState<FlowScreen>("start");
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: -9999, y: -9999 });
   const [showAccuseList, setShowAccuseList] = useState(false);
@@ -35,10 +37,13 @@ export default function App() {
   const activeTrackRef = useRef<string | null>(null);
 
   const game = useGame();
+  const gameStarted = screen === "game";
   const getTargetTrack = useCallback(() => {
     if (!soundEnabled) return null;
-    return gameStarted ? SCENE_MUSIC[game.game.currentRoom] ?? null : INTRO_MUSIC;
-  }, [game.game.currentRoom, gameStarted, soundEnabled]);
+    if (screen === "start") return INTRO_MUSIC;
+    if (screen === "chapter") return SCENE_MUSIC.apartment ?? null;
+    return SCENE_MUSIC[game.game.currentRoom] ?? null;
+  }, [game.game.currentRoom, screen, soundEnabled]);
 
   const inspectText = useMemo(() => {
     if (game.inspectedHotspot) {
@@ -227,8 +232,20 @@ export default function App() {
 
   const rootClass = `viewport ${game.cursorMode !== "none" ? "hide-cursor" : ""}`;
 
-  if (!gameStarted) {
-    return <StartScreen onStart={() => setGameStarted(true)} onUserInteract={requestAudioUnlock} />;
+  if (screen === "start") {
+    return (
+      <StartScreen
+        onStart={() => {
+          game.setCurrentRoomInstant("apartment");
+          setScreen("chapter");
+        }}
+        onUserInteract={requestAudioUnlock}
+      />
+    );
+  }
+
+  if (screen === "chapter") {
+    return <IntroScreen onContinue={() => setScreen("game")} onUserInteract={requestAudioUnlock} />;
   }
 
   return (
