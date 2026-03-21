@@ -52,15 +52,30 @@ export function StartScreen({ onStart }: StartScreenProps) {
       <div className="start-screen-fade" />
       <div className="start-screen-scanlines" />
 
-      <div className="start-screen-content">
+      <motion.div
+        className="start-screen-content"
+        animate={{
+          gap: showButton ? 54 : 18,
+          y: showButton ? -34 : 0,
+        }}
+        transition={{
+          duration: 0.9,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+      >
         <AnimatePresence>
           {showLogo && (
             <motion.div
+              layout
               className="start-screen-logo-block"
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
+              transition={{
+                opacity: { duration: 1.2, ease: "easeOut" },
+                y: { duration: 1.2, ease: "easeOut" },
+                layout: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+              }}
             >
               <motion.img
                 className="start-screen-logo"
@@ -85,10 +100,15 @@ export function StartScreen({ onStart }: StartScreenProps) {
         <AnimatePresence>
           {showButton && (
             <motion.div
+              layout
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{
+                opacity: { duration: 0.8, ease: "easeOut" },
+                y: { duration: 0.8, ease: "easeOut" },
+                layout: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+              }}
             >
               <motion.button
                 type="button"
@@ -103,7 +123,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
     </motion.section>
   );
 }

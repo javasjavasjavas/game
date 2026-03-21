@@ -17,6 +17,7 @@ const SCENE_MUSIC: Partial<Record<RoomId, string>> = {
   bar: "/game-assets/audio/the_bar.mp3",
   apartment: "/game-assets/audio/apartment.mp3",
 };
+const INTRO_MUSIC = "/game-assets/audio/Intro.mp3";
 
 const MUSIC_VOLUME = 0.45;
 const MUSIC_FADE_MS = 650;
@@ -90,7 +91,11 @@ export default function App() {
   useEffect(() => {
     const audio = musicRef.current;
     if (!audio) return;
-    const targetTrack = soundEnabled ? SCENE_MUSIC[game.game.currentRoom] ?? null : null;
+    const targetTrack = soundEnabled
+      ? gameStarted
+        ? SCENE_MUSIC[game.game.currentRoom] ?? null
+        : INTRO_MUSIC
+      : null;
 
     const clearFade = () => {
       if (fadeIntervalRef.current !== null) {
@@ -162,7 +167,7 @@ export default function App() {
     }
 
     return () => clearFade();
-  }, [game.game.currentRoom, soundEnabled]);
+  }, [game.game.currentRoom, gameStarted, soundEnabled]);
 
   const handleContextMenu: MouseEventHandler<HTMLElement> = (event) => {
     if (!game.selectedInventoryId) return;
