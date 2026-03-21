@@ -2,11 +2,193 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const BG_IMAGE = "/game-assets/background_intro.jpg";
-const LOGO_IMAGE = "/game-assets/logo.png";
+const TITLE = "PARADOX";
 const SUBTITLE = "After Hours";
 const LOGO_DELAY = 900;
 const BUTTON_DELAY = 1700;
 const EXIT_DURATION_MS = 800;
+const CORRUPT_CHARS = "▓░▒█▄▀■□▪▫◊◈⬡⬢⏣⎔";
+
+function getCorruptChar(): string {
+  return CORRUPT_CHARS[Math.floor(Math.random() * CORRUPT_CHARS.length)];
+}
+
+function useCorruptionEffect(text: string, interval = 5000) {
+  const [displayChars, setDisplayChars] = useState(text.split(""));
+  const [isCorrupting, setIsCorrupting] = useState(false);
+  const [skew, setSkew] = useState(0);
+  const [chromaOffset, setChromaOffset] = useState(2);
+  const [showScanline, setShowScanline] = useState(false);
+  const [variantIndex, setVariantIndex] = useState(0);
+
+  useEffect(() => {
+    let activeCleanup: (() => void) | undefined;
+    let scanlineTimer = 0;
+
+    const runVariant = (variant: number) => {
+      activeCleanup?.();
+      setIsCorrupting(true);
+      setShowScanline(true);
+      window.clearTimeout(scanlineTimer);
+      scanlineTimer = window.setTimeout(() => setShowScanline(false), 150);
+
+      const original = text.split("");
+
+      if (variant === 0) {
+        let frame = 0;
+        const totalFrames = 10;
+        const scrambleTimer = window.setInterval(() => {
+          frame += 1;
+          const rate = 1 - frame / totalFrames;
+          setDisplayChars(
+            original.map((char) =>
+              char === " " ? " " : Math.random() < rate * 0.7 ? getCorruptChar() : char,
+            ),
+          );
+
+          if (frame <= 6) {
+            setSkew(frame % 2 === 0 ? -5 : 5);
+            setChromaOffset(2 + (frame / 6) * 4);
+          } else {
+            setSkew(0);
+            setChromaOffset(2);
+          }
+
+          if (frame >= totalFrames) {
+            window.clearInterval(scrambleTimer);
+            setDisplayChars(original);
+            setSkew(0);
+            setChromaOffset(2);
+            setIsCorrupting(false);
+          }
+        }, 30);
+
+        activeCleanup = () => window.clearInterval(scrambleTimer);
+        return;
+      }
+
+      if (variant === 1) {
+        let resolved = 0;
+        const scrambleAllTimer = window.setInterval(() => {
+          setDisplayChars(
+            original.map((char, index) => (char === " " ? " " : index < resolved ? char : getCorruptChar())),
+          );
+          setChromaOffset(4);
+        }, 25);
+
+        const resolveTimer = window.setInterval(() => {
+          resolved += 1;
+          if (resolved > original.length) {
+            window.clearInterval(scrambleAllTimer);
+            window.clearInterval(resolveTimer);
+            setDisplayChars(original);
+            setChromaOffset(2);
+            setSkew(0);
+            setIsCorrupting(false);
+          }
+        }, 80);
+
+        let jitterFrame = 0;
+        const jitterTimer = window.setInterval(() => {
+          jitterFrame += 1;
+          setSkew(jitterFrame % 2 === 0 ? 2 : -2);
+          if (jitterFrame > 8) {
+            window.clearInterval(jitterTimer);
+            setSkew(0);
+          }
+        }, 50);
+
+        activeCleanup = () => {
+          window.clearInterval(scrambleAllTimer);
+          window.clearInterval(resolveTimer);
+          window.clearInterval(jitterTimer);
+        };
+        return;
+      }
+
+      let frame = 0;
+      const totalFrames = 14;
+      const flickerTimer = window.setInterval(() => {
+        frame += 1;
+
+        if (frame % 2 === 0) {
+          setChromaOffset(Math.random() * 8 + 2);
+          setSkew((Math.random() - 0.5) * 10);
+          setDisplayChars(
+            original.map((char) => (char === " " ? " " : Math.random() < 0.25 ? getCorruptChar() : char)),
+          );
+        } else {
+          setChromaOffset(2);
+          setSkew(0);
+          setDisplayChars(original);
+        }
+
+        if (frame >= totalFrames) {
+          window.clearInterval(flickerTimer);
+          setDisplayChars(original);
+          setSkew(0);
+          setChromaOffset(2);
+          setIsCorrupting(false);
+        }
+      }, 35);
+
+      activeCleanup = () => window.clearInterval(flickerTimer);
+    };
+
+    const intervalTimer = window.setInterval(() => {
+      setVariantIndex((previous) => {
+        runVariant(previous);
+        return (previous + 1) % 3;
+      });
+    }, interval);
+
+    return () => {
+      window.clearInterval(intervalTimer);
+      window.clearTimeout(scanlineTimer);
+      activeCleanup?.();
+    };
+  }, [text, interval]);
+
+  return { displayChars, isCorrupting, skew, chromaOffset, showScanline, variantIndex };
+}
+
+function GlitchText({ text }: { text: string }) {
+  const { displayChars, isCorrupting, skew, chromaOffset, showScanline, variantIndex } =
+    useCorruptionEffect(text, 5000);
+
+  return (
+    <div className="start-screen-glitch-wrap">
+      {showScanline && <div className="corruption-scanline" />}
+      <h1
+        className={`start-screen-glitch-title ${isCorrupting ? "is-corrupting" : ""}`}
+        data-variant={variantIndex}
+        style={{
+          transform: `skewX(${skew}deg)`,
+          transition: "transform 0.03s linear",
+          textShadow: [
+            `${-chromaOffset}px 0 0 #c9234e`,
+            `${chromaOffset}px 0 0 #0891a8`,
+            "0 0 40px rgba(8,145,168,0.3)",
+            "0 0 80px rgba(201,35,78,0.15)",
+            "0 4px 30px rgba(0,0,0,0.7)",
+          ].join(", "),
+        }}
+      >
+        {displayChars.map((char, index) => (
+          <span
+            key={`${char}-${index}`}
+            style={{
+              display: "inline-block",
+              minWidth: char === " " ? "0.3em" : undefined,
+            }}
+          >
+            {char}
+          </span>
+        ))}
+      </h1>
+    </div>
+  );
+}
 
 interface StartScreenProps {
   onStart: () => void;
@@ -112,14 +294,14 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
                 layout: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
               }}
             >
-              <motion.img
+              <motion.div
                 className="start-screen-logo"
-                src={LOGO_IMAGE}
-                alt="Paradox After Hours"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1.4, ease: "easeOut" }}
-              />
+              >
+                <GlitchText text={TITLE} />
+              </motion.div>
               <motion.p
                 className="start-screen-subtitle"
                 initial={{ opacity: 0 }}
@@ -160,12 +342,11 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
               <motion.p
                 className="start-screen-audio-hint"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0.22, 0.75, 0.22] }}
+                animate={{ opacity: 1 }}
                 transition={{
                   delay: 0.35,
-                  duration: 2.6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
+                  duration: 0.6,
+                  ease: "easeOut",
                 }}
               >
                 Click anywhere to activate the music

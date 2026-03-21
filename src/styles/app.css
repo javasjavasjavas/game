@@ -173,16 +173,60 @@ button {
 }
 
 .start-screen-logo {
-  width: min(78vw, 760px);
+  width: min(88vw, 960px);
   max-width: 100%;
-  height: auto;
-  display: block;
-  filter:
-    drop-shadow(-2px 0 0 rgba(201, 35, 78, 0.95))
-    drop-shadow(2px 0 0 rgba(8, 145, 168, 0.95))
-    drop-shadow(0 0 30px rgba(8, 145, 168, 0.25))
-    drop-shadow(0 0 55px rgba(201, 35, 78, 0.18))
-    drop-shadow(0 10px 35px rgba(0, 0, 0, 0.75));
+  display: flex;
+  justify-content: center;
+}
+
+.start-screen-glitch-wrap {
+  position: relative;
+  display: inline-block;
+  overflow: visible;
+}
+
+.start-screen-glitch-title {
+  margin: 0;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: 0.15em;
+  user-select: none;
+  font-size: clamp(2rem, 8vw, 4.5rem);
+}
+
+@keyframes scanline-flash {
+  0% {
+    top: -4px;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.corruption-scanline {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.9) 20%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.9) 80%,
+    transparent
+  );
+  pointer-events: none;
+  animation: scanline-flash 0.15s linear forwards;
+  box-shadow: 0 0 12px 4px rgba(255, 255, 255, 0.4);
+  z-index: 10;
 }
 
 .start-screen-subtitle {
@@ -246,18 +290,37 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .start-screen-audio-hint {
   margin: 60px 0 0;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.86);
-  font-size: clamp(0.42rem, 0.9vw, 0.58rem);
+  color: rgba(255, 255, 255, 0.96);
+  font-size: clamp(0.52rem, 1.05vw, 0.7rem);
+  line-height: 1.8;
   text-align: center;
+  max-width: min(80vw, 620px);
+  display: block;
   text-shadow:
-    0 0 12px rgba(8, 145, 168, 0.16),
-    0 0 22px rgba(201, 35, 78, 0.08);
+    0 0 16px rgba(8, 145, 168, 0.26),
+    0 0 28px rgba(201, 35, 78, 0.14);
+  animation: start-screen-audio-hint-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes start-screen-audio-hint-pulse {
+  0% {
+    opacity: 0.28;
+  }
+
+  50% {
+    opacity: 0.92;
+  }
+
+  100% {
+    opacity: 0.28;
+  }
 }
 
 .sidebar-toggle {
