@@ -6,6 +6,7 @@ import { InspectPanel } from "./components/panels/InspectPanel";
 import { CursorOverlay } from "./components/CursorOverlay";
 import { FooterBar } from "./components/FooterBar";
 import { Sidebar } from "./components/Sidebar";
+import { StartScreen } from "./components/StartScreen";
 import { StageView } from "./components/StageView";
 import { TopBar } from "./components/TopBar";
 import { ROOMS } from "./game/data";
@@ -22,6 +23,7 @@ const MUSIC_FADE_MS = 650;
 const MUSIC_FADE_STEP_MS = 50;
 
 export default function App() {
+  const [gameStarted, setGameStarted] = useState(false);
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: -9999, y: -9999 });
   const [showAccuseList, setShowAccuseList] = useState(false);
@@ -174,6 +176,10 @@ export default function App() {
   };
 
   const rootClass = `viewport ${game.cursorMode !== "none" ? "hide-cursor" : ""}`;
+
+  if (!gameStarted) {
+    return <StartScreen onStart={() => setGameStarted(true)} />;
+  }
 
   return (
     <div className="app">
