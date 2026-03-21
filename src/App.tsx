@@ -24,6 +24,7 @@ const MUSIC_FADE_MS = 650;
 const MUSIC_FADE_STEP_MS = 50;
 
 export default function App() {
+  const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: -9999, y: -9999 });
@@ -76,6 +77,7 @@ export default function App() {
     const audio = new Audio();
     audio.loop = true;
     audio.preload = "auto";
+    audio.playsInline = true;
     audio.volume = 0;
     musicRef.current = audio;
     return () => {
@@ -89,6 +91,22 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (audioUnlocked) return;
+
+    const unlock = () => {
+      setAudioUnlocked(true);
+    };
+
+    window.addEventListener("pointerdown", unlock, { passive: true });
+    window.addEventListener("keydown", unlock);
+
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+  }, [audioUnlocked]);
+
+  useEffect(() => {
     const audio = musicRef.current;
     if (!audio) return;
     const targetTrack = soundEnabled
@@ -96,6 +114,7 @@ export default function App() {
         ? SCENE_MUSIC[game.game.currentRoom] ?? null
         : INTRO_MUSIC
       : null;
+    const canPlay = soundEnabled && audioUnlocked;
 
     const clearFade = () => {
       if (fadeIntervalRef.current !== null) {
@@ -133,7 +152,7 @@ export default function App() {
       }
     };
 
-    if (!targetTrack) {
+    if (!targetTrack || !canPlay) {
       if (!audio.paused || audio.volume > 0) {
         fadeTo(0, () => {
           audio.pause();
@@ -167,7 +186,7 @@ export default function App() {
     }
 
     return () => clearFade();
-  }, [game.game.currentRoom, gameStarted, soundEnabled]);
+  }, [audioUnlocked, game.game.currentRoom, gameStarted, soundEnabled]);
 
   const handleContextMenu: MouseEventHandler<HTMLElement> = (event) => {
     if (!game.selectedInventoryId) return;
@@ -183,7 +202,7 @@ export default function App() {
   const rootClass = `viewport ${game.cursorMode !== "none" ? "hide-cursor" : ""}`;
 
   if (!gameStarted) {
-    return <StartScreen onStart={() => setGameStarted(true)} />;
+    return <StartScreen onStart={() => setGameStarted(true)} onUserInteract={() => setAudioUnlocked(true)} />;
   }
 
   return (

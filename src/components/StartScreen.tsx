@@ -10,14 +10,26 @@ const EXIT_DURATION_MS = 800;
 
 interface StartScreenProps {
   onStart: () => void;
+  onUserInteract?: () => void;
 }
 
-export function StartScreen({ onStart }: StartScreenProps) {
+export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
   const [showLogo, setShowLogo] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [backgroundReady, setBackgroundReady] = useState(false);
 
   useEffect(() => {
+    const image = new Image();
+    image.src = BG_IMAGE;
+    image.onload = () => setBackgroundReady(true);
+    image.onerror = () => setBackgroundReady(true);
+    if (image.complete) {
+      setBackgroundReady(true);
+    }
+
+    if (!backgroundReady) return;
+
     const logoTimer = window.setTimeout(() => setShowLogo(true), LOGO_DELAY);
     const buttonTimer = window.setTimeout(() => setShowButton(true), BUTTON_DELAY);
 
@@ -25,9 +37,10 @@ export function StartScreen({ onStart }: StartScreenProps) {
       window.clearTimeout(logoTimer);
       window.clearTimeout(buttonTimer);
     };
-  }, []);
+  }, [backgroundReady]);
 
   const handleStart = () => {
+    if (onUserInteract) onUserInteract();
     if (isExiting) return;
     setIsExiting(true);
     window.setTimeout(onStart, EXIT_DURATION_MS);
@@ -36,21 +49,41 @@ export function StartScreen({ onStart }: StartScreenProps) {
   return (
     <motion.section
       className="start-screen"
+      onPointerDown={onUserInteract}
+      onKeyDown={onUserInteract}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: EXIT_DURATION_MS / 1000, ease: "easeInOut" }}
     >
-      <motion.img
-        className="start-screen-bg"
-        src={BG_IMAGE}
-        alt=""
-        initial={{ opacity: 0, scale: 1.03 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 2.8, ease: "easeOut" }}
-      />
+      {backgroundReady && (
+        <motion.img
+          className="start-screen-bg"
+          src={BG_IMAGE}
+          alt=""
+          initial={{ opacity: 0, scale: 1.03 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 2.8, ease: "easeOut" }}
+        />
+      )}
 
       <div className="start-screen-radial" />
       <div className="start-screen-fade" />
       <div className="start-screen-scanlines" />
+
+      {!backgroundReady && (
+        <div className="start-screen-loading">
+          <div className="start-screen-loading-inner">
+            <span className="start-screen-loading-text">Loading Intro</span>
+            <div className="start-screen-loading-bar" aria-hidden>
+              <span className="start-screen-loading-segment filled" />
+              <span className="start-screen-loading-segment filled" />
+              <span className="start-screen-loading-segment filled" />
+              <span className="start-screen-loading-segment" />
+              <span className="start-screen-loading-segment" />
+              <span className="start-screen-loading-segment" />
+            </div>
+          </div>
+        </div>
+      )}
 
       <motion.div
         className="start-screen-content"
