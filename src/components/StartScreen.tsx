@@ -135,6 +135,7 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
         <AnimatePresence>
           {showButton && (
             <motion.div
+              className="start-screen-cta-block"
               layout
               initial={{ opacity: 0, y: 22 }}
               animate={{ opacity: 1, y: 0 }}
@@ -155,6 +156,20 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
                 <span className="start-screen-button-glow" />
                 <span className="start-screen-button-body">Start Game</span>
               </motion.button>
+
+              <motion.p
+                className="start-screen-audio-hint"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0.22, 0.75, 0.22] }}
+                transition={{
+                  delay: 0.35,
+                  duration: 2.6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                Click anywhere to activate the music
+              </motion.p>
             </motion.div>
           )}
         </AnimatePresence>

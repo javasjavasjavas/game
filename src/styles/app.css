@@ -242,6 +242,24 @@ button {
   background: #fff;
 }
 
+.start-screen-cta-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.start-screen-audio-hint {
+  margin: 60px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: clamp(0.42rem, 0.9vw, 0.58rem);
+  text-align: center;
+  text-shadow:
+    0 0 12px rgba(8, 145, 168, 0.16),
+    0 0 22px rgba(201, 35, 78, 0.08);
+}
+
 .sidebar-toggle {
   display: none;
   position: fixed;
