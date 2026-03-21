@@ -50,6 +50,8 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
     <motion.section
       className="start-screen"
       onPointerDown={onUserInteract}
+      onPointerMove={onUserInteract}
+      onClick={onUserInteract}
       onKeyDown={onUserInteract}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: EXIT_DURATION_MS / 1000, ease: "easeInOut" }}

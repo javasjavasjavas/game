@@ -1,5 +1,5 @@
 import { Coffee, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEventHandler } from "react";
 import { ConversationPanel } from "./components/panels/ConversationPanel";
 import { InspectPanel } from "./components/panels/InspectPanel";
@@ -35,6 +35,10 @@ export default function App() {
   const activeTrackRef = useRef<string | null>(null);
 
   const game = useGame();
+  const getTargetTrack = useCallback(() => {
+    if (!soundEnabled) return null;
+    return gameStarted ? SCENE_MUSIC[game.game.currentRoom] ?? null : INTRO_MUSIC;
+  }, [game.game.currentRoom, gameStarted, soundEnabled]);
 
   const inspectText = useMemo(() => {
     if (game.inspectedHotspot) {
@@ -90,30 +94,52 @@ export default function App() {
     };
   }, []);
 
+  const requestAudioUnlock = useCallback(() => {
+    setAudioUnlocked(true);
+    const audio = musicRef.current;
+    if (!audio || !soundEnabled) return;
+
+    const targetTrack = getTargetTrack();
+    if (!targetTrack) return;
+
+    if (activeTrackRef.current !== targetTrack || audio.src !== new URL(targetTrack, window.location.origin).href) {
+      audio.pause();
+      audio.src = targetTrack;
+      audio.load();
+      activeTrackRef.current = targetTrack;
+      audio.volume = 0;
+    }
+
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        // Browsers can still reject some non-trusted events; the normal effect will retry on the next valid gesture.
+      });
+    }
+  }, [getTargetTrack, soundEnabled]);
+
   useEffect(() => {
     if (audioUnlocked) return;
 
-    const unlock = () => {
-      setAudioUnlocked(true);
-    };
+    const unlock = () => requestAudioUnlock();
 
     window.addEventListener("pointerdown", unlock, { passive: true });
+    window.addEventListener("pointermove", unlock, { passive: true });
+    window.addEventListener("click", unlock, { passive: true });
     window.addEventListener("keydown", unlock);
 
     return () => {
       window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("pointermove", unlock);
+      window.removeEventListener("click", unlock);
       window.removeEventListener("keydown", unlock);
     };
-  }, [audioUnlocked]);
+  }, [audioUnlocked, requestAudioUnlock]);
 
   useEffect(() => {
     const audio = musicRef.current;
     if (!audio) return;
-    const targetTrack = soundEnabled
-      ? gameStarted
-        ? SCENE_MUSIC[game.game.currentRoom] ?? null
-        : INTRO_MUSIC
-      : null;
+    const targetTrack = getTargetTrack();
     const canPlay = soundEnabled && audioUnlocked;
 
     const clearFade = () => {
@@ -186,7 +212,7 @@ export default function App() {
     }
 
     return () => clearFade();
-  }, [audioUnlocked, game.game.currentRoom, gameStarted, soundEnabled]);
+  }, [audioUnlocked, getTargetTrack, soundEnabled]);
 
   const handleContextMenu: MouseEventHandler<HTMLElement> = (event) => {
     if (!game.selectedInventoryId) return;
@@ -202,7 +228,7 @@ export default function App() {
   const rootClass = `viewport ${game.cursorMode !== "none" ? "hide-cursor" : ""}`;
 
   if (!gameStarted) {
-    return <StartScreen onStart={() => setGameStarted(true)} onUserInteract={() => setAudioUnlocked(true)} />;
+    return <StartScreen onStart={() => setGameStarted(true)} onUserInteract={requestAudioUnlock} />;
   }
 
   return (
