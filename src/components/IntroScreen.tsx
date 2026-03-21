@@ -8,6 +8,7 @@ Outside, the city kept breathing through neon, lies, and dirty deals.
 In this town, nobody disappears by accident.`;
 const CHAR_DELAY = 30;
 const VOICE_TRACK = "/game-assets/audio/chapter_1_voice.mp3";
+const APARTMENT_BACKGROUND = "/game-assets/background_apartment.jpg";
 
 interface IntroScreenProps {
   onContinue: () => void;
@@ -62,12 +63,6 @@ export function IntroScreen({ onContinue, onUserInteract }: IntroScreenProps) {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isTyping && voiceRef.current) {
-      voiceRef.current.pause();
-    }
-  }, [isTyping]);
-
   const handleSkip = useCallback(() => {
     onUserInteract?.();
     if (!isTyping) return;
@@ -101,15 +96,32 @@ export function IntroScreen({ onContinue, onUserInteract }: IntroScreenProps) {
       onClick={onUserInteract}
       onKeyDown={onUserInteract}
     >
+      <motion.img
+        className="chapter-intro-bg"
+        src={APARTMENT_BACKGROUND}
+        alt=""
+        initial={{ opacity: 0, scale: 1.03, filter: "blur(16px)" }}
+        animate={{
+          opacity: isExiting ? 0.92 : 1,
+          scale: isExiting ? 1 : 1.015,
+          filter: isExiting ? "blur(6px)" : "blur(12px)",
+        }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
+      <div className="chapter-intro-bg-fade" />
       <div className="chapter-intro-scanlines" />
 
       <motion.div
         className="chapter-intro-box"
         initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3 }}
+        animate={{
+          opacity: isExiting ? 0 : 1,
+          y: isExiting ? -10 : 0,
+          scale: isExiting ? 0.985 : 1,
+        }}
+        transition={{ duration: 0.55, delay: 0.3 }}
       >
-        <div className="chapter-intro-classification">Document #P-2087 — Eyes Only</div>
+        <div className="chapter-intro-classification">Document #P-2087 - Eyes Only</div>
 
         <div className="chapter-intro-header">Chapter One: Blondie</div>
 
