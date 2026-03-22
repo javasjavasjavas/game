@@ -256,7 +256,7 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
       {!backgroundReady && (
         <div className="start-screen-loading">
           <div className="start-screen-loading-inner">
-            <span className="start-screen-loading-text">Loading Intro</span>
+            <span className="start-screen-loading-text">Loading Game</span>
             <div className="start-screen-loading-bar" aria-hidden>
               <span className="start-screen-loading-segment filled" />
               <span className="start-screen-loading-segment filled" />
@@ -349,7 +349,7 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
                   ease: "easeOut",
                 }}
               >
-                Click anywhere to activate the music
+                Click anywhere on the screen to activate the music in your browser
               </motion.p>
             </motion.div>
           )}

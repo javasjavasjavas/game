@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+const APARTMENT_BACKGROUND = "/game-assets/background_apartment.jpg";
+
 interface NewItemPopupProps {
   icon: string;
   label: string;
@@ -45,10 +47,35 @@ export function NewItemPopup({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#08080c",
             cursor: "default",
+            overflow: "hidden",
           }}
         >
+          <motion.img
+            src={APARTMENT_BACKGROUND}
+            alt=""
+            initial={{ opacity: 0, scale: 1.03, filter: "blur(16px)" }}
+            animate={{ opacity: 1, scale: 1.015, filter: "blur(12px)" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+              background:
+                "radial-gradient(circle at center, rgba(8,10,18,0.18) 0%, rgba(8,10,18,0.5) 48%, rgba(4,4,8,0.84) 100%), linear-gradient(to bottom, rgba(0,0,0,0.54) 0%, rgba(0,0,0,0.16) 34%, rgba(0,0,0,0.72) 100%)",
+            }}
+          />
+
           <div
             style={{
               position: "absolute",

@@ -98,7 +98,7 @@ export function StageView({
   const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
   const roomHotspots = STAGE_HOTSPOTS_BY_ROOM[displayedRoom] ?? [];
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
-  const loadingLabel = bootLoading ? "Loading Game" : "Loading Scene";
+  const loadingLabel = "Loading Scene";
   const bootSegments = 14;
 
   const syncCharacterBox = () => {
