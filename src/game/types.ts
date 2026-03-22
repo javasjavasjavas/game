@@ -92,11 +92,14 @@ export interface DialogueScriptOption {
   id: string;
   text: string;
   type: string;
+  requirements?: string[];
+  effects?: DialogueScriptEffects;
   next: string;
 }
 
 export interface DialogueScriptEffects {
   addFlags?: string[];
+  addClues?: string[];
 }
 
 export interface DialogueScriptNode {

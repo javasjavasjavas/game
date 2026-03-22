@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
-import lucyDialogueData from "../game/dialogues/dialogue_Lucy.json";
 import { CHARACTER_BY_ID, CLUES, HOTSPOT_ITEM_BY_ID, INVENTORY_ITEMS, NPCS, ROOMS, STAGE_HOTSPOTS_BY_ROOM } from "../game/data";
+import { getAvailableScriptOptions, getScriptedDialogue, getScriptedDialogueNode } from "../game/dialogues";
 import { formatTime, GameState } from "../game/state";
 import type {
   DialogueEntry,
   DialogueScriptDefinition,
+  DialogueScriptEffects,
   DialogueScriptNode,
   HotspotDefinition,
   HotspotItemDefinition,
@@ -24,11 +25,10 @@ export interface CharacterMemory {
 }
 
 type ScriptedConversationState =
-  | { kind: "lucy_node"; nodeId: string }
-  | { kind: "lucy_followup"; followupId: string }
+  | { kind: "node"; conversationId: string; nodeId: string }
+  | { kind: "followup"; conversationId: string; followupId: string; text: string }
   | null;
 
-const LUCY_DIALOGUE = lucyDialogueData as DialogueScriptDefinition;
 const APARTMENT_HOTSPOT_REQUIREMENTS: Partial<Record<string, string>> = {
   "apartment-jacket-pocket": "lucy_explains_photo_in_jacket",
   "apartment-computer-screen": "lucy_explains_bar_address_in_email",
@@ -54,42 +54,53 @@ export function useGame() {
   const [collectedHotspotItemIds, setCollectedHotspotItemIds] = useState<string[]>([]);
   const [itemPopup, setItemPopup] = useState<HotspotItemDefinition | null>(null);
   const [scriptedConversationState, setScriptedConversationState] = useState<ScriptedConversationState>(null);
+  const [scriptedNodeByConversationId, setScriptedNodeByConversationId] = useState<Record<string, string>>({});
 
   const room = ROOMS[game.currentRoom];
   const clues = game.getClueEntries();
   const npcsHere = game.npcsInRoom(game.currentRoom);
   const hasRequirement = (requirement: string) =>
     game.hasFlag(requirement) || game.hasClue(requirement) || ownedInventoryIds.includes(requirement);
-  const getLucyNode = (nodeId: string) => LUCY_DIALOGUE.nodes.find((node) => node.id === nodeId) ?? null;
-  const getLatestLucyFollowup = () =>
-    (LUCY_DIALOGUE.conditionalFollowups ?? []).filter((followup) => followup.requirements.every(hasRequirement)).at(-1) ?? null;
+  const activeScriptedDialogue = currentTalkNpcId ? getScriptedDialogue(currentTalkNpcId, game.currentRoom) : null;
+  const getLatestFollowup = (dialogue: DialogueScriptDefinition) =>
+    (dialogue.conditionalFollowups ?? []).filter((followup) => followup.requirements.every(hasRequirement)).at(-1) ?? null;
+  const applyScriptEffects = (draft: GameState, effects?: DialogueScriptEffects) => {
+    if (!effects) return;
+    effects.addFlags?.forEach((flag) => draft.addFlag(flag));
+    effects.addClues?.forEach((clueId) => draft.addClue(clueId));
+  };
   const applyNodeEffects = (draft: GameState, node: DialogueScriptNode | null) => {
-    if (!node?.effects?.addFlags) return;
-    node.effects.addFlags.forEach((flag) => draft.addFlag(flag));
+    applyScriptEffects(draft, node?.effects);
   };
 
   const conversation = useMemo(() => {
     if (!currentTalkNpcId || currentTalkNpcId === "selector") return null;
     const npc = NPCS.find((item) => item.id === currentTalkNpcId);
     let dialogue: DialogueEntry | null = null;
-    if (currentTalkNpcId === "lucy" && game.currentRoom === "apartment") {
-      if (scriptedConversationState?.kind === "lucy_node") {
-        const node = getLucyNode(scriptedConversationState.nodeId);
+    if (activeScriptedDialogue) {
+      if (
+        scriptedConversationState?.kind === "node" &&
+        scriptedConversationState.conversationId === activeScriptedDialogue.conversationId
+      ) {
+        const node = getScriptedDialogueNode(activeScriptedDialogue, scriptedConversationState.nodeId);
         dialogue = node
           ? {
               intro: node.text,
-              options: node.options.map((option) => ({ id: option.id, text: option.text })),
+              options: getAvailableScriptOptions(node, hasRequirement).map((option) => ({ id: option.id, text: option.text })),
             }
           : null;
-      } else if (scriptedConversationState?.kind === "lucy_followup") {
-        dialogue = { intro: conversationText, options: [] };
+      } else if (
+        scriptedConversationState?.kind === "followup" &&
+        scriptedConversationState.conversationId === activeScriptedDialogue.conversationId
+      ) {
+        dialogue = { intro: scriptedConversationState.text, options: [] };
       }
     }
     if (!dialogue) {
       dialogue = game.getDialogue(currentTalkNpcId);
     }
     return { npc, dialogue };
-  }, [conversationText, currentTalkNpcId, game, scriptedConversationState]);
+  }, [activeScriptedDialogue, currentTalkNpcId, game, hasRequirement, scriptedConversationState]);
 
   const selectedItem = INVENTORY_ITEMS.find((item) => item.id === selectedInventoryId) ?? null;
   const ownedInventoryItems = useMemo<InventoryItemDefinition[]>(
@@ -181,31 +192,67 @@ export function useGame() {
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
     setCurrentTalkNpcId(npcId);
-    if (npcId === "lucy" && game.currentRoom === "apartment") {
-      const lucyHasNamedLeads =
+    const scriptedDialogue = getScriptedDialogue(npcId, game.currentRoom);
+    if (scriptedDialogue) {
+      const nextGame = game.clone();
+      const savedNodeId = scriptedNodeByConversationId[scriptedDialogue.conversationId];
+      const savedNode = savedNodeId ? getScriptedDialogueNode(scriptedDialogue, savedNodeId) : null;
+      const savedNodeHasOptions = savedNode ? getAvailableScriptOptions(savedNode, hasRequirement).length > 0 : false;
+      const hasNamedLeads =
         game.hasFlag("lucy_explains_photo_in_jacket") ||
         game.hasFlag("lucy_explains_bar_address_in_email") ||
         game.hasFlag("player_directed_to_jacket_and_email");
-      const followup = lucyHasNamedLeads ? getLatestLucyFollowup() : null;
-      const startNode = lucyHasNamedLeads
-        ? getLucyNode("lucy_check_both_001") ?? getLucyNode("lucy_starting_points_001") ?? getLucyNode(LUCY_DIALOGUE.startNode)
-        : getLucyNode(LUCY_DIALOGUE.startNode);
-      const nextGame = game.clone();
+      const followup = !savedNodeHasOptions && hasNamedLeads ? getLatestFollowup(scriptedDialogue) : null;
+
+      if (savedNode && savedNodeHasOptions) {
+        applyNodeEffects(nextGame, savedNode);
+        nextGame.characterEmotion = savedNode.emotion;
+        nextGame.lastMessage = savedNode.text;
+        setScriptedConversationState({
+          kind: "node",
+          conversationId: scriptedDialogue.conversationId,
+          nodeId: savedNode.id,
+        });
+        setGame(nextGame);
+        setConversationText(savedNode.text);
+        return;
+      }
+
       if (followup) {
         nextGame.characterEmotion = followup.emotion;
         nextGame.lastMessage = followup.text;
-        setScriptedConversationState({ kind: "lucy_followup", followupId: followup.id });
+        setScriptedConversationState({
+          kind: "followup",
+          conversationId: scriptedDialogue.conversationId,
+          followupId: followup.id,
+          text: followup.text,
+        });
         setGame(nextGame);
         setConversationText(followup.text);
         return;
       }
-      if (startNode) {
-        applyNodeEffects(nextGame, startNode);
-        nextGame.characterEmotion = startNode.emotion;
-        nextGame.lastMessage = startNode.text;
-        setScriptedConversationState({ kind: "lucy_node", nodeId: startNode.id });
+
+      const nextNode =
+        (hasNamedLeads
+          ? getScriptedDialogueNode(scriptedDialogue, "lucy_check_both_001") ??
+            getScriptedDialogueNode(scriptedDialogue, "lucy_starting_points_001")
+          : null) ?? getScriptedDialogueNode(scriptedDialogue, scriptedDialogue.startNode);
+
+      if (nextNode) {
+        applyNodeEffects(nextGame, nextNode);
+        nextGame.characterEmotion = nextNode.emotion;
+        nextGame.lastMessage = nextNode.text;
+        setScriptedConversationState({
+          kind: "node",
+          conversationId: scriptedDialogue.conversationId,
+          nodeId: nextNode.id,
+        });
+        setScriptedNodeByConversationId((prev) => ({
+          ...prev,
+          [scriptedDialogue.conversationId]: nextNode.id,
+        }));
         setGame(nextGame);
-        setConversationText(startNode.text);
+        setConversationText(nextNode.text);
         return;
       }
     }
@@ -242,10 +289,19 @@ export function useGame() {
   };
 
   const pickDialogueOption = (npcId: string, optionId: string) => {
-    if (npcId === "lucy" && game.currentRoom === "apartment" && scriptedConversationState?.kind === "lucy_node") {
-      const currentNode = getLucyNode(scriptedConversationState.nodeId);
+    const scriptedDialogue = getScriptedDialogue(npcId, game.currentRoom);
+    if (
+      scriptedDialogue &&
+      scriptedConversationState?.kind === "node" &&
+      scriptedConversationState.conversationId === scriptedDialogue.conversationId
+    ) {
+      const currentNode = getScriptedDialogueNode(scriptedDialogue, scriptedConversationState.nodeId);
       const selectedOption = currentNode?.options.find((option) => option.id === optionId);
-      const nextNode = selectedOption ? getLucyNode(selectedOption.next) : null;
+      if (selectedOption?.requirements && !selectedOption.requirements.every(hasRequirement)) {
+        setConversationText("This is not the right moment for that question.");
+        return;
+      }
+      const nextNode = selectedOption ? getScriptedDialogueNode(scriptedDialogue, selectedOption.next) : null;
       if (!selectedOption || !nextNode) {
         setConversationText("There is nothing else to ask.");
         return;
@@ -253,15 +309,26 @@ export function useGame() {
 
       const nextGame = game.clone();
       const beforeFlags = new Set(nextGame.flags);
+      const beforeClues = new Set(nextGame.clues);
+      applyScriptEffects(nextGame, selectedOption.effects);
       applyNodeEffects(nextGame, nextNode);
       nextGame.characterEmotion = nextNode.emotion;
       nextGame.advanceTime(5);
       nextGame.lastMessage = nextNode.text;
       setGame(nextGame);
-      setScriptedConversationState({ kind: "lucy_node", nodeId: nextNode.id });
+      setScriptedConversationState({
+        kind: "node",
+        conversationId: scriptedDialogue.conversationId,
+        nodeId: nextNode.id,
+      });
+      setScriptedNodeByConversationId((prev) => ({
+        ...prev,
+        [scriptedDialogue.conversationId]: nextNode.id,
+      }));
       setConversationText(nextNode.text);
       const discoveredFlags = [...nextGame.flags].filter((flag) => !beforeFlags.has(flag));
-      setConversationHasClue(discoveredFlags.length > 0);
+      const discoveredClues = [...nextGame.clues].filter((clueId) => !beforeClues.has(clueId));
+      setConversationHasClue(discoveredFlags.length > 0 || discoveredClues.length > 0);
       return;
     }
 
