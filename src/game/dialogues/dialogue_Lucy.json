@@ -1,0 +1,365 @@
+{
+  "scene": "apartment",
+  "characterId": "lucy",
+  "conversationId": "lucy_intro_apartment",
+  "description": "Opening conversation that starts the case and points the player to the photo and the email.",
+  "startNode": "lucy_intro_001",
+  "nodes": [
+    {
+      "id": "lucy_intro_001",
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "You finally woke up. Good. Blondie is gone, and I don’t think this city plans on giving her back.",
+      "effects": {
+        "addFlags": ["case_started"]
+      },
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "Gone how? Missing, hiding, or dead and nobody told me yet?",
+          "type": "question",
+          "next": "lucy_gone_how_001"
+        },
+        {
+          "id": "opt_002",
+          "text": "You look like you already know more than you’re saying.",
+          "type": "comment",
+          "next": "lucy_you_know_more_001"
+        },
+        {
+          "id": "opt_003",
+          "text": "What do I have to start with?",
+          "type": "question",
+          "next": "lucy_starting_points_001"
+        },
+        {
+          "id": "opt_004",
+          "text": "You could’ve called someone cheaper.",
+          "type": "joke",
+          "next": "lucy_cheaper_001"
+        },
+        {
+          "id": "opt_005",
+          "text": "Did Blondie leave anything else?",
+          "type": "question",
+          "next": "lucy_anything_else_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_gone_how_001",
+      "speaker": "lucy",
+      "emotion": "angry",
+      "text": "Don’t joke. She disappeared. She was scared before she vanished.",
+      "options": [
+        {
+          "id": "opt_006",
+          "text": "Scared of who?",
+          "type": "question",
+          "next": "lucy_scared_of_who_001"
+        },
+        {
+          "id": "opt_007",
+          "text": "When did you last see her?",
+          "type": "question",
+          "next": "lucy_last_seen_001"
+        },
+        {
+          "id": "opt_008",
+          "text": "Back up. Tell me what you actually know.",
+          "type": "pressure",
+          "next": "lucy_what_you_know_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_scared_of_who_001",
+      "speaker": "lucy",
+      "emotion": "sad",
+      "text": "She didn’t give me names. Just warnings. Told me not to trust the police.",
+      "effects": {
+        "addFlags": ["lucy_warns_about_police"]
+      },
+      "options": [
+        {
+          "id": "opt_009",
+          "text": "That narrows it down to everyone with a badge and a pulse.",
+          "type": "comment",
+          "next": "lucy_badge_pulse_001"
+        },
+        {
+          "id": "opt_010",
+          "text": "Why didn’t she tell you more?",
+          "type": "question",
+          "next": "lucy_why_not_more_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_last_seen_001",
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "Not long before midnight. Long enough to know she wasn’t acting normal.",
+      "effects": {
+        "addFlags": ["lucy_last_seen_known"]
+      },
+      "options": [
+        {
+          "id": "opt_011",
+          "text": "Define not normal.",
+          "type": "question",
+          "next": "lucy_not_normal_001"
+        },
+        {
+          "id": "opt_012",
+          "text": "So she knew trouble was coming.",
+          "type": "comment",
+          "next": "lucy_trouble_was_coming_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_what_you_know_001",
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "I know she was trying to stay ahead of something. I know she didn’t trust the police. And I know waiting won’t help her.",
+      "effects": {
+        "addFlags": ["lucy_knows_blondie_was_running"]
+      },
+      "options": [
+        {
+          "id": "opt_013",
+          "text": "Fine. Then give me something real.",
+          "type": "pressure",
+          "next": "lucy_starting_points_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_you_know_more_001",
+      "speaker": "lucy",
+      "emotion": "angry",
+      "text": "And you look like a man who should ask better questions.",
+      "options": [
+        {
+          "id": "opt_014",
+          "text": "Try me.",
+          "type": "comment",
+          "next": "lucy_try_me_001"
+        },
+        {
+          "id": "opt_015",
+          "text": "You’re protecting somebody.",
+          "type": "accusation",
+          "next": "lucy_protecting_somebody_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_try_me_001",
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "Fine. I know she was trying to stay ahead of someone. I don’t know if she managed.",
+      "effects": {
+        "addFlags": ["lucy_knows_blondie_was_running"]
+      },
+      "options": [
+        {
+          "id": "opt_016",
+          "text": "Then start at the beginning.",
+          "type": "question",
+          "next": "lucy_starting_points_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_protecting_somebody_001",
+      "speaker": "lucy",
+      "emotion": "sad",
+      "text": "Maybe I’m protecting what’s left.",
+      "effects": {
+        "addFlags": ["lucy_is_hiding_more"]
+      },
+      "options": [
+        {
+          "id": "opt_017",
+          "text": "That’s not an answer.",
+          "type": "pressure",
+          "next": "lucy_starting_points_001"
+        },
+        {
+          "id": "opt_018",
+          "text": "No. But it’s honest enough.",
+          "type": "comment",
+          "next": "lucy_soften_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_soften_001",
+      "speaker": "lucy",
+      "emotion": "sad",
+      "text": "More honest than this city deserves.",
+      "options": [
+        {
+          "id": "opt_019",
+          "text": "Then help me anyway.",
+          "type": "question",
+          "next": "lucy_starting_points_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_starting_points_001",
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "I left Blondie’s photo in the pocket of your jacket. And I sent you the Bar address by email. That’s where she was last seen.",
+      "effects": {
+        "addFlags": [
+          "lucy_explains_photo_in_jacket",
+          "lucy_explains_bar_address_in_email"
+        ]
+      },
+      "options": [
+        {
+          "id": "opt_020",
+          "text": "The Bar. Great. A building full of witnesses with selective memory.",
+          "type": "comment",
+          "next": "lucy_bar_comment_001"
+        },
+        {
+          "id": "opt_021",
+          "text": "I’ll check both.",
+          "type": "comment",
+          "next": "lucy_check_both_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_bar_comment_001",
+      "speaker": "lucy",
+      "emotion": "happy",
+      "text": "That still makes it one of the more honest places in this city.",
+      "options": [
+        {
+          "id": "opt_022",
+          "text": "Comforting.",
+          "type": "comment",
+          "next": "lucy_comforting_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_comforting_001",
+      "speaker": "lucy",
+      "emotion": "happy",
+      "text": "I do what I can.",
+      "options": []
+    },
+    {
+      "id": "lucy_check_both_001",
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "Do it fast. If Blondie’s still alive, time is already working for the wrong side.",
+      "effects": {
+        "addFlags": ["player_directed_to_jacket_and_email"]
+      },
+      "options": []
+    },
+    {
+      "id": "lucy_cheaper_001",
+      "speaker": "lucy",
+      "emotion": "happy",
+      "text": "I tried. They were either drunk, dead, or useless. Then I remembered you.",
+      "options": [
+        {
+          "id": "opt_023",
+          "text": "You really know how to motivate a man.",
+          "type": "joke",
+          "next": "lucy_motivate_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_motivate_001",
+      "speaker": "lucy",
+      "emotion": "happy",
+      "text": "And yet, here you are.",
+      "options": []
+    },
+    {
+      "id": "lucy_anything_else_001",
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "Nothing clean. Nothing easy. Just the feeling that she knew something bad was already in motion.",
+      "effects": {
+        "addFlags": ["lucy_confirms_bad_feeling"]
+      },
+      "options": [
+        {
+          "id": "opt_024",
+          "text": "That feeling usually charges by the hour.",
+          "type": "comment",
+          "next": "lucy_hourly_rate_001"
+        },
+        {
+          "id": "opt_025",
+          "text": "Then I’ll start with the photo and the email.",
+          "type": "comment",
+          "next": "lucy_check_both_001"
+        }
+      ]
+    },
+    {
+      "id": "lucy_hourly_rate_001",
+      "speaker": "lucy",
+      "emotion": "sad",
+      "text": "Then you’d better be worth it tonight.",
+      "options": []
+    },
+    {
+      "id": "lucy_badge_pulse_001",
+      "speaker": "lucy",
+      "emotion": "happy",
+      "text": "Good. Your head still works. Use it.",
+      "options": []
+    },
+    {
+      "id": "lucy_why_not_more_001",
+      "speaker": "lucy",
+      "emotion": "sad",
+      "text": "Because saying too much out loud makes things real. And she was still pretending she had time.",
+      "options": []
+    },
+    {
+      "id": "lucy_not_normal_001",
+      "speaker": "lucy",
+      "emotion": "sad",
+      "text": "Like someone trying to keep her hands steady while her whole future was shaking.",
+      "options": []
+    },
+    {
+      "id": "lucy_trouble_was_coming_001",
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "No. I think it was already here.",
+      "options": []
+    }
+  ],
+  "conditionalFollowups": [
+    {
+      "id": "lucy_after_photo_found",
+      "requirements": ["blondie_photo"],
+      "speaker": "lucy",
+      "emotion": "sad",
+      "text": "Yeah. That’s the one. She hated that photo. Said it made her look too alive for this city."
+    },
+    {
+      "id": "lucy_after_email_found",
+      "requirements": ["bar_address_known"],
+      "speaker": "lucy",
+      "emotion": "serious",
+      "text": "Then stop staring at the screen and move. The Bar won’t get more honest while you’re standing here."
+    }
+  ]
+}

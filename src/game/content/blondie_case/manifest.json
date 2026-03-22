@@ -1,0 +1,21 @@
+{
+  "caseId": "blondie_case",
+  "version": "1.0.0",
+  "files": {
+    "characters": "./characters.json",
+    "locations": "./locations.json",
+    "itemsAndUnlocks": "./items_and_unlocks.json",
+    "walkthrough": "./walkthrough.json"
+  },
+  "idPolicy": {
+    "format": "snake_case",
+    "locationExamples": [
+      "italian_restaurant_interior",
+      "underground_garage"
+    ],
+    "characterExamples": [
+      "mysterious_kid",
+      "blue_wing"
+    ]
+  }
+}

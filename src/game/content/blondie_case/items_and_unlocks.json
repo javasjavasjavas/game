@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "caseId": "blondie_case",
+    "version": "1.0.0",
+    "sourceDocs": [
+      "docs/blondie_case_intro_and_core_systems_v2.md",
+      "docs/locations_and_hotspots_data.md",
+      "docs/walkthrough_data.md"
+    ]
+  },
+  "items": [
+    {
+      "id": "blondie_photo",
+      "name": "Blondie Photo",
+      "category": "clue",
+      "obtainedAt": "apartment.jacket_pocket",
+      "usedWith": ["rose", "the_gambler", "doctor", "mysterious_kid", "pepe", "jenny"]
+    },
+    {
+      "id": "crumpled_receipt",
+      "name": "Crumpled Receipt",
+      "category": "clue",
+      "obtainedAt": "bar.under_the_table"
+    },
+    {
+      "id": "sedative_box",
+      "name": "Sedative Box",
+      "category": "clue",
+      "obtainedAt": "pharmacy.medicine_shelf_1",
+      "usedWith": ["doctor", "lucy"]
+    },
+    {
+      "id": "arcade_token",
+      "name": "Arcade Token",
+      "category": "quest",
+      "obtainedAt": "arcade_room.arcade_machine_2_dispenser",
+      "usedAt": ["red_light_block.vending_machine"]
+    },
+    {
+      "id": "energizing_drink",
+      "name": "Energizing Drink",
+      "category": "quest",
+      "obtainedAt": "red_light_block.vending_machine",
+      "usedWith": ["mysterious_kid"]
+    },
+    {
+      "id": "license_plate_note",
+      "name": "License Plate Note",
+      "category": "clue",
+      "obtainedFrom": "rose",
+      "usedAt": ["underground_garage.car_license_plate"]
+    },
+    {
+      "id": "cigarette_pack",
+      "name": "Cigarette Pack",
+      "category": "quest",
+      "obtainedAt": "store.counter",
+      "usedWith": ["bodyguard"]
+    },
+    {
+      "id": "screwdriver",
+      "name": "Screwdriver",
+      "category": "optional_tool",
+      "obtainedAt": "underground_garage.tool_bench",
+      "usedAt": ["elevator.hidden_area"]
+    },
+    {
+      "id": "steel_bar",
+      "name": "Steel Bar",
+      "category": "final_tool",
+      "obtainedAt": "dark_alley.crate_stack",
+      "usedAt": ["safehouse.metal_door"]
+    },
+    {
+      "id": "trading_card_rooftop_01",
+      "name": "Trading Card: Rooftop 01",
+      "category": "collectible",
+      "obtainedAt": "rooftop.flower_pot"
+    },
+    {
+      "id": "trading_card_fire_escape_01",
+      "name": "Trading Card: Fire Escape 01",
+      "category": "collectible",
+      "obtainedAt": "fire_escape_landing.hidden_trading_card"
+    }
+  ],
+  "majorUnlocks": [
+    {
+      "id": "open_city_map",
+      "requirements": ["bar_address_known"],
+      "result": ["location:bar"]
+    },
+    {
+      "id": "unlock_underground_garage",
+      "requirements": ["energizing_drink_given_to_mysterious_kid"],
+      "result": ["location:underground_garage"]
+    },
+    {
+      "id": "unlock_motel_neon",
+      "requirements": ["plate_match_confirmed", "street_racer_identifies_car_as_nails"],
+      "result": ["location:motel_neon"]
+    },
+    {
+      "id": "unlock_italian_restaurant_interior",
+      "requirements": ["restaurant_access_granted"],
+      "result": ["location:italian_restaurant_interior"]
+    },
+    {
+      "id": "unlock_safehouse_final_entry",
+      "requirements": ["safehouse_location_known", "steel_bar"],
+      "result": ["ending_route_open"]
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import type { InventoryItemDefinition } from "../game/types";
 interface Props {
   showNav: boolean;
   mapOpen: boolean;
+  mapEnabled: boolean;
   inventoryItems: InventoryItemDefinition[];
   selectedInventoryId: string | null;
   onToggleInventory: (id: string) => void;
@@ -10,7 +11,7 @@ interface Props {
   onMap: () => void;
 }
 
-export function FooterBar({ showNav, mapOpen, inventoryItems, selectedInventoryId, onToggleInventory, onInspect, onMap }: Props) {
+export function FooterBar({ showNav, mapOpen, mapEnabled, inventoryItems, selectedInventoryId, onToggleInventory, onInspect, onMap }: Props) {
   if (!showNav) return null;
 
   return (
@@ -32,7 +33,7 @@ export function FooterBar({ showNav, mapOpen, inventoryItems, selectedInventoryI
         <button className="pill-btn" onClick={onInspect}>
           <img className="pill-icon-image" src="/game-assets/icon_search.png" alt="Search" /> Inspect area
         </button>
-        <button className="pill-btn" onClick={onMap}>
+        <button className="pill-btn" onClick={onMap} disabled={!mapEnabled}>
           <img className="pill-icon-image" src="/game-assets/icon_map.png" alt="Map" /> {mapOpen ? "Close City Map" : "Open City Map"}
         </button>
       </div>

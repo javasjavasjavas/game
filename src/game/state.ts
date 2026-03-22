@@ -19,6 +19,7 @@ export class GameState {
   money: number;
   expenses: string[];
   clues: Set<string>;
+  flags: Set<string>;
   finished: boolean;
   lastMessage: string;
 
@@ -29,6 +30,7 @@ export class GameState {
     this.money = seed?.money ?? 120;
     this.expenses = seed?.expenses ? [...seed.expenses] : [];
     this.clues = new Set(seed?.clues ? [...seed.clues] : []);
+    this.flags = new Set(seed?.flags ? [...seed.flags] : []);
     this.finished = seed?.finished ?? false;
     this.lastMessage = seed?.lastMessage ?? "You entered the city at night. Find who forged the logs.";
   }
@@ -44,6 +46,14 @@ export class GameState {
   addClue(clueId: string): void {
     if (!CLUES[clueId]) return;
     this.clues.add(clueId);
+  }
+
+  hasFlag(flagId: string): boolean {
+    return this.flags.has(flagId);
+  }
+
+  addFlag(flagId: string): void {
+    this.flags.add(flagId);
   }
 
   getClueEntries(): Array<{ id: string; text: string }> {

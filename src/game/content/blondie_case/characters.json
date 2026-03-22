@@ -1,0 +1,312 @@
+{
+  "meta": {
+    "caseId": "blondie_case",
+    "version": "1.0.0",
+    "sourceDocs": [
+      "docs/GAME_TECH_UI_UX_GUIDE.md",
+      "docs/blondie_case_intro_and_core_systems_v2.md",
+      "docs/characters_data_from_visible_sprites.md"
+    ]
+  },
+  "emotionCatalog": [
+    "serious",
+    "happy",
+    "sad",
+    "angry",
+    "thinking",
+    "thiking",
+    "laughing",
+    "suspicious",
+    "sensual",
+    "tired",
+    "worried",
+    "winner"
+  ],
+  "aliases": {
+    "blue_wing": ["hero"],
+    "mysterious_kid": ["mind_reader"],
+    "the_gambler": ["gambler"]
+  },
+  "characters": [
+    {
+      "id": "big_boss",
+      "name": "Big Boss",
+      "role": "crime_boss",
+      "importance": "main",
+      "defaultLocationId": "italian_restaurant_interior",
+      "availableFromStart": false,
+      "spritePrefix": "character_big_boss",
+      "emotionsAvailable": ["happy", "serious"],
+      "emotionSprites": {
+        "happy": {
+          "fileName": "character_big_boss_happy.png",
+          "image": "/game-assets/character_big_boss_happy.png"
+        },
+        "serious": {
+          "fileName": "character_big_boss_serious.png",
+          "image": "/game-assets/character_big_boss_serious.png"
+        }
+      }
+    },
+    {
+      "id": "blondie",
+      "name": "Blondie",
+      "role": "missing_person",
+      "importance": "main",
+      "defaultLocationId": "safehouse",
+      "availableFromStart": false,
+      "spritePrefix": "character_blondie",
+      "emotionsAvailable": ["happy", "sad", "serious"],
+      "emotionSprites": {
+        "happy": {
+          "fileName": "character_blondie_happy.png",
+          "image": "/game-assets/character_blondie_happy.png"
+        },
+        "sad": {
+          "fileName": "character_blondie_sad.png",
+          "image": "/game-assets/character_blondie_sad.png"
+        },
+        "serious": {
+          "fileName": "character_blondie_serious.png",
+          "image": "/game-assets/character_blondie_serious.png"
+        }
+      }
+    },
+    {
+      "id": "bodyguard",
+      "name": "BodyGuard",
+      "role": "gatekeeper",
+      "importance": "main",
+      "defaultLocationId": "italian_restaurant_exterior",
+      "availableFromStart": true,
+      "spritePrefix": "character_bodyguard",
+      "emotionsAvailable": ["happy", "laughing", "serious", "tired"],
+      "emotionSprites": {
+        "happy": {
+          "fileName": "character_bodyguard_happy.png",
+          "image": "/game-assets/character_bodyguard_happy.png"
+        },
+        "laughing": {
+          "fileName": "character_bodyguard_laughing.png",
+          "image": "/game-assets/character_bodyguard_laughing.png"
+        },
+        "serious": {
+          "fileName": "character_bodyguard_serious.png",
+          "image": "/game-assets/character_bodyguard_serious.png"
+        },
+        "tired": {
+          "fileName": "character_bodyguard_tired.png",
+          "image": "/game-assets/character_bodyguard_tired.png"
+        }
+      }
+    },
+    {
+      "id": "driver",
+      "name": "Driver",
+      "role": "transport_npc",
+      "importance": "secondary",
+      "defaultLocationId": "cab",
+      "availableFromStart": true,
+      "spritePrefix": "character_driver",
+      "emotionsAvailable": ["happy", "laughing", "serious"],
+      "emotionSprites": {
+        "happy": {
+          "fileName": "character_driver_happy.png",
+          "image": "/game-assets/character_driver_happy.png"
+        },
+        "laughing": {
+          "fileName": "character_driver_laughing.png",
+          "image": "/game-assets/character_driver_laughing.png"
+        },
+        "serious": {
+          "fileName": "character_driver_serious.png",
+          "image": "/game-assets/character_driver_serious.png"
+        }
+      }
+    },
+    {
+      "id": "blue_wing",
+      "name": "Blue Wing",
+      "role": "vigilante",
+      "importance": "secondary",
+      "defaultLocationId": "rooftop",
+      "availableFromStart": false,
+      "spritePrefix": "character_hero",
+      "emotionsAvailable": ["happy", "serious", "thinking"],
+      "emotionSprites": {
+        "happy": {
+          "fileName": "character_hero_happy.png",
+          "image": "/game-assets/character_hero_happy.png"
+        },
+        "serious": {
+          "fileName": "character_hero_serious.png",
+          "image": "/game-assets/character_hero_serious.png"
+        },
+        "thinking": {
+          "fileName": "character_hero_thinking.png",
+          "image": "/game-assets/character_hero_thinking.png"
+        }
+      }
+    },
+    {
+      "id": "lucy",
+      "name": "Lucy",
+      "role": "client",
+      "importance": "main",
+      "defaultLocationId": "apartment",
+      "availableFromStart": true,
+      "spritePrefix": "character_lucy",
+      "emotionsAvailable": ["angry", "happy", "sad", "serious"],
+      "emotionSprites": {
+        "angry": {
+          "fileName": "character_lucy_angry.png",
+          "image": "/game-assets/character_lucy_angry.png"
+        },
+        "happy": {
+          "fileName": "character_lucy_happy.png",
+          "image": "/game-assets/character_lucy_happy.png"
+        },
+        "sad": {
+          "fileName": "character_lucy_sad.png",
+          "image": "/game-assets/character_lucy_sad.png"
+        },
+        "serious": {
+          "fileName": "character_lucy_serious.png",
+          "image": "/game-assets/character_lucy_serious.png"
+        }
+      }
+    },
+    {
+      "id": "mysterious_kid",
+      "name": "Mysterious Kid",
+      "role": "witness",
+      "importance": "main",
+      "defaultLocationId": "arcade_room",
+      "availableFromStart": true,
+      "spritePrefix": "character_mind_reader",
+      "emotionsAvailable": ["angry", "happy", "suspicious"],
+      "emotionSprites": {
+        "angry": {
+          "fileName": "character_mind_reader_angry.png",
+          "image": "/game-assets/character_mind_reader_angry.png"
+        },
+        "happy": {
+          "fileName": "character_mind_reader_happy.png",
+          "image": "/game-assets/character_mind_reader_happy.png"
+        },
+        "suspicious": {
+          "fileName": "character_mind_reader_suspicious.png",
+          "image": "/game-assets/character_mind_reader_suspicious.png"
+        }
+      }
+    },
+    {
+      "id": "nails",
+      "name": "Nails",
+      "role": "gang_member",
+      "importance": "secondary",
+      "defaultLocationId": "motel_neon",
+      "availableFromStart": false,
+      "spritePrefix": "character_nails",
+      "emotionsAvailable": ["serious", "thinking", "worried"],
+      "emotionSprites": {
+        "serious": {
+          "fileName": "character_nails_serious.png",
+          "image": "/game-assets/character_nails_serious.png"
+        },
+        "thinking": {
+          "fileName": "character_nails_thinking.png",
+          "image": "/game-assets/character_nails_thinking.png"
+        },
+        "worried": {
+          "fileName": "character_nails_worried.png",
+          "image": "/game-assets/character_nails_worried.png"
+        }
+      }
+    },
+    {
+      "id": "pepe",
+      "name": "Pepe",
+      "role": "street_contact",
+      "importance": "main",
+      "defaultLocationId": "dark_alley",
+      "availableFromStart": false,
+      "spritePrefix": "character_pepe",
+      "emotionsAvailable": ["happy", "serious", "thiking"],
+      "emotionSprites": {
+        "happy": {
+          "fileName": "character_pepe_happy.png",
+          "image": "/game-assets/character_pepe_happy.png"
+        },
+        "serious": {
+          "fileName": "character_pepe_serious.png",
+          "image": "/game-assets/character_pepe_serious.png"
+        },
+        "thiking": {
+          "fileName": "character_pepe_thinking.png",
+          "image": "/game-assets/character_pepe_thinking.png"
+        }
+      }
+    },
+    {
+      "id": "rose",
+      "name": "Rose",
+      "role": "street_witness",
+      "importance": "main",
+      "defaultLocationId": "red_light_block",
+      "availableFromStart": true,
+      "spritePrefix": "character_rose",
+      "emotionsAvailable": ["sensual", "serious", "thinking"],
+      "emotionSprites": {
+        "sensual": {
+          "fileName": "character_rose_sensual.png",
+          "image": "/game-assets/character_rose_sensual.png"
+        },
+        "serious": {
+          "fileName": "character_rose_serious.png",
+          "image": "/game-assets/character_rose_serious.png"
+        },
+        "thinking": {
+          "fileName": "character_rose_thinking.png",
+          "image": "/game-assets/character_rose_thinking.png"
+        }
+      }
+    },
+    {
+      "id": "the_gambler",
+      "name": "The Gambler",
+      "role": "informant",
+      "importance": "secondary",
+      "defaultLocationId": "bar",
+      "availableFromStart": true,
+      "spritePrefix": "character_the_gambler",
+      "emotionsAvailable": ["angry", "happy", "serious", "winner"],
+      "emotionSprites": {
+        "angry": {
+          "fileName": "character_the_gambler_angry.png",
+          "image": "/game-assets/character_the_gambler_angry.png"
+        },
+        "happy": {
+          "fileName": "character_the_gambler_happy.png",
+          "image": "/game-assets/character_the_gambler_happy.png"
+        },
+        "serious": {
+          "fileName": "character_the_gambler_serious.png",
+          "image": "/game-assets/character_the_gambler_serious.png"
+        },
+        "winner": {
+          "fileName": "character_the_gambler_winner.png",
+          "image": "/game-assets/character_the_gambler_winner.png"
+        }
+      }
+    }
+  ],
+  "pendingCharactersWithoutVerifiedSprites": [
+    "detective",
+    "doctor",
+    "street_racer",
+    "jenny",
+    "dirty_cop",
+    "creator"
+  ]
+}

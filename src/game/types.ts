@@ -30,14 +30,25 @@ export interface Npc {
   schedule: NpcScheduleSlot[];
 }
 
-export type CharacterEmotion = "serious" | "happy" | "sad" | "angry" | "suspicious";
+export type CharacterEmotion =
+  | "serious"
+  | "happy"
+  | "sad"
+  | "angry"
+  | "suspicious"
+  | "laughing"
+  | "tired"
+  | "thinking"
+  | "worried"
+  | "sensual"
+  | "winner";
 
 export interface CharacterDefinition {
   id: string;
   name: string;
   description: string;
   defaultEmotion: CharacterEmotion;
-  emotions: Record<CharacterEmotion, string>;
+  emotions: Partial<Record<CharacterEmotion, string>>;
 }
 
 export interface HotspotDefinition {
@@ -77,6 +88,44 @@ export interface DialogueEntry {
   options: DialogueOption[];
 }
 
+export interface DialogueScriptOption {
+  id: string;
+  text: string;
+  type: string;
+  next: string;
+}
+
+export interface DialogueScriptEffects {
+  addFlags?: string[];
+}
+
+export interface DialogueScriptNode {
+  id: string;
+  speaker: string;
+  emotion: CharacterEmotion;
+  text: string;
+  effects?: DialogueScriptEffects;
+  options: DialogueScriptOption[];
+}
+
+export interface DialogueConditionalFollowup {
+  id: string;
+  requirements: string[];
+  speaker: string;
+  emotion: CharacterEmotion;
+  text: string;
+}
+
+export interface DialogueScriptDefinition {
+  scene: string;
+  characterId: string;
+  conversationId: string;
+  description: string;
+  startNode: string;
+  nodes: DialogueScriptNode[];
+  conditionalFollowups?: DialogueConditionalFollowup[];
+}
+
 export interface SolveResult {
   ok: boolean;
   ending: string;
@@ -90,8 +139,11 @@ export interface GameState {
   money: number;
   expenses: string[];
   clues: Set<string>;
+  flags: Set<string>;
   finished: boolean;
   lastMessage: string;
   hasClue(clueId: string): boolean;
   addClue(clueId: string): void;
+  hasFlag(flagId: string): boolean;
+  addFlag(flagId: string): void;
 }

@@ -1,0 +1,155 @@
+{
+  "meta": {
+    "caseId": "blondie_case",
+    "version": "1.0.0",
+    "sourceDocs": [
+      "docs/blondie_case_intro_and_core_systems_v2.md",
+      "docs/walkthrough_data.md"
+    ]
+  },
+  "walkthrough": {
+    "title": "Blondie Case - Canonical Basic Winning Route",
+    "goal": "Find Blondie before 05:00",
+    "startTime": "22:00",
+    "deadline": "05:00",
+    "stages": [
+      {
+        "id": "01_apartment_intro",
+        "locationId": "apartment",
+        "required": true,
+        "steps": [
+          "talk:lucy",
+          "inspect:jacket_pocket -> blondie_photo",
+          "inspect:computer_screen -> bar_address_known + open_city_map"
+        ]
+      },
+      {
+        "id": "02_building_transition",
+        "locationId": "elevator",
+        "required": true,
+        "steps": [
+          "scene:leave_apartment",
+          "scene:exit_building"
+        ]
+      },
+      {
+        "id": "03_bar",
+        "locationId": "bar",
+        "required": true,
+        "steps": [
+          "talk:the_gambler (requires bar_address_known)",
+          "inspect:under_the_table -> crumpled_receipt"
+        ]
+      },
+      {
+        "id": "04_pharmacy",
+        "locationId": "pharmacy",
+        "required": true,
+        "steps": [
+          "talk:doctor",
+          "inspect:medicine_shelf_2",
+          "inspect:medicine_shelf_1 -> sedative_box"
+        ]
+      },
+      {
+        "id": "05_arcade_first_pass",
+        "locationId": "arcade_room",
+        "required": true,
+        "steps": [
+          "talk:mysterious_kid",
+          "inspect:counter_computer",
+          "inspect:arcade_machine_2_dispenser -> arcade_token"
+        ]
+      },
+      {
+        "id": "06_store",
+        "locationId": "store",
+        "required": true,
+        "steps": [
+          "talk:jenny",
+          "shop:counter -> cigarette_pack"
+        ]
+      },
+      {
+        "id": "07_red_light_block",
+        "locationId": "red_light_block",
+        "required": true,
+        "steps": [
+          "talk:rose (requires blondie_photo) -> license_plate_note",
+          "use:vending_machine + arcade_token -> energizing_drink",
+          "transition:alley_entrance"
+        ]
+      },
+      {
+        "id": "08_dark_alley",
+        "locationId": "dark_alley",
+        "required": true,
+        "steps": [
+          "talk:pepe",
+          "inspect:crate_stack -> steel_bar"
+        ]
+      },
+      {
+        "id": "09_arcade_return",
+        "locationId": "arcade_room",
+        "required": true,
+        "steps": [
+          "give:energizing_drink -> mysterious_kid",
+          "unlock:underground_garage"
+        ]
+      },
+      {
+        "id": "10_underground_garage",
+        "locationId": "underground_garage",
+        "required": true,
+        "steps": [
+          "inspect:car_license_plate (requires license_plate_note) -> plate_match_confirmed",
+          "talk:street_racer -> motel_neon_unlocked",
+          "inspect:tool_bench -> screwdriver"
+        ]
+      },
+      {
+        "id": "11_restaurant_exterior",
+        "locationId": "italian_restaurant_exterior",
+        "required": true,
+        "steps": [
+          "use:restaurant_door -> blocked",
+          "give:cigarette_pack -> bodyguard",
+          "unlock:italian_restaurant_interior"
+        ]
+      },
+      {
+        "id": "12_restaurant_interior",
+        "locationId": "italian_restaurant_interior",
+        "required": true,
+        "steps": [
+          "talk:big_boss -> nails_is_weak_link"
+        ]
+      },
+      {
+        "id": "13_motel_neon",
+        "locationId": "motel_neon",
+        "required": true,
+        "steps": [
+          "talk:nails -> safehouse_location_known"
+        ]
+      },
+      {
+        "id": "14_safehouse",
+        "locationId": "safehouse",
+        "required": true,
+        "steps": [
+          "use:metal_door + steel_bar",
+          "result:blondie_found"
+        ]
+      }
+    ]
+  },
+  "optionalBranches": [
+    "rooftop_early_collectible",
+    "fire_escape_landing_collectible",
+    "gambler_card_minigame",
+    "blue_wing_late_appearance",
+    "elevator_screwdriver_hidden_note"
+  ]
+}

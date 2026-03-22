@@ -47,12 +47,15 @@ export default function App() {
   }, [game.game.currentRoom, screen, soundEnabled]);
 
   const inspectText = useMemo(() => {
+    if (game.inspectedHotspotText) {
+      return game.inspectedHotspotText;
+    }
     if (game.inspectedHotspot) {
       return game.inspectedHotspot.inspectText;
     }
     const exitNames = game.room.exits.map((id) => ROOMS[id].name).join(", ");
     return `${game.room.description} Visible exits: ${exitNames}. Traffic noise covers whispers; inspect clues and question whoever is present.`;
-  }, [game.inspectedHotspot, game.room]);
+  }, [game.inspectedHotspot, game.inspectedHotspotText, game.room]);
   const inspectTitle = game.inspectedHotspot?.label ?? "Inspection";
 
   const conversationOpen = Boolean(game.currentTalkNpcId);
@@ -296,6 +299,7 @@ export default function App() {
 
         <StageView
           emotion={game.game.characterEmotion}
+          hotspots={game.visibleHotspots}
           onCharacterClick={() => {
             setShowAccuseList(false);
             game.openTalkSelector();
@@ -318,6 +322,7 @@ export default function App() {
           <FooterBar
             showNav={showNavigation}
             mapOpen={game.mapOpen}
+            mapEnabled={game.canOpenMap}
             inventoryItems={game.ownedInventoryItems}
             selectedInventoryId={game.selectedInventoryId}
             onToggleInventory={game.toggleInventoryItem}
@@ -325,7 +330,7 @@ export default function App() {
               setShowAccuseList(false);
               game.openRoomInspect();
             }}
-            onMap={() => game.setMapOpen((prev) => !prev)}
+            onMap={game.toggleMap}
           />
 
         </footer>

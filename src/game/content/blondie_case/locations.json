@@ -1,0 +1,211 @@
+{
+  "meta": {
+    "caseId": "blondie_case",
+    "version": "1.0.0",
+    "sourceDocs": [
+      "docs/blondie_case_intro_and_core_systems_v2.md",
+      "docs/locations_and_hotspots_data.md"
+    ]
+  },
+  "locationGroups": [
+    "detective_building",
+    "downtown",
+    "residential",
+    "industrial_edge",
+    "outer_district",
+    "hidden"
+  ],
+  "locations": [
+    {
+      "id": "apartment",
+      "name": "Apartment",
+      "type": "building_scene",
+      "group": "detective_building",
+      "availableFromStart": true,
+      "appearsOnCityMap": false,
+      "npcIds": ["lucy"]
+    },
+    {
+      "id": "elevator",
+      "name": "Elevator",
+      "type": "building_scene",
+      "group": "detective_building",
+      "availableFromStart": true,
+      "appearsOnCityMap": false,
+      "npcIds": []
+    },
+    {
+      "id": "rooftop",
+      "name": "Rooftop",
+      "type": "building_scene",
+      "group": "detective_building",
+      "availableFromStart": true,
+      "appearsOnCityMap": false,
+      "npcIds": ["blue_wing"]
+    },
+    {
+      "id": "bar",
+      "name": "The Bar",
+      "type": "city_location",
+      "group": "downtown",
+      "availableFromStart": false,
+      "appearsOnCityMap": true,
+      "npcIds": ["the_gambler"]
+    },
+    {
+      "id": "pharmacy",
+      "name": "Pharmacy",
+      "type": "city_location",
+      "group": "residential",
+      "availableFromStart": true,
+      "appearsOnCityMap": true,
+      "npcIds": ["doctor"]
+    },
+    {
+      "id": "arcade_room",
+      "name": "Arcade Room",
+      "type": "city_location",
+      "group": "downtown",
+      "availableFromStart": true,
+      "appearsOnCityMap": true,
+      "npcIds": ["mysterious_kid"]
+    },
+    {
+      "id": "store",
+      "name": "The Store",
+      "type": "city_location",
+      "group": "downtown",
+      "availableFromStart": true,
+      "appearsOnCityMap": true,
+      "npcIds": ["jenny", "dirty_cop"]
+    },
+    {
+      "id": "red_light_block",
+      "name": "Red Light Block",
+      "type": "city_location",
+      "group": "downtown",
+      "availableFromStart": true,
+      "appearsOnCityMap": true,
+      "npcIds": ["rose"]
+    },
+    {
+      "id": "dark_alley",
+      "name": "Dark Alley",
+      "type": "city_location",
+      "group": "industrial_edge",
+      "availableFromStart": true,
+      "appearsOnCityMap": true,
+      "npcIds": ["pepe", "blue_wing"]
+    },
+    {
+      "id": "fire_escape_landing",
+      "name": "Fire Escape Landing",
+      "type": "side_location",
+      "group": "industrial_edge",
+      "availableFromStart": false,
+      "appearsOnCityMap": false,
+      "npcIds": []
+    },
+    {
+      "id": "underground_garage",
+      "name": "Underground Garage",
+      "type": "city_location",
+      "group": "industrial_edge",
+      "availableFromStart": false,
+      "appearsOnCityMap": true,
+      "npcIds": ["street_racer"]
+    },
+    {
+      "id": "italian_restaurant_exterior",
+      "name": "Italian Restaurant Exterior",
+      "type": "city_location",
+      "group": "downtown",
+      "availableFromStart": true,
+      "appearsOnCityMap": true,
+      "npcIds": ["bodyguard"]
+    },
+    {
+      "id": "italian_restaurant_interior",
+      "name": "Italian Restaurant Interior",
+      "type": "city_location",
+      "group": "downtown",
+      "availableFromStart": false,
+      "appearsOnCityMap": false,
+      "npcIds": ["big_boss", "dirty_cop"]
+    },
+    {
+      "id": "motel_neon",
+      "name": "Motel Neon",
+      "type": "city_location",
+      "group": "outer_district",
+      "availableFromStart": false,
+      "appearsOnCityMap": true,
+      "npcIds": ["nails"]
+    },
+    {
+      "id": "safehouse",
+      "name": "The Safehouse",
+      "type": "city_location",
+      "group": "hidden",
+      "availableFromStart": false,
+      "appearsOnCityMap": true,
+      "npcIds": ["blondie"]
+    }
+  ],
+  "hotspots": [
+    {"id": "jacket_pocket", "locationId": "apartment", "type": "pickup", "result": "blondie_photo"},
+    {"id": "videogame_screen", "locationId": "apartment", "type": "humor", "result": "flavor_text"},
+    {"id": "computer_screen", "locationId": "apartment", "type": "clue", "result": "bar_address_known"},
+    {"id": "window_city_view", "locationId": "apartment", "type": "info", "result": "worldbuilding_text"},
+
+    {"id": "button_panel", "locationId": "elevator", "type": "navigation", "result": "scene_transition"},
+    {"id": "neighbor_note", "locationId": "elevator", "type": "info", "result": "building_context"},
+    {"id": "carved_number", "locationId": "elevator", "type": "clue", "result": "building_number_context"},
+
+    {"id": "edge_view", "locationId": "rooftop", "type": "info", "result": "city_observation_text"},
+    {"id": "flower_pot", "locationId": "rooftop", "type": "collectible", "result": "trading_card_rooftop_01"},
+
+    {"id": "wall_poster", "locationId": "bar", "type": "humor", "result": "flavor_text"},
+    {"id": "under_the_table", "locationId": "bar", "type": "pickup", "result": "crumpled_receipt"},
+    {"id": "bottle_bar", "locationId": "bar", "type": "info", "result": "context_text"},
+
+    {"id": "medical_diploma", "locationId": "pharmacy", "type": "humor", "result": "flavor_text"},
+    {"id": "medicine_shelf_1", "locationId": "pharmacy", "type": "pickup", "result": "sedative_box"},
+    {"id": "medicine_shelf_2", "locationId": "pharmacy", "type": "info", "result": "hint_text"},
+
+    {"id": "counter_computer", "locationId": "arcade_room", "type": "clue", "result": "has_arcade_timeline_clue"},
+    {"id": "arcade_machine_1", "locationId": "arcade_room", "type": "humor", "result": "flavor_text"},
+    {"id": "arcade_machine_2_dispenser", "locationId": "arcade_room", "type": "pickup", "result": "arcade_token"},
+
+    {"id": "fridge", "locationId": "store", "type": "shop", "result": "buy_small_product"},
+    {"id": "counter", "locationId": "store", "type": "shop", "result": "cigarette_pack"},
+    {"id": "ice_cream_freezer", "locationId": "store", "type": "humor", "result": "flavor_text"},
+
+    {"id": "vending_machine", "locationId": "red_light_block", "type": "use_shop", "result": "energizing_drink", "requirements": ["arcade_token"]},
+    {"id": "alley_entrance", "locationId": "red_light_block", "type": "transition", "result": "go_to_dark_alley"},
+    {"id": "ramen_shop", "locationId": "red_light_block", "type": "humor", "result": "flavor_text"},
+
+    {"id": "dumpster", "locationId": "dark_alley", "type": "humor", "result": "flavor_text"},
+    {"id": "fire_escape_ladder", "locationId": "dark_alley", "type": "transition", "result": "go_to_fire_escape_landing"},
+    {"id": "crate_stack", "locationId": "dark_alley", "type": "pickup", "result": "steel_bar"},
+
+    {"id": "hidden_trading_card", "locationId": "fire_escape_landing", "type": "collectible", "result": "trading_card_fire_escape_01"},
+
+    {"id": "car_license_plate", "locationId": "underground_garage", "type": "clue", "result": "plate_match_confirmed", "requirements": ["license_plate_note"]},
+    {"id": "tool_bench", "locationId": "underground_garage", "type": "pickup", "result": "screwdriver"},
+    {"id": "car_body", "locationId": "underground_garage", "type": "humor", "result": "flavor_text"},
+
+    {"id": "restaurant_door", "locationId": "italian_restaurant_exterior", "type": "gate", "result": "blocked_by_bodyguard"},
+    {"id": "menu_board", "locationId": "italian_restaurant_exterior", "type": "humor", "result": "flavor_text"},
+    {"id": "delivery_motorcycle", "locationId": "italian_restaurant_exterior", "type": "info", "result": "ambient_info"},
+
+    {"id": "motel_neon_pending", "locationId": "motel_neon", "type": "pending", "result": "pending_definition"},
+
+    {"id": "metal_door", "locationId": "safehouse", "type": "gate_use", "result": "force_entry", "requirements": ["steel_bar"]}
+  ],
+  "buildingNavigation": {
+    "apartment": ["elevator"],
+    "elevator": ["rooftop", "city_map"],
+    "rooftop": ["elevator"]
+  }
+}

@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent, SyntheticEvent } from "react";
-import { CHARACTER_BY_ID, CHARACTERS, STAGE_CHARACTER_BY_ROOM, STAGE_HOTSPOTS_BY_ROOM } from "../game/data";
+import { CHARACTER_BY_ID, CHARACTERS, STAGE_CHARACTER_BY_ROOM } from "../game/data";
 import { MapOverlay } from "./MapOverlay";
-import type { CharacterEmotion, RoomId } from "../game/types";
+import type { CharacterEmotion, HotspotDefinition, RoomId } from "../game/types";
 
 const ALL_CHARACTER_SPRITES = CHARACTERS.flatMap((character) => Object.values(character.emotions));
 const MAP_BACKGROUND_SRC = "/game-assets/map_bg.jpg";
@@ -41,6 +41,7 @@ function preloadImage(src: string, cache: Set<string>): Promise<void> {
 
 interface Props {
   emotion: CharacterEmotion;
+  hotspots: HotspotDefinition[];
   onCharacterClick: () => void;
   onCharacterEnter: () => void;
   onCharacterLeave: () => void;
@@ -55,6 +56,7 @@ interface Props {
 
 export function StageView({
   emotion,
+  hotspots,
   onCharacterClick,
   onCharacterEnter,
   onCharacterLeave,
@@ -96,7 +98,7 @@ export function StageView({
     : null;
   const showStageCharacter = Boolean(stageCharacter && activeCharacterSrc);
   const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
-  const roomHotspots = STAGE_HOTSPOTS_BY_ROOM[displayedRoom] ?? [];
+  const roomHotspots = hotspots;
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
   const loadingLabel = "Loading Scene";
   const bootSegments = 14;
