@@ -50,6 +50,20 @@ export interface HotspotDefinition {
   inspectText: string;
 }
 
+export interface InventoryItemDefinition {
+  id: string;
+  label: string;
+  image: string;
+}
+
+export interface HotspotItemDefinition {
+  hotspotId: string;
+  itemId: string;
+  label: string;
+  image: string;
+  description: string;
+}
+
 export interface DialogueOption {
   id: string;
   text: string;

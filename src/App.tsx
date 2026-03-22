@@ -6,6 +6,7 @@ import { InspectPanel } from "./components/panels/InspectPanel";
 import { CursorOverlay } from "./components/CursorOverlay";
 import { FooterBar } from "./components/FooterBar";
 import { IntroScreen } from "./components/IntroScreen";
+import { NewItemPopup } from "./components/NewItemPopup";
 import { Sidebar } from "./components/Sidebar";
 import { StartScreen } from "./components/StartScreen";
 import { StageView } from "./components/StageView";
@@ -317,6 +318,7 @@ export default function App() {
           <FooterBar
             showNav={showNavigation}
             mapOpen={game.mapOpen}
+            inventoryItems={game.ownedInventoryItems}
             selectedInventoryId={game.selectedInventoryId}
             onToggleInventory={game.toggleInventoryItem}
             onInspect={() => {
@@ -344,6 +346,15 @@ export default function App() {
             game.pickDialogueOption(game.currentTalkNpcId, optionId);
           }}
           onClose={game.closeConversation}
+        />
+
+        <NewItemPopup
+          icon={game.itemPopup?.image ?? ""}
+          label={game.itemPopup?.label ?? ""}
+          description={game.itemPopup?.description}
+          visible={Boolean(game.itemPopup)}
+          onPickUp={game.pickUpItemFromPopup}
+          onDiscard={game.discardItemPopup}
         />
 
         <CursorOverlay mode={game.cursorMode} icon={cursorIcon} x={cursorPos.x} y={cursorPos.y} />

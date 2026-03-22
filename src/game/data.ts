@@ -1,4 +1,13 @@
-import type { CharacterDefinition, DialogueEntry, HotspotDefinition, Npc, Room, RoomId } from "./types";
+import type {
+  CharacterDefinition,
+  DialogueEntry,
+  HotspotDefinition,
+  HotspotItemDefinition,
+  InventoryItemDefinition,
+  Npc,
+  Room,
+  RoomId,
+} from "./types";
 
 export const CHARACTERS: CharacterDefinition[] = [
   {
@@ -582,8 +591,23 @@ export const ENDINGS = {
   late: "Too late. At 22:00 the district locks down and all leads go cold.",
 };
 
-export const INVENTORY_ITEMS = [
+export const INVENTORY_ITEMS: InventoryItemDefinition[] = [
   { id: "key", label: "Key", image: "/game-assets/item_key.png" },
-  { id: "paper", label: "Beer can", image: "/game-assets/item_beer.png" },
+  { id: "paper", label: "Beer Can", image: "/game-assets/item_beer.png" },
   { id: "cup", label: "Cassette", image: "/game-assets/item_cassete.png" },
 ];
+
+export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
+  {
+    hotspotId: "apartment-videogame-screen",
+    itemId: "paper",
+    label: "Beer Can",
+    image: "/game-assets/item_beer.png",
+    description:
+      "A warm beer can sits beside the setup, still half full. Whoever left it here wasn't planning to be gone long.",
+  },
+];
+
+export const HOTSPOT_ITEM_BY_ID: Record<string, HotspotItemDefinition> = Object.fromEntries(
+  HOTSPOT_ITEMS.map((item) => [item.hotspotId, item]),
+);

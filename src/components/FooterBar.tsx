@@ -1,22 +1,23 @@
-import { INVENTORY_ITEMS } from "../game/data";
+import type { InventoryItemDefinition } from "../game/types";
 
 interface Props {
   showNav: boolean;
   mapOpen: boolean;
+  inventoryItems: InventoryItemDefinition[];
   selectedInventoryId: string | null;
   onToggleInventory: (id: string) => void;
   onInspect: () => void;
   onMap: () => void;
 }
 
-export function FooterBar({ showNav, mapOpen, selectedInventoryId, onToggleInventory, onInspect, onMap }: Props) {
+export function FooterBar({ showNav, mapOpen, inventoryItems, selectedInventoryId, onToggleInventory, onInspect, onMap }: Props) {
   if (!showNav) return null;
 
   return (
     <div className="footer-row" id="footer-navigation">
       <div className="inv-wrap">
         <span className="inv-title">INV</span>
-        {INVENTORY_ITEMS.map((item) => (
+        {inventoryItems.map((item) => (
           <button
             key={item.id}
             className={`inv-item ${selectedInventoryId === item.id ? "active" : ""}`}

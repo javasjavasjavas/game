@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { CHARACTER_BY_ID, CLUES, INVENTORY_ITEMS, NPCS, ROOMS, STAGE_HOTSPOTS_BY_ROOM } from "../game/data";
+import { CHARACTER_BY_ID, CLUES, HOTSPOT_ITEM_BY_ID, INVENTORY_ITEMS, NPCS, ROOMS, STAGE_HOTSPOTS_BY_ROOM } from "../game/data";
 import { formatTime, GameState } from "../game/state";
-import type { HotspotDefinition, RoomId } from "../game/types";
+import type { HotspotDefinition, HotspotItemDefinition, InventoryItemDefinition, RoomId } from "../game/types";
 
 export type CursorMode = "none" | "talk" | "use" | "inspect";
 
@@ -29,6 +29,9 @@ export function useGame() {
   const [conversationHasClue, setConversationHasClue] = useState(false);
   const [roomBeforeCab, setRoomBeforeCab] = useState<RoomId>("bar");
   const [inspectedHotspotId, setInspectedHotspotId] = useState<string | null>(null);
+  const [ownedInventoryIds, setOwnedInventoryIds] = useState<string[]>(["key", "cup"]);
+  const [collectedHotspotItemIds, setCollectedHotspotItemIds] = useState<string[]>([]);
+  const [itemPopup, setItemPopup] = useState<HotspotItemDefinition | null>(null);
 
   const room = ROOMS[game.currentRoom];
   const clues = game.getClueEntries();
@@ -42,6 +45,10 @@ export function useGame() {
   }, [currentTalkNpcId, game]);
 
   const selectedItem = INVENTORY_ITEMS.find((item) => item.id === selectedInventoryId) ?? null;
+  const ownedInventoryItems = useMemo<InventoryItemDefinition[]>(
+    () => INVENTORY_ITEMS.filter((item) => ownedInventoryIds.includes(item.id)),
+    [ownedInventoryIds],
+  );
   const characterMemories = useMemo(() => Object.values(characterMemoryByNpc), [characterMemoryByNpc]);
   const expandedCharacterMemory = expandedCharacterMemoryId ? characterMemoryByNpc[expandedCharacterMemoryId] ?? null : null;
   const inspectedHotspot: HotspotDefinition | null = useMemo(() => {
@@ -184,6 +191,7 @@ export function useGame() {
   };
 
   const toggleInventoryItem = (id: string) => {
+    if (!ownedInventoryIds.includes(id)) return;
     setSelectedInventoryId((prev) => (prev === id ? null : id));
   };
 
@@ -200,6 +208,16 @@ export function useGame() {
   };
 
   const openHotspotInspect = (hotspotId: string) => {
+    const hotspotItem = HOTSPOT_ITEM_BY_ID[hotspotId];
+    if (hotspotItem && !collectedHotspotItemIds.includes(hotspotId)) {
+      setCurrentTalkNpcId(null);
+      setConversationText("");
+      setConversationHasClue(false);
+      setInspectOpen(false);
+      setInspectedHotspotId(null);
+      setItemPopup(hotspotItem);
+      return;
+    }
     setCurrentTalkNpcId(null);
     setConversationText("");
     setConversationHasClue(false);
@@ -210,6 +228,22 @@ export function useGame() {
   const closeInspect = () => {
     setInspectOpen(false);
     setInspectedHotspotId(null);
+  };
+
+  const discardItemPopup = () => {
+    setItemPopup(null);
+  };
+
+  const pickUpItemFromPopup = () => {
+    if (!itemPopup) return;
+    if (!ownedInventoryIds.includes(itemPopup.itemId)) {
+      setOwnedInventoryIds((prev) => [...prev, itemPopup.itemId]);
+    }
+    setCollectedHotspotItemIds((prev) => (prev.includes(itemPopup.hotspotId) ? prev : [...prev, itemPopup.hotspotId]));
+    mutate((draft) => {
+      draft.lastMessage = `You picked up ${itemPopup.label}.`;
+    });
+    setItemPopup(null);
   };
 
   const takeCab = () => {
@@ -296,6 +330,7 @@ export function useGame() {
     npcsHere,
     conversation,
     selectedItem,
+    ownedInventoryItems,
     cursorMode,
     currentTalkNpcId,
     conversationText,
@@ -303,6 +338,7 @@ export function useGame() {
     mapOpen,
     moneyDetailsOpen,
     selectedInventoryId,
+    itemPopup,
     setMapOpen,
     setInspectOpen,
     setHoverCharacter,
@@ -324,6 +360,8 @@ export function useGame() {
     openRoomInspect,
     openHotspotInspect,
     closeInspect,
+    discardItemPopup,
+    pickUpItemFromPopup,
     characterMemories,
     expandedCharacterMemory,
     toggleCharacterMemory,
