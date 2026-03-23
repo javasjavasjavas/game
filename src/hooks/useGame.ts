@@ -50,7 +50,7 @@ export function useGame() {
   const [roomBeforeCab, setRoomBeforeCab] = useState<RoomId>("bar");
   const [inspectedHotspotId, setInspectedHotspotId] = useState<string | null>(null);
   const [inspectOverrideText, setInspectOverrideText] = useState<string | null>(null);
-  const [ownedInventoryIds, setOwnedInventoryIds] = useState<string[]>(["key", "cup"]);
+  const [ownedInventoryIds, setOwnedInventoryIds] = useState<string[]>([]);
   const [collectedHotspotItemIds, setCollectedHotspotItemIds] = useState<string[]>([]);
   const [itemPopup, setItemPopup] = useState<HotspotItemDefinition | null>(null);
   const [scriptedConversationState, setScriptedConversationState] = useState<ScriptedConversationState>(null);
@@ -73,6 +73,26 @@ export function useGame() {
     );
   const getLatestFollowup = (dialogue: DialogueScriptDefinition) =>
     (dialogue.conditionalFollowups ?? []).filter((followup) => followup.requirements.every(hasRequirement)).at(-1) ?? null;
+  const getScriptNodeText = (dialogue: DialogueScriptDefinition, node: DialogueScriptNode) => {
+    if (dialogue.characterId !== "lucy" || dialogue.scene !== "apartment") {
+      return node.text;
+    }
+
+    const alreadySharedStartingPoints =
+      game.hasFlag("lucy_explains_photo_in_jacket") ||
+      game.hasFlag("lucy_explains_bar_address_in_email") ||
+      game.hasFlag("player_directed_to_jacket_and_email");
+
+    if (node.id === "lucy_intro_001" && alreadySharedStartingPoints) {
+      return "You already have the photo and the Bar lead. If you still need something from me, ask it now.";
+    }
+
+    if (node.id === "lucy_starting_points_001" && alreadySharedStartingPoints) {
+      return "Like I told you already: Blondie's photo is in your jacket, and the Bar address is in the email on your computer. That is still your best lead.";
+    }
+
+    return node.text;
+  };
   const applyScriptEffects = (draft: GameState, effects?: DialogueScriptEffects) => {
     if (!effects) return;
     effects.addFlags?.forEach((flag) => draft.addFlag(flag));
@@ -112,7 +132,7 @@ export function useGame() {
         const node = getScriptedDialogueNode(activeScriptedDialogue, scriptedConversationState.nodeId);
         dialogue = node
           ? {
-              intro: node.text,
+              intro: getScriptNodeText(activeScriptedDialogue, node),
               options: getRemainingScriptOptions(activeScriptedDialogue, node).map((option) => ({ id: option.id, text: option.text })),
             }
           : null;
@@ -235,16 +255,37 @@ export function useGame() {
       const savedNodeId = scriptedNodeByConversationId[scriptedDialogue.conversationId];
       const savedNode = savedNodeId ? getScriptedDialogueNode(scriptedDialogue, savedNodeId) : null;
       const savedNodeHasOptions = savedNode ? getRemainingScriptOptions(scriptedDialogue, savedNode).length > 0 : false;
+      const rootNode = getScriptedDialogueNode(scriptedDialogue, scriptedDialogue.startNode);
+      const rootNodeHasOptions = rootNode ? getRemainingScriptOptions(scriptedDialogue, rootNode).length > 0 : false;
       const hasNamedLeads =
         game.hasFlag("lucy_explains_photo_in_jacket") ||
         game.hasFlag("lucy_explains_bar_address_in_email") ||
         game.hasFlag("player_directed_to_jacket_and_email");
       const followup = !savedNodeHasOptions && hasNamedLeads ? getLatestFollowup(scriptedDialogue) : null;
 
+      if (rootNode && rootNodeHasOptions) {
+        applyNodeEffects(nextGame, rootNode);
+        nextGame.characterEmotion = rootNode.emotion;
+        nextGame.lastMessage = getScriptNodeText(scriptedDialogue, rootNode);
+        setScriptedConversationState({
+          kind: "node",
+          conversationId: scriptedDialogue.conversationId,
+          nodeId: rootNode.id,
+        });
+        setScriptedNodeByConversationId((prev) => ({
+          ...prev,
+          [scriptedDialogue.conversationId]: rootNode.id,
+        }));
+        setScriptedBackStack([]);
+        setGame(nextGame);
+        setConversationText(getScriptNodeText(scriptedDialogue, rootNode));
+        return;
+      }
+
       if (savedNode && savedNodeHasOptions) {
         applyNodeEffects(nextGame, savedNode);
         nextGame.characterEmotion = savedNode.emotion;
-        nextGame.lastMessage = savedNode.text;
+        nextGame.lastMessage = getScriptNodeText(scriptedDialogue, savedNode);
         setScriptedConversationState({
           kind: "node",
           conversationId: scriptedDialogue.conversationId,
@@ -252,7 +293,7 @@ export function useGame() {
         });
         setScriptedBackStack([]);
         setGame(nextGame);
-        setConversationText(savedNode.text);
+        setConversationText(getScriptNodeText(scriptedDialogue, savedNode));
         return;
       }
 
@@ -280,7 +321,7 @@ export function useGame() {
       if (nextNode) {
         applyNodeEffects(nextGame, nextNode);
         nextGame.characterEmotion = nextNode.emotion;
-        nextGame.lastMessage = nextNode.text;
+        nextGame.lastMessage = getScriptNodeText(scriptedDialogue, nextNode);
         setScriptedConversationState({
           kind: "node",
           conversationId: scriptedDialogue.conversationId,
@@ -292,7 +333,7 @@ export function useGame() {
         }));
         setScriptedBackStack([]);
         setGame(nextGame);
-        setConversationText(nextNode.text);
+        setConversationText(getScriptNodeText(scriptedDialogue, nextNode));
         return;
       }
     }
@@ -357,7 +398,7 @@ export function useGame() {
       applyNodeEffects(nextGame, nextNode);
       nextGame.characterEmotion = nextNode.emotion;
       nextGame.advanceTime(5);
-      nextGame.lastMessage = nextNode.text;
+      nextGame.lastMessage = getScriptNodeText(scriptedDialogue, nextNode);
       setGame(nextGame);
       setScriptedConversationState({
         kind: "node",
@@ -389,7 +430,7 @@ export function useGame() {
           },
         ]);
       }
-      setConversationText(nextNode.text);
+      setConversationText(getScriptNodeText(scriptedDialogue, nextNode));
       const discoveredFlags = [...nextGame.flags].filter((flag) => !beforeFlags.has(flag));
       const discoveredClues = [...nextGame.clues].filter((clueId) => !beforeClues.has(clueId));
       setConversationHasClue(discoveredFlags.length > 0 || discoveredClues.length > 0);
@@ -575,7 +616,7 @@ export function useGame() {
       [activeScriptedDialogue.conversationId]: previousNode.id,
     }));
     setConversationHasClue(false);
-    setConversationText(previousNode.text);
+    setConversationText(getScriptNodeText(activeScriptedDialogue, previousNode));
   };
 
   const toggleMap = () => {

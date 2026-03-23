@@ -33,12 +33,6 @@
           "next": "lucy_starting_points_001"
         },
         {
-          "id": "opt_004",
-          "text": "You could’ve called someone cheaper.",
-          "type": "joke",
-          "next": "lucy_cheaper_001"
-        },
-        {
           "id": "opt_005",
           "text": "Did Blondie leave anything else?",
           "type": "question",

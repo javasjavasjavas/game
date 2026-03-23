@@ -598,8 +598,6 @@ export const ENDINGS = {
 };
 
 export const INVENTORY_ITEMS: InventoryItemDefinition[] = [
-  { id: "key", label: "Key", image: "/game-assets/item_key.png" },
-  { id: "cup", label: "Cassette", image: "/game-assets/item_cassete.png" },
   { id: "blondie_photo", label: "Blondie Photo", image: "/game-assets/icon_eye.png" },
 ];
 

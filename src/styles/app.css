@@ -1777,7 +1777,7 @@ button {
 .detail-choices {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
 }
 
 .talk-option {
@@ -1785,11 +1785,15 @@ button {
   background: transparent;
   color: #97a3bb;
   text-align: left;
-  padding: 4px 8px;
+  padding: 12px 10px;
   font-family: "Press Start 2P", monospace;
   font-size: 13px;
   line-height: 1.45;
   transition: color 120ms ease, background-color 120ms ease;
+}
+
+.talk-option + .talk-option {
+  border-top: 1px solid rgba(96, 118, 151, 0.35);
 }
 
 .talk-option:hover {
@@ -1798,7 +1802,6 @@ button {
 }
 
 .talk-option.end {
-  margin-top: 10px;
   color: var(--cyber-blue);
 }
 
@@ -1872,16 +1875,8 @@ button {
   }
 
   .talk-option {
-  border: 0;
-  background: transparent;
-  color: #97a3bb;
-  text-align: left;
-  padding: 4px 8px;
-  font-family: "Press Start 2P", monospace;
-  font-size: 13px;
-  line-height: 1.45;
-  transition: color 120ms ease, background-color 120ms ease;
-}
+    padding: 12px 10px;
+  }
 }
 
 @media (max-width: 900px) {
