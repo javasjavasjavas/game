@@ -204,7 +204,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       width: 330,
       height: 505,
       inspectText:
-        "A jacket hangs over the chair back, one sleeve nearly touching the floor. The inside pocket looks heavy, like it is hiding paper or a small metal object.",
+        "The pocket feels empty now. Whatever Lucy left there is already in your hands.",
     },
     {
       id: "apartment-videogame-screen",
@@ -470,6 +470,11 @@ export const CLUES: Record<string, string> = {
   tornJacket: "Torn jacket with neon paint from the alley wall.",
   keyLog: "Store shutter log was edited during the blackout window.",
   witness: "Lucy's statement: Big Boss rushed out of the alley at 21:10.",
+  lucy_warned_about_police: "Lucy warned Blondie did not trust the police.",
+  lucy_last_seen_before_midnight: "Lucy last saw Blondie not long before midnight.",
+  lucy_blondie_was_running: "Lucy believes Blondie was trying to stay ahead of someone.",
+  lucy_pointed_to_bar_and_photo: "Lucy pointed you to the jacket address and the photo on the computer.",
+  lucy_bad_feeling_before_disappearance: "Lucy felt something bad was already in motion before Blondie vanished.",
 };
 
 export const DIALOGUE: Record<string, DialogueEntry> = {
@@ -593,18 +598,18 @@ export const ENDINGS = {
 
 export const INVENTORY_ITEMS: InventoryItemDefinition[] = [
   { id: "key", label: "Key", image: "/game-assets/item_key.png" },
-  { id: "paper", label: "Beer Can", image: "/game-assets/item_beer.png" },
   { id: "cup", label: "Cassette", image: "/game-assets/item_cassete.png" },
+  { id: "bar_address_note", label: "Bar Address", image: "/game-assets/icon_map.png" },
 ];
 
 export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
   {
-    hotspotId: "apartment-videogame-screen",
-    itemId: "paper",
-    label: "Beer Can",
-    image: "/game-assets/item_beer.png",
+    hotspotId: "apartment-jacket-pocket",
+    itemId: "bar_address_note",
+    label: "Bar Address",
+    image: "/game-assets/icon_map.png",
     description:
-      "A warm beer can sits beside the setup, still half full. Whoever left it here wasn't planning to be gone long.",
+      "A scrap of paper with the Bar address written in a quick hand. Cheap paper, urgent ink, and exactly the kind of lead you do not ignore.",
   },
 ];
 

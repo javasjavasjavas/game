@@ -11,7 +11,9 @@ interface Props {
   selectingNpc: boolean;
   npcsHere: Npc[];
   onSelectNpc: (npcId: string) => void;
+  onGoBack: () => void;
   onPickOption: (optionId: string) => void;
+  showGoBack: boolean;
   onClose: () => void;
 }
 
@@ -24,7 +26,9 @@ export function ConversationPanel({
   selectingNpc,
   npcsHere,
   onSelectNpc,
+  onGoBack,
   onPickOption,
+  showGoBack,
   onClose,
 }: Props) {
   const [typedText, setTypedText] = useState(text);
@@ -78,6 +82,11 @@ export function ConversationPanel({
                       {option.text}
                     </button>
                   ))}
+              {!selectingNpc && showGoBack && (
+                <button className="talk-option" onClick={onGoBack}>
+                  [Go back]
+                </button>
+              )}
               <button className="talk-option end" onClick={onClose}>
                 [End conversation]
               </button>

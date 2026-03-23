@@ -1,4 +1,4 @@
-import { Coffee, KeyRound, Menu, MessageSquareText, Newspaper } from "lucide-react";
+import { Coffee, KeyRound, Menu, MessageSquareText } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEventHandler } from "react";
 import { ConversationPanel } from "./components/panels/ConversationPanel";
@@ -72,8 +72,6 @@ export default function App() {
       <img className="cursor-item-image" src={game.selectedItem.image} alt={game.selectedItem.label} />
     ) : game.selectedInventoryId === "key" ? (
       <KeyRound size={26} />
-    ) : game.selectedInventoryId === "paper" ? (
-      <Newspaper size={26} />
     ) : (
       <Coffee size={26} />
     );
@@ -299,7 +297,7 @@ export default function App() {
 
         <StageView
           emotion={game.game.characterEmotion}
-          hotspots={game.visibleHotspots}
+          hotspots={conversationOpen ? [] : game.visibleHotspots}
           onCharacterClick={() => {
             setShowAccuseList(false);
             game.openTalkSelector();
@@ -346,10 +344,12 @@ export default function App() {
           selectingNpc={selectingNpc}
           npcsHere={game.npcsHere}
           onSelectNpc={game.talkToNpc}
+          onGoBack={game.goBackConversation}
           onPickOption={(optionId) => {
             if (!game.currentTalkNpcId || game.currentTalkNpcId === "selector") return;
             game.pickDialogueOption(game.currentTalkNpcId, optionId);
           }}
+          showGoBack={game.canGoBackConversation}
           onClose={game.closeConversation}
         />
 

@@ -78,7 +78,8 @@
       "emotion": "sad",
       "text": "She didn’t give me names. Just warnings. Told me not to trust the police.",
       "effects": {
-        "addFlags": ["lucy_warns_about_police"]
+        "addFlags": ["lucy_warns_about_police"],
+        "addClues": ["lucy_warned_about_police"]
       },
       "options": [
         {
@@ -101,7 +102,8 @@
       "emotion": "serious",
       "text": "Not long before midnight. Long enough to know she wasn’t acting normal.",
       "effects": {
-        "addFlags": ["lucy_last_seen_known"]
+        "addFlags": ["lucy_last_seen_known"],
+        "addClues": ["lucy_last_seen_before_midnight"]
       },
       "options": [
         {
@@ -124,7 +126,8 @@
       "emotion": "serious",
       "text": "I know she was trying to stay ahead of something. I know she didn’t trust the police. And I know waiting won’t help her.",
       "effects": {
-        "addFlags": ["lucy_knows_blondie_was_running"]
+        "addFlags": ["lucy_knows_blondie_was_running"],
+        "addClues": ["lucy_blondie_was_running"]
       },
       "options": [
         {
@@ -161,7 +164,8 @@
       "emotion": "serious",
       "text": "Fine. I know she was trying to stay ahead of someone. I don’t know if she managed.",
       "effects": {
-        "addFlags": ["lucy_knows_blondie_was_running"]
+        "addFlags": ["lucy_knows_blondie_was_running"],
+        "addClues": ["lucy_blondie_was_running"]
       },
       "options": [
         {
@@ -213,12 +217,13 @@
       "id": "lucy_starting_points_001",
       "speaker": "lucy",
       "emotion": "serious",
-      "text": "I left Blondie’s photo in the pocket of your jacket. And I sent you the Bar address by email. That’s where she was last seen.",
+      "text": "I left the Bar address in the pocket of your jacket. Blondie’s photo should still be on the computer. The Bar is where she was last seen.",
       "effects": {
         "addFlags": [
-          "lucy_explains_photo_in_jacket",
-          "lucy_explains_bar_address_in_email"
-        ]
+          "lucy_explains_bar_address_in_jacket",
+          "lucy_explains_photo_on_computer"
+        ],
+        "addClues": ["lucy_pointed_to_bar_and_photo"]
       },
       "options": [
         {
@@ -260,7 +265,7 @@
       "id": "lucy_check_both_001",
       "speaker": "lucy",
       "emotion": "serious",
-      "text": "Do it fast. If Blondie’s still alive, time is already working for the wrong side.",
+      "text": "Do it fast. Check the jacket, check the computer, and move. If Blondie’s still alive, time is already working for the wrong side.",
       "effects": {
         "addFlags": ["player_directed_to_jacket_and_email"]
       },
@@ -293,7 +298,8 @@
       "emotion": "serious",
       "text": "Nothing clean. Nothing easy. Just the feeling that she knew something bad was already in motion.",
       "effects": {
-        "addFlags": ["lucy_confirms_bad_feeling"]
+        "addFlags": ["lucy_confirms_bad_feeling"],
+        "addClues": ["lucy_bad_feeling_before_disappearance"]
       },
       "options": [
         {
@@ -355,11 +361,11 @@
       "text": "Yeah. That’s the one. She hated that photo. Said it made her look too alive for this city."
     },
     {
-      "id": "lucy_after_email_found",
+      "id": "lucy_after_bar_address_found",
       "requirements": ["bar_address_known"],
       "speaker": "lucy",
       "emotion": "serious",
-      "text": "Then stop staring at the screen and move. The Bar won’t get more honest while you’re standing here."
+      "text": "That’s the address. Then stop staring at the paper and move. The Bar won’t get more honest while you’re standing here."
     }
   ]
 }

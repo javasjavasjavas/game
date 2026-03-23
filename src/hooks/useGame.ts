@@ -30,8 +30,8 @@ type ScriptedConversationState =
   | null;
 
 const APARTMENT_HOTSPOT_REQUIREMENTS: Partial<Record<string, string>> = {
-  "apartment-jacket-pocket": "lucy_explains_photo_in_jacket",
-  "apartment-computer-screen": "lucy_explains_bar_address_in_email",
+  "apartment-jacket-pocket": "lucy_explains_bar_address_in_jacket",
+  "apartment-computer-screen": "lucy_explains_photo_on_computer",
 };
 
 export function useGame() {
@@ -55,6 +55,8 @@ export function useGame() {
   const [itemPopup, setItemPopup] = useState<HotspotItemDefinition | null>(null);
   const [scriptedConversationState, setScriptedConversationState] = useState<ScriptedConversationState>(null);
   const [scriptedNodeByConversationId, setScriptedNodeByConversationId] = useState<Record<string, string>>({});
+  const [scriptedBackStack, setScriptedBackStack] = useState<Array<{ conversationId: string; nodeId: string; optionId: string }>>([]);
+  const [usedScriptOptionKeysByConversationId, setUsedScriptOptionKeysByConversationId] = useState<Record<string, string[]>>({});
 
   const room = ROOMS[game.currentRoom];
   const clues = game.getClueEntries();
@@ -62,6 +64,13 @@ export function useGame() {
   const hasRequirement = (requirement: string) =>
     game.hasFlag(requirement) || game.hasClue(requirement) || ownedInventoryIds.includes(requirement);
   const activeScriptedDialogue = currentTalkNpcId ? getScriptedDialogue(currentTalkNpcId, game.currentRoom) : null;
+  const getOptionKey = (nodeId: string, optionId: string) => `${nodeId}:${optionId}`;
+  const isOptionUsed = (conversationId: string, nodeId: string, optionId: string) =>
+    usedScriptOptionKeysByConversationId[conversationId]?.includes(getOptionKey(nodeId, optionId)) ?? false;
+  const getRemainingScriptOptions = (dialogue: DialogueScriptDefinition, node: DialogueScriptNode) =>
+    getAvailableScriptOptions(node, hasRequirement).filter(
+      (option) => !isOptionUsed(dialogue.conversationId, node.id, option.id),
+    );
   const getLatestFollowup = (dialogue: DialogueScriptDefinition) =>
     (dialogue.conditionalFollowups ?? []).filter((followup) => followup.requirements.every(hasRequirement)).at(-1) ?? null;
   const applyScriptEffects = (draft: GameState, effects?: DialogueScriptEffects) => {
@@ -71,6 +80,24 @@ export function useGame() {
   };
   const applyNodeEffects = (draft: GameState, node: DialogueScriptNode | null) => {
     applyScriptEffects(draft, node?.effects);
+  };
+  const recordCluesForCharacter = (npcId: string, clueIds: string[]) => {
+    if (clueIds.length === 0) return;
+    const discoveredClueTexts = clueIds.map((clueId) => CLUES[clueId] ?? clueId);
+    setCharacterMemoryByNpc((prev) => {
+      const current = prev[npcId];
+      if (!current) return prev;
+      const merged = [...discoveredClueTexts, ...current.clues];
+      const unique = merged.filter((item, index) => merged.indexOf(item) === index).slice(0, 8);
+      return {
+        ...prev,
+        [npcId]: {
+          ...current,
+          clues: unique,
+          hasNewClue: true,
+        },
+      };
+    });
   };
 
   const conversation = useMemo(() => {
@@ -86,7 +113,7 @@ export function useGame() {
         dialogue = node
           ? {
               intro: node.text,
-              options: getAvailableScriptOptions(node, hasRequirement).map((option) => ({ id: option.id, text: option.text })),
+              options: getRemainingScriptOptions(activeScriptedDialogue, node).map((option) => ({ id: option.id, text: option.text })),
             }
           : null;
       } else if (
@@ -123,7 +150,8 @@ export function useGame() {
       return !requiredFlag || game.hasFlag(requiredFlag);
     });
   }, [game]);
-  const canOpenMap = game.hasFlag("bar_address_known");
+  const canOpenMap = game.hasFlag("bar_address_known") || ownedInventoryIds.includes("bar_address_note");
+  const canGoBackConversation = Boolean(activeScriptedDialogue && scriptedBackStack.some((entry) => entry.conversationId === activeScriptedDialogue.conversationId));
 
   const cursorMode: CursorMode = selectedInventoryId
     ? "use"
@@ -154,6 +182,7 @@ export function useGame() {
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
     setScriptedConversationState(null);
+    setScriptedBackStack([]);
   };
 
   const setCurrentRoomInstant = (roomId: RoomId) => {
@@ -169,6 +198,7 @@ export function useGame() {
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
     setScriptedConversationState(null);
+    setScriptedBackStack([]);
   };
 
   const wait = () => {
@@ -183,6 +213,7 @@ export function useGame() {
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
     setScriptedConversationState(null);
+    setScriptedBackStack([]);
   };
 
   const talkToNpc = (npcId: string) => {
@@ -197,10 +228,10 @@ export function useGame() {
       const nextGame = game.clone();
       const savedNodeId = scriptedNodeByConversationId[scriptedDialogue.conversationId];
       const savedNode = savedNodeId ? getScriptedDialogueNode(scriptedDialogue, savedNodeId) : null;
-      const savedNodeHasOptions = savedNode ? getAvailableScriptOptions(savedNode, hasRequirement).length > 0 : false;
+      const savedNodeHasOptions = savedNode ? getRemainingScriptOptions(scriptedDialogue, savedNode).length > 0 : false;
       const hasNamedLeads =
-        game.hasFlag("lucy_explains_photo_in_jacket") ||
-        game.hasFlag("lucy_explains_bar_address_in_email") ||
+        game.hasFlag("lucy_explains_bar_address_in_jacket") ||
+        game.hasFlag("lucy_explains_photo_on_computer") ||
         game.hasFlag("player_directed_to_jacket_and_email");
       const followup = !savedNodeHasOptions && hasNamedLeads ? getLatestFollowup(scriptedDialogue) : null;
 
@@ -213,6 +244,7 @@ export function useGame() {
           conversationId: scriptedDialogue.conversationId,
           nodeId: savedNode.id,
         });
+        setScriptedBackStack([]);
         setGame(nextGame);
         setConversationText(savedNode.text);
         return;
@@ -227,6 +259,7 @@ export function useGame() {
           followupId: followup.id,
           text: followup.text,
         });
+        setScriptedBackStack([]);
         setGame(nextGame);
         setConversationText(followup.text);
         return;
@@ -251,6 +284,7 @@ export function useGame() {
           ...prev,
           [scriptedDialogue.conversationId]: nextNode.id,
         }));
+        setScriptedBackStack([]);
         setGame(nextGame);
         setConversationText(nextNode.text);
         return;
@@ -286,6 +320,7 @@ export function useGame() {
     setConversationText("");
     setConversationHasClue(false);
     setScriptedConversationState(null);
+    setScriptedBackStack([]);
   };
 
   const pickDialogueOption = (npcId: string, optionId: string) => {
@@ -296,7 +331,9 @@ export function useGame() {
       scriptedConversationState.conversationId === scriptedDialogue.conversationId
     ) {
       const currentNode = getScriptedDialogueNode(scriptedDialogue, scriptedConversationState.nodeId);
-      const selectedOption = currentNode?.options.find((option) => option.id === optionId);
+      const selectedOption = currentNode
+        ? getRemainingScriptOptions(scriptedDialogue, currentNode).find((option) => option.id === optionId)
+        : null;
       if (selectedOption?.requirements && !selectedOption.requirements.every(hasRequirement)) {
         setConversationText("This is not the right moment for that question.");
         return;
@@ -325,10 +362,22 @@ export function useGame() {
         ...prev,
         [scriptedDialogue.conversationId]: nextNode.id,
       }));
+      if (currentNode) {
+        setScriptedBackStack((prev) => [
+          ...prev,
+          {
+            conversationId: scriptedDialogue.conversationId,
+            nodeId: currentNode.id,
+            optionId: selectedOption.id,
+          },
+        ]);
+      }
       setConversationText(nextNode.text);
       const discoveredFlags = [...nextGame.flags].filter((flag) => !beforeFlags.has(flag));
       const discoveredClues = [...nextGame.clues].filter((clueId) => !beforeClues.has(clueId));
       setConversationHasClue(discoveredFlags.length > 0 || discoveredClues.length > 0);
+      ensureCharacterMemory(npcId);
+      recordCluesForCharacter(npcId, discoveredClues);
       return;
     }
 
@@ -343,23 +392,7 @@ export function useGame() {
     setConversationText(response);
     setConversationHasClue(discoveredClues.length > 0);
     ensureCharacterMemory(npcId);
-    if (discoveredClues.length > 0) {
-      const discoveredClueTexts = discoveredClues.map((clueId) => CLUES[clueId] ?? clueId);
-      setCharacterMemoryByNpc((prev) => {
-        const current = prev[npcId];
-        if (!current) return prev;
-        const merged = [...discoveredClueTexts, ...current.clues];
-        const unique = merged.filter((item, index) => merged.indexOf(item) === index).slice(0, 8);
-        return {
-          ...prev,
-          [npcId]: {
-            ...current,
-            clues: unique,
-            hasNewClue: true,
-          },
-        };
-      });
-    }
+    recordCluesForCharacter(npcId, discoveredClues);
   };
 
   const solve = (npcId: string) => {
@@ -390,10 +423,12 @@ export function useGame() {
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
     setScriptedConversationState(null);
+    setScriptedBackStack([]);
     setInspectOpen(true);
   };
 
   const openHotspotInspect = (hotspotId: string) => {
+    if (currentTalkNpcId) return;
     const hotspotItem = HOTSPOT_ITEM_BY_ID[hotspotId];
     if (hotspotItem && !collectedHotspotItemIds.includes(hotspotId)) {
       setCurrentTalkNpcId(null);
@@ -403,25 +438,18 @@ export function useGame() {
       setInspectedHotspotId(null);
       setInspectOverrideText(null);
       setScriptedConversationState(null);
+      setScriptedBackStack([]);
       setItemPopup(hotspotItem);
       return;
     }
 
     let overrideText: string | null = null;
     const nextGame = game.clone();
-    if (game.currentRoom === "apartment" && hotspotId === "apartment-jacket-pocket" && !nextGame.hasFlag("blondie_photo")) {
+    if (game.currentRoom === "apartment" && hotspotId === "apartment-computer-screen" && !nextGame.hasFlag("blondie_photo")) {
       nextGame.addFlag("blondie_photo");
-      nextGame.lastMessage = "You found Blondie's photo in the jacket pocket.";
+      nextGame.lastMessage = "You found Blondie's photo on the computer.";
       overrideText =
-        "Inside the pocket, there is a photo of Blondie. The edges are bent from being handled too often, like somebody kept checking she was still real.";
-    }
-    if (game.currentRoom === "apartment" && hotspotId === "apartment-computer-screen" && !nextGame.hasFlag("bar_address_known")) {
-      nextGame.addFlag("bar_address_known");
-      nextGame.addFlag("open_city_map_enabled");
-      nextGame.addFlag("bar_marked_on_map");
-      nextGame.lastMessage = "You found Lucy's email with the Bar address.";
-      overrideText =
-        "The email is still open. Lucy sent the Bar address hours ago, with just enough detail to make it feel urgent and not nearly enough to make it feel safe.";
+        "The computer still shows Blondie's photo. The image is sharp enough to remember her face and sad enough to remind you why this night started badly.";
     }
     if (overrideText) {
       setGame(nextGame);
@@ -432,6 +460,7 @@ export function useGame() {
     setConversationHasClue(false);
     setInspectOpen(false);
     setScriptedConversationState(null);
+    setScriptedBackStack([]);
     setInspectOverrideText(overrideText);
     setInspectedHotspotId(hotspotId);
   };
@@ -453,6 +482,11 @@ export function useGame() {
     }
     setCollectedHotspotItemIds((prev) => (prev.includes(itemPopup.hotspotId) ? prev : [...prev, itemPopup.hotspotId]));
     mutate((draft) => {
+      if (itemPopup.itemId === "bar_address_note") {
+        draft.addFlag("bar_address_known");
+        draft.addFlag("open_city_map_enabled");
+        draft.addFlag("bar_marked_on_map");
+      }
       draft.lastMessage = `You picked up ${itemPopup.label}.`;
     });
     setItemPopup(null);
@@ -484,6 +518,7 @@ export function useGame() {
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
     setScriptedConversationState(null);
+    setScriptedBackStack([]);
   };
 
   const leaveCab = () => {
@@ -501,6 +536,61 @@ export function useGame() {
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
     setScriptedConversationState(null);
+    setScriptedBackStack([]);
+  };
+
+  const goBackConversation = () => {
+    if (!activeScriptedDialogue) return;
+    const currentState = scriptedConversationState;
+    if (!currentState || currentState.kind !== "node" || currentState.conversationId !== activeScriptedDialogue.conversationId) return;
+
+    const currentNode = getScriptedDialogueNode(activeScriptedDialogue, currentState.nodeId);
+    const stackEntry = [...scriptedBackStack].reverse().find((entry) => entry.conversationId === activeScriptedDialogue.conversationId);
+    if (!currentNode || !stackEntry) return;
+
+    const remainingOptions = getRemainingScriptOptions(activeScriptedDialogue, currentNode);
+    if (remainingOptions.length === 0) {
+      setUsedScriptOptionKeysByConversationId((prev) => {
+        const currentKeys = prev[activeScriptedDialogue.conversationId] ?? [];
+        const optionKey = getOptionKey(stackEntry.nodeId, stackEntry.optionId);
+        if (currentKeys.includes(optionKey)) return prev;
+        return {
+          ...prev,
+          [activeScriptedDialogue.conversationId]: [...currentKeys, optionKey],
+        };
+      });
+    }
+
+    const previousNode = getScriptedDialogueNode(activeScriptedDialogue, stackEntry.nodeId);
+    if (!previousNode) return;
+
+    setScriptedBackStack((prev) => {
+      let index = -1;
+      for (let i = prev.length - 1; i >= 0; i -= 1) {
+        const entry = prev[i];
+        if (
+          entry.conversationId === activeScriptedDialogue.conversationId &&
+          entry.nodeId === stackEntry.nodeId &&
+          entry.optionId === stackEntry.optionId
+        ) {
+          index = i;
+          break;
+        }
+      }
+      if (index === -1) return prev;
+      return prev.slice(0, index);
+    });
+    setScriptedConversationState({
+      kind: "node",
+      conversationId: activeScriptedDialogue.conversationId,
+      nodeId: previousNode.id,
+    });
+    setScriptedNodeByConversationId((prev) => ({
+      ...prev,
+      [activeScriptedDialogue.conversationId]: previousNode.id,
+    }));
+    setConversationHasClue(false);
+    setConversationText(previousNode.text);
   };
 
   const toggleMap = () => {
@@ -566,6 +656,7 @@ export function useGame() {
     selectedInventoryId,
     itemPopup,
     canOpenMap,
+    canGoBackConversation,
     setMapOpen,
     setInspectOpen,
     setHoverCharacter,
@@ -582,6 +673,7 @@ export function useGame() {
     openAccusationPrompt,
     takeCab,
     leaveCab,
+    goBackConversation,
     toggleMap,
     toggleInventoryItem,
     clearInventorySelection,
