@@ -1,13 +1,39 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const BG_IMAGE = "/game-assets/background_intro.jpg";
+const NEXT_SCENE_BG_IMAGE = "/game-assets/background_apartment.jpg";
 const TITLE = "PARADOX";
 const SUBTITLE = "After Hours";
 const LOGO_DELAY = 900;
 const BUTTON_DELAY = 1700;
 const EXIT_DURATION_MS = 800;
 const CORRUPT_CHARS = "▓░▒█▄▀■□▪▫◊◈⬡⬢⏣⎔";
+
+const PRELOADED_IMAGES = new Set<string>();
+
+function preloadImage(src: string): Promise<void> {
+  if (PRELOADED_IMAGES.has(src)) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const image = new Image();
+    let settled = false;
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      PRELOADED_IMAGES.add(src);
+      resolve();
+    };
+
+    image.onload = done;
+    image.onerror = done;
+    image.src = src;
+
+    if (image.complete) {
+      done();
+    }
+  });
+}
 
 function getCorruptChar(): string {
   return CORRUPT_CHARS[Math.floor(Math.random() * CORRUPT_CHARS.length)];
@@ -200,16 +226,13 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
   const [showButton, setShowButton] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [backgroundReady, setBackgroundReady] = useState(false);
+  const nextSceneBackgroundPromiseRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
-    const image = new Image();
-    image.src = BG_IMAGE;
-    image.onload = () => setBackgroundReady(true);
-    image.onerror = () => setBackgroundReady(true);
-    if (image.complete) {
-      setBackgroundReady(true);
-    }
+    preloadImage(BG_IMAGE).then(() => setBackgroundReady(true));
+  }, []);
 
+  useEffect(() => {
     if (!backgroundReady) return;
 
     const logoTimer = window.setTimeout(() => setShowLogo(true), LOGO_DELAY);
@@ -221,11 +244,26 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
     };
   }, [backgroundReady]);
 
-  const handleStart = () => {
+  useEffect(() => {
+    if (!showButton) return;
+    nextSceneBackgroundPromiseRef.current = preloadImage(NEXT_SCENE_BG_IMAGE);
+  }, [showButton]);
+
+  const handleStart = async () => {
     if (onUserInteract) onUserInteract();
     if (isExiting) return;
     setIsExiting(true);
-    window.setTimeout(onStart, EXIT_DURATION_MS);
+    const nextSceneBackgroundPromise = preloadImage(NEXT_SCENE_BG_IMAGE);
+    nextSceneBackgroundPromiseRef.current = nextSceneBackgroundPromise;
+
+    await Promise.all([
+      nextSceneBackgroundPromise,
+      new Promise<void>((resolve) => {
+        window.setTimeout(resolve, EXIT_DURATION_MS);
+      }),
+    ]);
+
+    onStart();
   };
 
   return (
