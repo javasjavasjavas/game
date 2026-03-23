@@ -2,6 +2,8 @@ export type RoomId =
   | "bar"
   | "cab"
   | "apartment"
+  | "elevator"
+  | "rooftop"
   | "store"
   | "alley"
   | "pharmacy"

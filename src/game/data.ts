@@ -82,7 +82,19 @@ export const ROOMS: Record<RoomId, Room> = {
     id: "apartment",
     name: "Apartment",
     description: "A narrow hallway, broken intercom, and sleepless windows.",
-    exits: ["bar", "cab", "alley", "pharmacy", "arcade", "street"],
+    exits: ["elevator"],
+  },
+  elevator: {
+    id: "elevator",
+    name: "Elevator",
+    description: "A stained metal box humming between floors, carrying bad choices up and down the building.",
+    exits: ["apartment", "rooftop", "street"],
+  },
+  rooftop: {
+    id: "rooftop",
+    name: "Rooftop",
+    description: "Tar, wet wind, and the city breathing below like it knows your business already.",
+    exits: ["elevator"],
   },
   store: {
     id: "store",
@@ -138,6 +150,8 @@ export const ROOM_ORDER: RoomId[] = [
   "bar",
   "cab",
   "apartment",
+  "elevator",
+  "rooftop",
   "store",
   "alley",
   "pharmacy",
@@ -152,6 +166,8 @@ export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
   bar: { x: 48, y: 48 },
   cab: { x: 50, y: 92 },
   apartment: { x: 22, y: 24 },
+  elevator: { x: 46, y: 24 },
+  rooftop: { x: 46, y: 12 },
   store: { x: 78, y: 26 },
   alley: { x: 52, y: 78 },
   pharmacy: { x: 84, y: 72 },
@@ -235,6 +251,50 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       height: 790,
       inspectText:
         "Beyond the glass, the city is all neon haze and distant sirens. The skyline feels close enough to touch, but the room still feels sealed off.",
+    },
+  ],
+  elevator: [
+    {
+      id: "elevator-neighbor-note",
+      label: "Neighbor Note",
+      x: 345,
+      y: 520,
+      width: 420,
+      height: 430,
+      inspectText:
+        "A folded note is taped beside the panel. Somebody wrote 'DON'T TRUST THE NIGHT SUPER' in quick, angry strokes, then thought better of signing it.",
+    },
+    {
+      id: "elevator-carved-number",
+      label: "Carved Number",
+      x: 2320,
+      y: 640,
+      width: 290,
+      height: 370,
+      inspectText:
+        "Someone scratched an apartment number into the metal wall deep enough to survive repainting. Either it mattered once, or it still does.",
+    },
+  ],
+  rooftop: [
+    {
+      id: "rooftop-edge-view",
+      label: "Edge View",
+      x: 1850,
+      y: 280,
+      width: 760,
+      height: 520,
+      inspectText:
+        "From up here the district looks calm, which is exactly how you know it is lying. Neon washes over rainwater and hides more than it reveals.",
+    },
+    {
+      id: "rooftop-flower-pot",
+      label: "Flower Pot",
+      x: 780,
+      y: 1120,
+      width: 250,
+      height: 280,
+      inspectText:
+        "The flower pot is chipped and half-dead, but somebody still drags it back from the ledge every time the wind tries to claim it.",
     },
   ],
   arcade: [

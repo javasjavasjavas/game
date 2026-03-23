@@ -24,6 +24,13 @@ export interface CharacterMemory {
   hasNewClue: boolean;
 }
 
+export interface SceneAction {
+  id: string;
+  label: string;
+  icon?: string;
+  onClick: () => void;
+}
+
 type ScriptedConversationState =
   | { kind: "node"; conversationId: string; nodeId: string }
   | { kind: "followup"; conversationId: string; followupId: string; text: string }
@@ -170,7 +177,7 @@ export function useGame() {
       return !requiredFlag || game.hasFlag(requiredFlag);
     });
   }, [game]);
-  const canOpenMap = game.hasClue("bar_address_known") || game.hasFlag("bar_address_known");
+  const canOpenMap = game.hasFlag("entered_city_map");
   const availableMapRooms = canOpenMap ? (["apartment", "bar"] as RoomId[]) : [];
   const canGoBackConversation = Boolean(
     activeScriptedDialogue &&
@@ -550,10 +557,100 @@ export function useGame() {
     setItemPopup(null);
   };
 
+  const goToElevator = () => {
+    mutate((draft) => {
+      if (draft.currentRoom !== "apartment") return;
+      draft.currentRoom = "elevator";
+      draft.advanceTime(1);
+      draft.addFlag("entered_elevator");
+      draft.lastMessage = "You step into the elevator, carrying Blondie's photo and the Bar lead with you.";
+    });
+    setCurrentTalkNpcId(null);
+    setConversationText("");
+    setConversationHasClue(false);
+    setInspectOpen(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
+    setInspectOverrideText(null);
+    setScriptedConversationState(null);
+    setScriptedBackStack([]);
+  };
+
+  const goToRooftop = () => {
+    mutate((draft) => {
+      if (draft.currentRoom !== "elevator") return;
+      draft.currentRoom = "rooftop";
+      draft.advanceTime(1);
+      draft.addFlag("entered_rooftop");
+      draft.lastMessage = "The elevator groans its way up to the rooftop.";
+    });
+    setCurrentTalkNpcId(null);
+    setConversationText("");
+    setConversationHasClue(false);
+    setInspectOpen(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
+    setInspectOverrideText(null);
+    setScriptedConversationState(null);
+    setScriptedBackStack([]);
+  };
+
+  const returnToElevator = () => {
+    mutate((draft) => {
+      if (draft.currentRoom !== "rooftop") return;
+      draft.currentRoom = "elevator";
+      draft.advanceTime(1);
+      draft.lastMessage = "You head back into the elevator before the night talks you into staying.";
+    });
+    setCurrentTalkNpcId(null);
+    setConversationText("");
+    setConversationHasClue(false);
+    setInspectOpen(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
+    setInspectOverrideText(null);
+    setScriptedConversationState(null);
+    setScriptedBackStack([]);
+  };
+
+  const exitBuilding = () => {
+    if (!game.hasClue("bar_address_known") && !game.hasFlag("bar_address_known")) {
+      mutate((draft) => {
+        draft.lastMessage = "You still need the Bar address before heading into the city.";
+      });
+      return;
+    }
+
+    mutate((draft) => {
+      if (draft.currentRoom !== "elevator") return;
+      draft.addFlag("entered_city_map");
+      draft.addFlag("open_city_map_enabled");
+      draft.addFlag("bar_marked_on_map");
+      draft.advanceTime(2);
+      draft.lastMessage = "You leave the building and unfold the city in your head. The Bar is the first real lead.";
+    });
+    setCurrentTalkNpcId(null);
+    setConversationText("");
+    setConversationHasClue(false);
+    setInspectOpen(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
+    setInspectOverrideText(null);
+    setScriptedConversationState(null);
+    setScriptedBackStack([]);
+    setMapOpen(true);
+  };
+
   const takeCab = () => {
     const fare = 18;
     if (game.finished) return;
     if (game.currentRoom === "cab") return;
+    if (game.currentRoom === "apartment" || game.currentRoom === "elevator" || game.currentRoom === "rooftop") {
+      mutate((draft) => {
+        draft.lastMessage = "You need to leave the building before looking for a cab.";
+      });
+      return;
+    }
     if (game.money < fare) {
       mutate((draft) => {
         draft.lastMessage = "Not enough cash for a cab ride.";
@@ -622,12 +719,58 @@ export function useGame() {
   const toggleMap = () => {
     if (!canOpenMap) {
       mutate((draft) => {
-        draft.lastMessage = "Lucy mentioned an email with the Bar address. Check the computer first.";
+        draft.lastMessage =
+          draft.currentRoom === "apartment"
+            ? "You have the Bar address. Leave the apartment first."
+            : "Leave the building first. That is when the city map opens up.";
       });
       return;
     }
     setMapOpen((prev) => !prev);
   };
+
+  const sceneActions = useMemo<SceneAction[]>(() => {
+    if (game.currentRoom === "apartment" && (game.hasClue("bar_address_known") || game.hasFlag("bar_address_known"))) {
+      return [
+        {
+          id: "leave-apartment",
+          label: "Leave Apartment",
+          icon: "/game-assets/icon_map.png",
+          onClick: goToElevator,
+        },
+      ];
+    }
+
+    if (game.currentRoom === "elevator") {
+      return [
+        {
+          id: "exit-building",
+          label: "Exit Building",
+          icon: "/game-assets/icon_map.png",
+          onClick: exitBuilding,
+        },
+        {
+          id: "go-to-rooftop",
+          label: "Go to Rooftop",
+          icon: "/game-assets/icon_search.png",
+          onClick: goToRooftop,
+        },
+      ];
+    }
+
+    if (game.currentRoom === "rooftop") {
+      return [
+        {
+          id: "return-elevator",
+          label: "Return to Elevator",
+          icon: "/game-assets/icon_map.png",
+          onClick: returnToElevator,
+        },
+      ];
+    }
+
+    return [];
+  }, [game, exitBuilding, goToElevator, goToRooftop, returnToElevator]);
 
   const ensureCharacterMemory = (npcId: string) => {
     const npc = NPCS.find((item) => item.id === npcId);
@@ -673,6 +816,7 @@ export function useGame() {
     conversation,
     selectedItem,
     ownedInventoryItems,
+    sceneActions,
     cursorMode,
     currentTalkNpcId,
     conversationText,
@@ -700,6 +844,10 @@ export function useGame() {
     openAccusationPrompt,
     takeCab,
     leaveCab,
+    goToElevator,
+    goToRooftop,
+    returnToElevator,
+    exitBuilding,
     goBackConversation,
     toggleMap,
     toggleInventoryItem,
