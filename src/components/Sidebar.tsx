@@ -1,6 +1,3 @@
-import { Zap } from "lucide-react";
-import { NPCS } from "../game/data";
-import { motion } from "framer-motion";
 import type { CharacterMemory } from "../hooks/useGame";
 
 interface Props {
@@ -11,9 +8,6 @@ interface Props {
   onToggleCharacter: (npcId: string) => void;
   onWait: () => void;
   onTakeCab: () => void;
-  onSolveClick: () => void;
-  onAccuse: (npcId: string) => void;
-  showAccuseList: boolean;
   mobileOpen: boolean;
   soundEnabled: boolean;
   onToggleSound: () => void;
@@ -29,9 +23,6 @@ export function Sidebar({
   onToggleCharacter,
   onWait,
   onTakeCab,
-  onSolveClick,
-  onAccuse,
-  showAccuseList,
   mobileOpen,
   soundEnabled,
   onToggleSound,
@@ -114,18 +105,6 @@ export function Sidebar({
         <button className="action-btn" onClick={onTakeCab}>
           <img className="action-icon-image" src="/game-assets/icon_cab.png" alt="Cab" /> {inCab ? "Leave the cab" : "Take a cab"}
         </button>
-        <button className="action-btn warn" onClick={onSolveClick}>
-          <Zap size={14} /> Submit accusation
-        </button>
-        {showAccuseList && (
-          <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="dialogue-choices">
-            {NPCS.map((npc) => (
-              <button key={npc.id} className="choice-btn" onClick={() => onAccuse(npc.id)}>
-                {npc.name}
-              </button>
-            ))}
-          </motion.div>
-        )}
       </section>
     </aside>
   );

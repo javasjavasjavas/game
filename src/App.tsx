@@ -31,7 +31,6 @@ export default function App() {
   const [screen, setScreen] = useState<FlowScreen>("start");
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: -9999, y: -9999 });
-  const [showAccuseList, setShowAccuseList] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const musicRef = useRef<HTMLAudioElement | null>(null);
   const fadeIntervalRef = useRef<number | null>(null);
@@ -260,27 +259,14 @@ export default function App() {
         score={game.clues.length * 100}
         money={game.game.money}
         onToggleCharacter={game.toggleCharacterMemory}
-        onWait={() => {
-          setShowAccuseList(false);
-          game.wait();
-        }}
+        onWait={game.wait}
         onTakeCab={() => {
-          setShowAccuseList(false);
           if (game.game.currentRoom === "cab") {
             game.leaveCab();
           } else {
             game.takeCab();
           }
         }}
-        onSolveClick={() => {
-          game.openAccusationPrompt();
-          setShowAccuseList((prev) => !prev);
-        }}
-        onAccuse={(npcId) => {
-          game.solve(npcId);
-          setShowAccuseList(false);
-        }}
-        showAccuseList={showAccuseList}
         mobileOpen={mobileSidebar}
         soundEnabled={soundEnabled}
         onToggleSound={() => setSoundEnabled((prev) => !prev)}
@@ -297,16 +283,10 @@ export default function App() {
           emotion={game.game.characterEmotion}
           hotspots={conversationOpen ? [] : game.visibleHotspots}
           availableMapRooms={game.availableMapRooms}
-          onCharacterClick={() => {
-            setShowAccuseList(false);
-            game.openTalkSelector();
-          }}
+          onCharacterClick={game.openTalkSelector}
           onCharacterEnter={() => game.setHoverCharacter(true)}
           onCharacterLeave={() => game.setHoverCharacter(false)}
-          onHotspotClick={(hotspotId) => {
-            setShowAccuseList(false);
-            game.openHotspotInspect(hotspotId);
-          }}
+          onHotspotClick={game.openHotspotInspect}
           onHotspotEnter={() => game.setHoverHotspot(true)}
           onHotspotLeave={() => game.setHoverHotspot(false)}
           mapOpen={game.mapOpen}
@@ -322,11 +302,9 @@ export default function App() {
             mapEnabled={game.canOpenMap}
             inventoryItems={game.ownedInventoryItems}
             selectedInventoryId={game.selectedInventoryId}
+            sceneActions={game.sceneActions}
             onToggleInventory={game.toggleInventoryItem}
-            onInspect={() => {
-              setShowAccuseList(false);
-              game.openRoomInspect();
-            }}
+            onInspect={game.openRoomInspect}
             onMap={game.toggleMap}
           />
 

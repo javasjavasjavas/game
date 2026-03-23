@@ -1669,6 +1669,55 @@ button {
   gap: 8px;
 }
 
+.map-pill-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.map-new-badge {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 12px);
+  transform: translateX(-50%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  animation: map-new-badge-bounce 1.15s ease-in-out infinite;
+}
+
+.map-new-badge-text {
+  border: 1px solid rgba(242, 207, 74, 0.75);
+  border-radius: 999px;
+  background: rgba(242, 207, 74, 0.16);
+  color: #f2cf4a;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+  padding: 7px 10px 6px;
+  box-shadow: 0 0 18px rgba(242, 207, 74, 0.14);
+}
+
+.map-new-badge-arrow {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid rgba(242, 207, 74, 0.88);
+}
+
+@keyframes map-new-badge-bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
 .pill-icon-image {
   width: 25px;
   height: 25px;
