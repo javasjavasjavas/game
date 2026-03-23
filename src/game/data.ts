@@ -470,10 +470,11 @@ export const CLUES: Record<string, string> = {
   tornJacket: "Torn jacket with neon paint from the alley wall.",
   keyLog: "Store shutter log was edited during the blackout window.",
   witness: "Lucy's statement: Big Boss rushed out of the alley at 21:10.",
+  bar_address_known: "Lucy's email points to The Bar at 14 Mercer Street.",
   lucy_warned_about_police: "Lucy warned Blondie did not trust the police.",
   lucy_last_seen_before_midnight: "Lucy last saw Blondie not long before midnight.",
   lucy_blondie_was_running: "Lucy believes Blondie was trying to stay ahead of someone.",
-  lucy_pointed_to_bar_and_photo: "Lucy pointed you to the jacket address and the photo on the computer.",
+  lucy_pointed_to_bar_and_photo: "Lucy pointed you to Blondie's photo in the jacket and the Bar address in the email.",
   lucy_bad_feeling_before_disappearance: "Lucy felt something bad was already in motion before Blondie vanished.",
 };
 
@@ -599,17 +600,17 @@ export const ENDINGS = {
 export const INVENTORY_ITEMS: InventoryItemDefinition[] = [
   { id: "key", label: "Key", image: "/game-assets/item_key.png" },
   { id: "cup", label: "Cassette", image: "/game-assets/item_cassete.png" },
-  { id: "bar_address_note", label: "Bar Address", image: "/game-assets/icon_map.png" },
+  { id: "blondie_photo", label: "Blondie Photo", image: "/game-assets/icon_eye.png" },
 ];
 
 export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
   {
     hotspotId: "apartment-jacket-pocket",
-    itemId: "bar_address_note",
-    label: "Bar Address",
-    image: "/game-assets/icon_map.png",
+    itemId: "blondie_photo",
+    label: "Blondie Photo",
+    image: "/game-assets/icon_eye.png",
     description:
-      "A scrap of paper with the Bar address written in a quick hand. Cheap paper, urgent ink, and exactly the kind of lead you do not ignore.",
+      "A photo of Blondie, worn at the corners from being handled too often. A useful face to carry through a city full of bad liars.",
   },
 ];
 

@@ -22,7 +22,7 @@ export function InspectPanel({ open, title = "Inspection", text, onClose }: Prop
             <img className="detail-close-icon" src="/game-assets/icon_cross.png" alt="Close" />
           </button>
           <h3 className="detail-title">{title}</h3>
-          <p className="detail-text">{text}</p>
+          <p className="detail-text" dangerouslySetInnerHTML={{ __html: text }} />
         </motion.div>
       )}
     </AnimatePresence>

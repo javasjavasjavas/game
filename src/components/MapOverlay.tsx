@@ -7,6 +7,7 @@ import type { RoomId } from "../game/types";
 interface Props {
   open: boolean;
   currentRoom: RoomId;
+  availableRooms: RoomId[];
   onClose: () => void;
   onSelectRoom: (roomId: RoomId, walkMinutes: number) => void;
 }
@@ -36,7 +37,7 @@ const MAP_LOCATIONS: MapLocation[] = [
   { roomId: "street", x: 56, y: 42, distance: "0.6 km", walkTime: "7 min", walkMinutes: 7 },
 ];
 
-export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) {
+export function MapOverlay({ open, currentRoom, availableRooms, onClose, onSelectRoom }: Props) {
   const frameRef = useRef<HTMLDivElement | null>(null);
   const [frameSize, setFrameSize] = useState({ width: 0, height: 0 });
 
@@ -56,8 +57,9 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
   }, []);
 
   const adjustedLocations = useMemo(() => {
+    const visibleLocations = MAP_LOCATIONS.filter((loc) => availableRooms.includes(loc.roomId));
     if (frameSize.width <= 0 || frameSize.height <= 0) {
-      return MAP_LOCATIONS.map((loc) => ({ ...loc, drawX: loc.x, drawY: loc.y }));
+      return visibleLocations.map((loc) => ({ ...loc, drawX: loc.x, drawY: loc.y }));
     }
 
     const scale = Math.max(frameSize.width / MAP_WIDTH, frameSize.height / MAP_HEIGHT);
@@ -66,7 +68,7 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
     const offsetX = (frameSize.width - renderedWidth) / 2;
     const offsetY = (frameSize.height - renderedHeight) / 2;
 
-    return MAP_LOCATIONS.map((loc) => {
+    return visibleLocations.map((loc) => {
       const xPx = (loc.x / 100) * MAP_WIDTH * scale + offsetX;
       const yPx = (loc.y / 100) * MAP_HEIGHT * scale + offsetY;
       return {
@@ -75,7 +77,7 @@ export function MapOverlay({ open, currentRoom, onClose, onSelectRoom }: Props) 
         drawY: (yPx / frameSize.height) * 100,
       };
     });
-  }, [frameSize.height, frameSize.width]);
+  }, [availableRooms, frameSize.height, frameSize.width]);
 
   return (
     <AnimatePresence mode="wait">

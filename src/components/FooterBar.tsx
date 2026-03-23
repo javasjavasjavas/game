@@ -33,9 +33,11 @@ export function FooterBar({ showNav, mapOpen, mapEnabled, inventoryItems, select
         <button className="pill-btn" onClick={onInspect}>
           <img className="pill-icon-image" src="/game-assets/icon_search.png" alt="Search" /> Inspect area
         </button>
-        <button className="pill-btn" onClick={onMap} disabled={!mapEnabled}>
-          <img className="pill-icon-image" src="/game-assets/icon_map.png" alt="Map" /> {mapOpen ? "Close City Map" : "Open City Map"}
-        </button>
+        {mapEnabled && (
+          <button className="pill-btn" onClick={onMap}>
+            <img className="pill-icon-image" src="/game-assets/icon_map.png" alt="Map" /> {mapOpen ? "Close City Map" : "Open City Map"}
+          </button>
+        )}
       </div>
     </div>
   );

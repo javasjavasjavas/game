@@ -217,11 +217,11 @@
       "id": "lucy_starting_points_001",
       "speaker": "lucy",
       "emotion": "serious",
-      "text": "I left the Bar address in the pocket of your jacket. Blondie’s photo should still be on the computer. The Bar is where she was last seen.",
+      "text": "I left Blondie’s photo in the pocket of your jacket. The Bar address is in the email on your computer. That’s where she was last seen.",
       "effects": {
         "addFlags": [
-          "lucy_explains_bar_address_in_jacket",
-          "lucy_explains_photo_on_computer"
+          "lucy_explains_photo_in_jacket",
+          "lucy_explains_bar_address_in_email"
         ],
         "addClues": ["lucy_pointed_to_bar_and_photo"]
       },
@@ -265,7 +265,7 @@
       "id": "lucy_check_both_001",
       "speaker": "lucy",
       "emotion": "serious",
-      "text": "Do it fast. Check the jacket, check the computer, and move. If Blondie’s still alive, time is already working for the wrong side.",
+      "text": "Do it fast. Check the jacket, check the email, and move. If Blondie’s still alive, time is already working for the wrong side.",
       "effects": {
         "addFlags": ["player_directed_to_jacket_and_email"]
       },

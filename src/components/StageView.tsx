@@ -42,6 +42,7 @@ function preloadImage(src: string, cache: Set<string>): Promise<void> {
 interface Props {
   emotion: CharacterEmotion;
   hotspots: HotspotDefinition[];
+  availableMapRooms: RoomId[];
   onCharacterClick: () => void;
   onCharacterEnter: () => void;
   onCharacterLeave: () => void;
@@ -57,6 +58,7 @@ interface Props {
 export function StageView({
   emotion,
   hotspots,
+  availableMapRooms,
   onCharacterClick,
   onCharacterEnter,
   onCharacterLeave,
@@ -532,7 +534,13 @@ export function StageView({
         />
       )}
 
-      <MapOverlay open={mapOpen} currentRoom={currentRoom} onClose={onMapClose} onSelectRoom={onMapSelect} />
+      <MapOverlay
+        open={mapOpen}
+        currentRoom={currentRoom}
+        availableRooms={availableMapRooms}
+        onClose={onMapClose}
+        onSelectRoom={onMapSelect}
+      />
     </section>
   );
 }

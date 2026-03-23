@@ -30,8 +30,8 @@ type ScriptedConversationState =
   | null;
 
 const APARTMENT_HOTSPOT_REQUIREMENTS: Partial<Record<string, string>> = {
-  "apartment-jacket-pocket": "lucy_explains_bar_address_in_jacket",
-  "apartment-computer-screen": "lucy_explains_photo_on_computer",
+  "apartment-jacket-pocket": "lucy_explains_photo_in_jacket",
+  "apartment-computer-screen": "lucy_explains_bar_address_in_email",
 };
 
 export function useGame() {
@@ -55,7 +55,7 @@ export function useGame() {
   const [itemPopup, setItemPopup] = useState<HotspotItemDefinition | null>(null);
   const [scriptedConversationState, setScriptedConversationState] = useState<ScriptedConversationState>(null);
   const [scriptedNodeByConversationId, setScriptedNodeByConversationId] = useState<Record<string, string>>({});
-  const [scriptedBackStack, setScriptedBackStack] = useState<Array<{ conversationId: string; nodeId: string; optionId: string }>>([]);
+  const [, setScriptedBackStack] = useState<Array<{ conversationId: string; nodeId: string; optionId: string }>>([]);
   const [usedScriptOptionKeysByConversationId, setUsedScriptOptionKeysByConversationId] = useState<Record<string, string[]>>({});
 
   const room = ROOMS[game.currentRoom];
@@ -150,8 +150,14 @@ export function useGame() {
       return !requiredFlag || game.hasFlag(requiredFlag);
     });
   }, [game]);
-  const canOpenMap = game.hasFlag("bar_address_known") || ownedInventoryIds.includes("bar_address_note");
-  const canGoBackConversation = Boolean(activeScriptedDialogue && scriptedBackStack.some((entry) => entry.conversationId === activeScriptedDialogue.conversationId));
+  const canOpenMap = game.hasClue("bar_address_known") || game.hasFlag("bar_address_known");
+  const availableMapRooms = canOpenMap ? (["apartment", "bar"] as RoomId[]) : [];
+  const canGoBackConversation = Boolean(
+    activeScriptedDialogue &&
+      scriptedConversationState?.kind === "node" &&
+      scriptedConversationState.conversationId === activeScriptedDialogue.conversationId &&
+      scriptedConversationState.nodeId !== activeScriptedDialogue.startNode,
+  );
 
   const cursorMode: CursorMode = selectedInventoryId
     ? "use"
@@ -230,8 +236,8 @@ export function useGame() {
       const savedNode = savedNodeId ? getScriptedDialogueNode(scriptedDialogue, savedNodeId) : null;
       const savedNodeHasOptions = savedNode ? getRemainingScriptOptions(scriptedDialogue, savedNode).length > 0 : false;
       const hasNamedLeads =
-        game.hasFlag("lucy_explains_bar_address_in_jacket") ||
-        game.hasFlag("lucy_explains_photo_on_computer") ||
+        game.hasFlag("lucy_explains_photo_in_jacket") ||
+        game.hasFlag("lucy_explains_bar_address_in_email") ||
         game.hasFlag("player_directed_to_jacket_and_email");
       const followup = !savedNodeHasOptions && hasNamedLeads ? getLatestFollowup(scriptedDialogue) : null;
 
@@ -363,6 +369,17 @@ export function useGame() {
         [scriptedDialogue.conversationId]: nextNode.id,
       }));
       if (currentNode) {
+        setUsedScriptOptionKeysByConversationId((prev) => {
+          const currentKeys = prev[scriptedDialogue.conversationId] ?? [];
+          const optionKey = getOptionKey(currentNode.id, selectedOption.id);
+          if (currentKeys.includes(optionKey)) return prev;
+          return {
+            ...prev,
+            [scriptedDialogue.conversationId]: [...currentKeys, optionKey],
+          };
+        });
+      }
+      if (currentNode) {
         setScriptedBackStack((prev) => [
           ...prev,
           {
@@ -445,14 +462,19 @@ export function useGame() {
 
     let overrideText: string | null = null;
     const nextGame = game.clone();
-    if (game.currentRoom === "apartment" && hotspotId === "apartment-computer-screen" && !nextGame.hasFlag("blondie_photo")) {
-      nextGame.addFlag("blondie_photo");
-      nextGame.lastMessage = "You found Blondie's photo on the computer.";
+    if (game.currentRoom === "apartment" && hotspotId === "apartment-computer-screen" && !nextGame.hasFlag("bar_address_known")) {
+      nextGame.addFlag("bar_address_known");
+      nextGame.addClue("bar_address_known");
+      nextGame.addFlag("open_city_map_enabled");
+      nextGame.addFlag("bar_marked_on_map");
+      nextGame.lastMessage = "You found the Bar address in Lucy's email.";
       overrideText =
-        "The computer still shows Blondie's photo. The image is sharp enough to remember her face and sad enough to remind you why this night started badly.";
+        "Lucy left the mail open. The message points to <span style=\"color:#f2cf4a\">The Bar, 14 Mercer Street</span>, written plain enough to feel important and dangerous at the same time.";
     }
     if (overrideText) {
       setGame(nextGame);
+      ensureCharacterMemory("lucy");
+      recordCluesForCharacter("lucy", ["bar_address_known"]);
     }
 
     setCurrentTalkNpcId(null);
@@ -482,11 +504,6 @@ export function useGame() {
     }
     setCollectedHotspotItemIds((prev) => (prev.includes(itemPopup.hotspotId) ? prev : [...prev, itemPopup.hotspotId]));
     mutate((draft) => {
-      if (itemPopup.itemId === "bar_address_note") {
-        draft.addFlag("bar_address_known");
-        draft.addFlag("open_city_map_enabled");
-        draft.addFlag("bar_marked_on_map");
-      }
       draft.lastMessage = `You picked up ${itemPopup.label}.`;
     });
     setItemPopup(null);
@@ -544,42 +561,10 @@ export function useGame() {
     const currentState = scriptedConversationState;
     if (!currentState || currentState.kind !== "node" || currentState.conversationId !== activeScriptedDialogue.conversationId) return;
 
-    const currentNode = getScriptedDialogueNode(activeScriptedDialogue, currentState.nodeId);
-    const stackEntry = [...scriptedBackStack].reverse().find((entry) => entry.conversationId === activeScriptedDialogue.conversationId);
-    if (!currentNode || !stackEntry) return;
-
-    const remainingOptions = getRemainingScriptOptions(activeScriptedDialogue, currentNode);
-    if (remainingOptions.length === 0) {
-      setUsedScriptOptionKeysByConversationId((prev) => {
-        const currentKeys = prev[activeScriptedDialogue.conversationId] ?? [];
-        const optionKey = getOptionKey(stackEntry.nodeId, stackEntry.optionId);
-        if (currentKeys.includes(optionKey)) return prev;
-        return {
-          ...prev,
-          [activeScriptedDialogue.conversationId]: [...currentKeys, optionKey],
-        };
-      });
-    }
-
-    const previousNode = getScriptedDialogueNode(activeScriptedDialogue, stackEntry.nodeId);
+    const previousNode = getScriptedDialogueNode(activeScriptedDialogue, activeScriptedDialogue.startNode);
     if (!previousNode) return;
 
-    setScriptedBackStack((prev) => {
-      let index = -1;
-      for (let i = prev.length - 1; i >= 0; i -= 1) {
-        const entry = prev[i];
-        if (
-          entry.conversationId === activeScriptedDialogue.conversationId &&
-          entry.nodeId === stackEntry.nodeId &&
-          entry.optionId === stackEntry.optionId
-        ) {
-          index = i;
-          break;
-        }
-      }
-      if (index === -1) return prev;
-      return prev.slice(0, index);
-    });
+    setScriptedBackStack([]);
     setScriptedConversationState({
       kind: "node",
       conversationId: activeScriptedDialogue.conversationId,
@@ -656,6 +641,7 @@ export function useGame() {
     selectedInventoryId,
     itemPopup,
     canOpenMap,
+    availableMapRooms,
     canGoBackConversation,
     setMapOpen,
     setInspectOpen,

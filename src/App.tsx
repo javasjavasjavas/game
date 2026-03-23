@@ -298,6 +298,7 @@ export default function App() {
         <StageView
           emotion={game.game.characterEmotion}
           hotspots={conversationOpen ? [] : game.visibleHotspots}
+          availableMapRooms={game.availableMapRooms}
           onCharacterClick={() => {
             setShowAccuseList(false);
             game.openTalkSelector();
