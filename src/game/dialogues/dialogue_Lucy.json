@@ -306,6 +306,10 @@
           "id": "opt_025",
           "text": "Then I’ll start with the photo and the email.",
           "type": "comment",
+          "requirements": [
+            "lucy_explains_photo_in_jacket",
+            "lucy_explains_bar_address_in_email"
+          ],
           "next": "lucy_check_both_001"
         }
       ]
