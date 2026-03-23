@@ -11,7 +11,7 @@ const BACKGROUND_BY_ROOM: Record<RoomId, string> = {
   bar: "/game-assets/background_bar.jpg",
   cab: "/game-assets/background_cab.jpg",
   apartment: "/game-assets/background_apartment.jpg",
-  elevator: "/game-assets/background_elevetor.png",
+  elevator: "/game-assets/background_elevator.jpg",
   rooftop: "/game-assets/background_street.jpg",
   store: "/game-assets/background_store.jpg",
   alley: "/game-assets/background_bar.jpg",
