@@ -5,6 +5,7 @@ import { ConversationPanel } from "./components/panels/ConversationPanel";
 import { InspectPanel } from "./components/panels/InspectPanel";
 import { CursorOverlay } from "./components/CursorOverlay";
 import { FooterBar } from "./components/FooterBar";
+import { ElevatorChoicePopup } from "./components/ElevatorChoicePopup";
 import { IntroScreen } from "./components/IntroScreen";
 import { NewItemPopup } from "./components/NewItemPopup";
 import { Sidebar } from "./components/Sidebar";
@@ -337,6 +338,13 @@ export default function App() {
           visible={Boolean(game.itemPopup)}
           onPickUp={game.pickUpItemFromPopup}
           onDiscard={game.discardItemPopup}
+        />
+
+        <ElevatorChoicePopup
+          visible={game.elevatorChoiceOpen}
+          onExitBuilding={game.exitBuilding}
+          onRooftop={game.goToRooftop}
+          onCancel={game.closeElevatorChoice}
         />
 
         <CursorOverlay mode={game.cursorMode} icon={cursorIcon} x={cursorPos.x} y={cursorPos.y} />

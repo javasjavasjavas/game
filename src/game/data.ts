@@ -255,6 +255,16 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
   ],
   elevator: [
     {
+      id: "elevator-call-button",
+      label: "Call Button",
+      x: 2480,
+      y: 720,
+      width: 165,
+      height: 230,
+      inspectText:
+        "The call button glows behind scratched plastic. One press and the building asks where you think you belong tonight.",
+    },
+    {
       id: "elevator-neighbor-note",
       label: "Neighbor Note",
       x: 345,

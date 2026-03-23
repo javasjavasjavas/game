@@ -57,6 +57,7 @@ export function useGame() {
   const [roomBeforeCab, setRoomBeforeCab] = useState<RoomId>("bar");
   const [inspectedHotspotId, setInspectedHotspotId] = useState<string | null>(null);
   const [inspectOverrideText, setInspectOverrideText] = useState<string | null>(null);
+  const [elevatorChoiceOpen, setElevatorChoiceOpen] = useState(false);
   const [ownedInventoryIds, setOwnedInventoryIds] = useState<string[]>([]);
   const [collectedHotspotItemIds, setCollectedHotspotItemIds] = useState<string[]>([]);
   const [itemPopup, setItemPopup] = useState<HotspotItemDefinition | null>(null);
@@ -481,12 +482,17 @@ export function useGame() {
     setSelectedInventoryId(null);
   };
 
+  const closeElevatorChoice = () => {
+    setElevatorChoiceOpen(false);
+  };
+
   const openRoomInspect = () => {
     setCurrentTalkNpcId(null);
     setConversationText("");
     setConversationHasClue(false);
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
+    setElevatorChoiceOpen(false);
     setScriptedConversationState(null);
     setScriptedBackStack([]);
     setInspectOpen(true);
@@ -494,6 +500,18 @@ export function useGame() {
 
   const openHotspotInspect = (hotspotId: string) => {
     if (currentTalkNpcId) return;
+    if (game.currentRoom === "elevator" && hotspotId === "elevator-call-button") {
+      setCurrentTalkNpcId(null);
+      setConversationText("");
+      setConversationHasClue(false);
+      setInspectOpen(false);
+      setInspectedHotspotId(null);
+      setInspectOverrideText(null);
+      setScriptedConversationState(null);
+      setScriptedBackStack([]);
+      setElevatorChoiceOpen(true);
+      return;
+    }
     const hotspotItem = HOTSPOT_ITEM_BY_ID[hotspotId];
     if (hotspotItem && !collectedHotspotItemIds.includes(hotspotId)) {
       setCurrentTalkNpcId(null);
@@ -502,6 +520,7 @@ export function useGame() {
       setInspectOpen(false);
       setInspectedHotspotId(null);
       setInspectOverrideText(null);
+      setElevatorChoiceOpen(false);
       setScriptedConversationState(null);
       setScriptedBackStack([]);
       setItemPopup(hotspotItem);
@@ -529,6 +548,7 @@ export function useGame() {
     setConversationText("");
     setConversationHasClue(false);
     setInspectOpen(false);
+    setElevatorChoiceOpen(false);
     setScriptedConversationState(null);
     setScriptedBackStack([]);
     setInspectOverrideText(overrideText);
@@ -591,6 +611,7 @@ export function useGame() {
     setHoverHotspot(false);
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
+    setElevatorChoiceOpen(false);
     setScriptedConversationState(null);
     setScriptedBackStack([]);
   };
@@ -609,6 +630,7 @@ export function useGame() {
     setHoverHotspot(false);
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
+    setElevatorChoiceOpen(false);
     setScriptedConversationState(null);
     setScriptedBackStack([]);
   };
@@ -636,6 +658,7 @@ export function useGame() {
     setHoverHotspot(false);
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
+    setElevatorChoiceOpen(false);
     setScriptedConversationState(null);
     setScriptedBackStack([]);
     setMapOpen(true);
@@ -742,20 +765,7 @@ export function useGame() {
     }
 
     if (game.currentRoom === "elevator") {
-      return [
-        {
-          id: "exit-building",
-          label: "Exit Building",
-          icon: "/game-assets/icon_map.png",
-          onClick: exitBuilding,
-        },
-        {
-          id: "go-to-rooftop",
-          label: "Go to Rooftop",
-          icon: "/game-assets/icon_search.png",
-          onClick: goToRooftop,
-        },
-      ];
+      return [];
     }
 
     if (game.currentRoom === "rooftop") {
@@ -770,7 +780,7 @@ export function useGame() {
     }
 
     return [];
-  }, [game, exitBuilding, goToElevator, goToRooftop, returnToElevator]);
+  }, [game, goToElevator, returnToElevator]);
 
   const ensureCharacterMemory = (npcId: string) => {
     const npc = NPCS.find((item) => item.id === npcId);
@@ -821,6 +831,7 @@ export function useGame() {
     currentTalkNpcId,
     conversationText,
     inspectOpen,
+    elevatorChoiceOpen,
     mapOpen,
     moneyDetailsOpen,
     selectedInventoryId,
@@ -855,6 +866,7 @@ export function useGame() {
     openRoomInspect,
     openHotspotInspect,
     closeInspect,
+    closeElevatorChoice,
     discardItemPopup,
     pickUpItemFromPopup,
     characterMemories,
