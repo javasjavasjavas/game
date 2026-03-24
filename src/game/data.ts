@@ -559,20 +559,25 @@ export const NPCS: Npc[] = [
   },
 ];
 
+export const MAX_CHARACTER_CLUES_PER_NPC = 3;
+
+export const CHARACTER_CLUE_PRIORITY_BY_NPC: Partial<Record<string, string[]>> = {
+  lucy: ["bar_address_known", "lucy_warned_about_police", "lucy_blondie_was_running"],
+  thegambler: ["gambler_confirms_blondie_was_here", "gambler_confirms_meeting_went_wrong"],
+  bigboss: ["tornJacket"],
+  clerk: ["keyLog"],
+};
+
 export const CLUES: Record<string, string> = {
   tornJacket: "Torn jacket with neon paint from the alley wall.",
   keyLog: "Store shutter log was edited during the blackout window.",
   witness: "Lucy's statement: Big Boss rushed out of the alley at 21:10.",
   bar_address_known: "Lucy's email points to The Bar at 14 Mercer Street.",
   lucy_warned_about_police: "Lucy warned Blondie did not trust the police.",
-  lucy_last_seen_before_midnight: "Lucy last saw Blondie not long before midnight.",
   lucy_blondie_was_running: "Lucy believes Blondie was trying to stay ahead of someone.",
-  lucy_pointed_to_bar_and_photo: "Lucy pointed you to Blondie's photo in the jacket and the Bar address in the email.",
-  lucy_bad_feeling_before_disappearance: "Lucy felt something bad was already in motion before Blondie vanished.",
   building_neighbor_note: "A neighbor left a warning in the elevator: 'Don't trust the night super.'",
   gambler_confirms_blondie_was_here: "The Gambler confirmed Blondie was at the Bar that night.",
   gambler_confirms_meeting_went_wrong: "The Gambler said Blondie's meeting at the Bar went wrong fast.",
-  bar_story_clue_obtained: "The Bar story suggests Blondie left in a hurry after meeting the wrong company.",
   crumpled_receipt: "A crumpled receipt from under the Bar table may help place the timing of Blondie's stop here.",
 };
 

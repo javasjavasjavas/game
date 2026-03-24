@@ -96,8 +96,7 @@
       "emotion": "serious",
       "text": "Not long before midnight. Long enough to know she wasn’t acting normal.",
       "effects": {
-        "addFlags": ["lucy_last_seen_known"],
-        "addClues": ["lucy_last_seen_before_midnight"]
+        "addFlags": ["lucy_last_seen_known"]
       },
       "options": [
         {
@@ -216,8 +215,7 @@
         "addFlags": [
           "lucy_explains_photo_in_jacket",
           "lucy_explains_bar_address_in_email"
-        ],
-        "addClues": ["lucy_pointed_to_bar_and_photo"]
+        ]
       },
       "options": [
         {
@@ -292,8 +290,7 @@
       "emotion": "serious",
       "text": "Nothing clean. Nothing easy. Just the feeling that she knew something bad was already in motion.",
       "effects": {
-        "addFlags": ["lucy_confirms_bad_feeling"],
-        "addClues": ["lucy_bad_feeling_before_disappearance"]
+        "addFlags": ["lucy_confirms_bad_feeling"]
       },
       "options": [
         {
@@ -367,3 +364,4 @@
     }
   ]
 }
+

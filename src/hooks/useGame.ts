@@ -1,5 +1,15 @@
 import { useMemo, useState } from "react";
-import { CHARACTER_BY_ID, CLUES, HOTSPOT_ITEM_BY_ID, INVENTORY_ITEMS, NPCS, ROOMS, STAGE_HOTSPOTS_BY_ROOM } from "../game/data";
+import {
+  CHARACTER_BY_ID,
+  CHARACTER_CLUE_PRIORITY_BY_NPC,
+  CLUES,
+  HOTSPOT_ITEM_BY_ID,
+  INVENTORY_ITEMS,
+  MAX_CHARACTER_CLUES_PER_NPC,
+  NPCS,
+  ROOMS,
+  STAGE_HOTSPOTS_BY_ROOM,
+} from "../game/data";
 import { getAvailableScriptOptions, getScriptedDialogue, getScriptedDialogueNode } from "../game/dialogues";
 import { formatTime, GameState } from "../game/state";
 import type {
@@ -20,6 +30,7 @@ export interface CharacterMemory {
   name: string;
   description: string;
   portrait: string;
+  clueIds: string[];
   clues: string[];
   hasNewClue: boolean;
 }
@@ -109,20 +120,71 @@ export function useGame() {
   const applyNodeEffects = (draft: GameState, node: DialogueScriptNode | null) => {
     applyScriptEffects(draft, node?.effects);
   };
+  const getRecordableCharacterClueIds = (npcId: string, clueIds: string[]) => {
+    const uniqueClueIds = clueIds.filter(
+      (clueId, index) => Boolean(CLUES[clueId]) && clueIds.indexOf(clueId) === index,
+    );
+    if (uniqueClueIds.length === 0) return [];
+
+    const priority = CHARACTER_CLUE_PRIORITY_BY_NPC[npcId];
+    if (!priority || priority.length === 0) {
+      return uniqueClueIds.slice(0, MAX_CHARACTER_CLUES_PER_NPC);
+    }
+
+    return priority.filter((clueId) => uniqueClueIds.includes(clueId)).slice(0, MAX_CHARACTER_CLUES_PER_NPC);
+  };
+  const orderCharacterClueIds = (npcId: string, clueIds: string[]) => {
+    const uniqueClueIds = clueIds.filter(
+      (clueId, index) => Boolean(CLUES[clueId]) && clueIds.indexOf(clueId) === index,
+    );
+    if (uniqueClueIds.length === 0) return [];
+
+    const priority = CHARACTER_CLUE_PRIORITY_BY_NPC[npcId];
+    if (!priority || priority.length === 0) {
+      return uniqueClueIds.slice(0, MAX_CHARACTER_CLUES_PER_NPC);
+    }
+
+    return priority.filter((clueId) => uniqueClueIds.includes(clueId)).slice(0, MAX_CHARACTER_CLUES_PER_NPC);
+  };
+  const createCharacterMemory = (npcId: string): CharacterMemory | null => {
+    const npc = NPCS.find((item) => item.id === npcId);
+    if (!npc) return null;
+    const characterData = CHARACTER_BY_ID[npcId];
+    return {
+      npcId,
+      name: npc.name,
+      description: characterData?.description ?? `${npc.name} is a person of interest in this district.`,
+      portrait: characterData?.emotions[characterData.defaultEmotion] ?? "/game-assets/character_big_boss_serious.png",
+      clueIds: [],
+      clues: [],
+      hasNewClue: false,
+    };
+  };
   const recordCluesForCharacter = (npcId: string, clueIds: string[]) => {
-    if (clueIds.length === 0) return;
-    const discoveredClueTexts = clueIds.map((clueId) => CLUES[clueId] ?? clueId);
+    const recordableClueIds = getRecordableCharacterClueIds(npcId, clueIds);
+    if (recordableClueIds.length === 0) return;
+
     setCharacterMemoryByNpc((prev) => {
-      const current = prev[npcId];
+      const current = prev[npcId] ?? createCharacterMemory(npcId);
       if (!current) return prev;
-      const merged = [...discoveredClueTexts, ...current.clues];
-      const unique = merged.filter((item, index) => merged.indexOf(item) === index).slice(0, 8);
+
+      const mergedClueIds = [...current.clueIds, ...recordableClueIds].filter(
+        (clueId, index, allClueIds) => allClueIds.indexOf(clueId) === index,
+      );
+      const orderedClueIds = orderCharacterClueIds(npcId, mergedClueIds);
+      const addedNewClue = orderedClueIds.some((clueId) => !current.clueIds.includes(clueId));
+
+      if (prev[npcId] && !addedNewClue && orderedClueIds.length === current.clueIds.length) {
+        return prev;
+      }
+
       return {
         ...prev,
         [npcId]: {
           ...current,
-          clues: unique,
-          hasNewClue: true,
+          clueIds: orderedClueIds,
+          clues: orderedClueIds.map((clueId) => CLUES[clueId] ?? clueId),
+          hasNewClue: current.hasNewClue || addedNewClue,
         },
       };
     });
@@ -400,7 +462,6 @@ export function useGame() {
       }
 
       const nextGame = game.clone();
-      const beforeFlags = new Set(nextGame.flags);
       const beforeClues = new Set(nextGame.clues);
       applyScriptEffects(nextGame, selectedOption.effects);
       applyNodeEffects(nextGame, nextNode);
@@ -439,11 +500,11 @@ export function useGame() {
         ]);
       }
       setConversationText(getScriptNodeText(scriptedDialogue, nextNode));
-      const discoveredFlags = [...nextGame.flags].filter((flag) => !beforeFlags.has(flag));
       const discoveredClues = [...nextGame.clues].filter((clueId) => !beforeClues.has(clueId));
-      setConversationHasClue(discoveredFlags.length > 0 || discoveredClues.length > 0);
+      const recordableClues = getRecordableCharacterClueIds(npcId, discoveredClues);
+      setConversationHasClue(recordableClues.length > 0);
       ensureCharacterMemory(npcId);
-      recordCluesForCharacter(npcId, discoveredClues);
+      recordCluesForCharacter(npcId, recordableClues);
       return;
     }
 
@@ -455,10 +516,11 @@ export function useGame() {
     discoveredClues = [...nextGame.clues].filter((id) => !before.has(id));
     setGame(nextGame);
 
+    const recordableClues = getRecordableCharacterClueIds(npcId, discoveredClues);
     setConversationText(response);
-    setConversationHasClue(discoveredClues.length > 0);
+    setConversationHasClue(recordableClues.length > 0);
     ensureCharacterMemory(npcId);
-    recordCluesForCharacter(npcId, discoveredClues);
+    recordCluesForCharacter(npcId, recordableClues);
   };
 
   const solve = (npcId: string) => {
@@ -798,22 +860,14 @@ export function useGame() {
   }, [game, goToElevator, returnToElevator]);
 
   const ensureCharacterMemory = (npcId: string) => {
-    const npc = NPCS.find((item) => item.id === npcId);
-    if (!npc) return;
-    const characterData = CHARACTER_BY_ID[npcId];
+    const nextMemory = createCharacterMemory(npcId);
+    if (!nextMemory) return;
 
     setCharacterMemoryByNpc((prev) => {
       if (prev[npcId]) return prev;
       return {
         ...prev,
-        [npcId]: {
-          npcId,
-          name: npc.name,
-          description: characterData?.description ?? `${npc.name} is a person of interest in this district.`,
-          portrait: characterData?.emotions[characterData.defaultEmotion] ?? "/game-assets/character_big_boss_serious.png",
-          clues: [],
-          hasNewClue: false,
-        },
+        [npcId]: nextMemory,
       };
     });
   };

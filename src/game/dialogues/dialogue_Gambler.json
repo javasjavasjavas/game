@@ -74,7 +74,7 @@
       "emotion": "angry",
       "text": "I did not get a name. Just a man with money on him and the kind of eyes that make everybody else finish their drinks faster. Whatever that meeting was, it went wrong quick.",
       "effects": {
-        "addClues": ["gambler_confirms_meeting_went_wrong", "bar_story_clue_obtained"]
+        "addClues": ["gambler_confirms_meeting_went_wrong"]
       },
       "options": [
         {
@@ -97,7 +97,7 @@
       "emotion": "serious",
       "text": "Scared enough to keep one eye on the door and the other on the people pretending not to watch her. That is how fear looks in a place like this.",
       "effects": {
-        "addClues": ["gambler_confirms_meeting_went_wrong", "bar_story_clue_obtained"]
+        "addClues": ["gambler_confirms_meeting_went_wrong"]
       },
       "options": [
         {
