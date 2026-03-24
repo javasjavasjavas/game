@@ -159,8 +159,8 @@
     {"id": "window_city_view", "locationId": "apartment", "type": "info", "result": "worldbuilding_text"},
 
     {"id": "button_panel", "locationId": "elevator", "type": "navigation", "result": "scene_transition"},
-    {"id": "neighbor_note", "locationId": "elevator", "type": "info", "result": "building_context"},
-    {"id": "carved_number", "locationId": "elevator", "type": "clue", "result": "building_number_context"},
+    {"id": "neighbor_note", "locationId": "elevator", "type": "clue", "result": "building_neighbor_note"},
+    {"id": "window_city_view", "locationId": "elevator", "type": "info", "result": "worldbuilding_text"},
 
     {"id": "edge_view", "locationId": "rooftop", "type": "info", "result": "city_observation_text"},
     {"id": "flower_pot", "locationId": "rooftop", "type": "collectible", "result": "trading_card_rooftop_01"},

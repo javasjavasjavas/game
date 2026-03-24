@@ -21,8 +21,6 @@ export function NewItemPopup({
   onDiscard,
 }: NewItemPopupProps) {
   const [showInner, setShowInner] = useState(false);
-  const [pickHovered, setPickHovered] = useState(false);
-  const [discardHovered, setDiscardHovered] = useState(false);
 
   useEffect(() => {
     if (!visible) return;
@@ -199,13 +197,11 @@ export function NewItemPopup({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.4 }}
                 style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: 12,
                   marginTop: 20,
                   paddingTop: 20,
                   borderTop: "1px solid rgba(255,255,255,0.04)",
                 }}
+                className="popup-pill-row"
               >
                 <motion.button
                   whileTap={{ scale: 0.97 }}
@@ -213,23 +209,9 @@ export function NewItemPopup({
                     event.stopPropagation();
                     onDiscard();
                   }}
-                  onMouseEnter={() => setDiscardHovered(true)}
-                  onMouseLeave={() => setDiscardHovered(false)}
-                  style={{
-                    fontSize: "clamp(0.4rem, 0.9vw, 0.55rem)",
-                    textTransform: "lowercase",
-                    letterSpacing: "0.18em",
-                    color: discardHovered ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.3)",
-                    backgroundColor: "transparent",
-                    border: discardHovered
-                      ? "1px solid rgba(255,255,255,0.35)"
-                      : "1px solid rgba(255,255,255,0.1)",
-                    padding: "10px 24px",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                  }}
+                  className="pill-btn popup-pill-btn"
                 >
-                  discard
+                  DISCARD
                 </motion.button>
 
                 <motion.button
@@ -238,23 +220,9 @@ export function NewItemPopup({
                     event.stopPropagation();
                     onPickUp();
                   }}
-                  onMouseEnter={() => setPickHovered(true)}
-                  onMouseLeave={() => setPickHovered(false)}
-                  style={{
-                    fontSize: "clamp(0.4rem, 0.9vw, 0.55rem)",
-                    textTransform: "lowercase",
-                    letterSpacing: "0.18em",
-                    color: pickHovered ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.3)",
-                    backgroundColor: "transparent",
-                    border: pickHovered
-                      ? "1px solid rgba(255,255,255,0.35)"
-                      : "1px solid rgba(255,255,255,0.1)",
-                    padding: "10px 24px",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                  }}
+                  className="pill-btn popup-pill-btn"
                 >
-                  pick up
+                  PICK UP
                 </motion.button>
               </motion.div>
             )}

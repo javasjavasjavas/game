@@ -17,7 +17,6 @@ export function ElevatorChoicePopup({
   onCancel,
 }: ElevatorChoicePopupProps) {
   const [showInner, setShowInner] = useState(false);
-  const [hoveredAction, setHoveredAction] = useState<string | null>(null);
 
   useEffect(() => {
     if (!visible) return;
@@ -25,21 +24,6 @@ export function ElevatorChoicePopup({
     const timer = window.setTimeout(() => setShowInner(true), 200);
     return () => window.clearTimeout(timer);
   }, [visible]);
-
-  const buttonStyle = (id: string) => ({
-    fontSize: "clamp(0.4rem, 0.9vw, 0.55rem)",
-    textTransform: "lowercase" as const,
-    letterSpacing: "0.18em",
-    color: hoveredAction === id ? "rgba(223,245,255,0.85)" : "rgba(180,213,229,0.62)",
-    backgroundColor: hoveredAction === id ? "rgba(8,145,168,0.08)" : "transparent",
-    border:
-      hoveredAction === id
-        ? "1px solid rgba(8,145,168,0.5)"
-        : "1px solid rgba(136,183,210,0.16)",
-    padding: "10px 24px",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-  });
 
   return (
     <AnimatePresence>
@@ -168,43 +152,34 @@ export function ElevatorChoicePopup({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
                 style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: 12,
                   marginTop: 20,
                   paddingTop: 20,
                   borderTop: "1px solid rgba(97,169,204,0.12)",
-                  flexWrap: "wrap",
                 }}
+                className="popup-pill-row"
               >
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={onCancel}
-                  onMouseEnter={() => setHoveredAction("cancel")}
-                  onMouseLeave={() => setHoveredAction(null)}
-                  style={buttonStyle("cancel")}
+                  className="pill-btn popup-pill-btn"
                 >
-                  cancel
+                  CANCEL
                 </motion.button>
 
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={onRooftop}
-                  onMouseEnter={() => setHoveredAction("rooftop")}
-                  onMouseLeave={() => setHoveredAction(null)}
-                  style={buttonStyle("rooftop")}
+                  className="pill-btn popup-pill-btn"
                 >
-                  rooftop
+                  ROOFTOP
                 </motion.button>
 
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={onExitBuilding}
-                  onMouseEnter={() => setHoveredAction("exit")}
-                  onMouseLeave={() => setHoveredAction(null)}
-                  style={buttonStyle("exit")}
+                  className="pill-btn popup-pill-btn"
                 >
-                  exit building
+                  EXIT BUILDING
                 </motion.button>
               </motion.div>
             )}

@@ -995,6 +995,14 @@ button {
   cursor: none;
 }
 
+.stage-hotspot-debug.is-visible {
+  border: 2px solid #2dff54;
+  background: rgba(45, 255, 84, 0.14);
+  box-shadow:
+    inset 0 0 0 1px rgba(45, 255, 84, 0.28),
+    0 0 12px rgba(45, 255, 84, 0.18);
+}
+
 .stage-loading {
   position: absolute;
   inset: 0;
@@ -1667,6 +1675,20 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.popup-pill-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.popup-pill-btn {
+  min-width: 168px;
+  justify-content: center;
+  padding: 14px 20px 12px;
+  font-size: 12px;
 }
 
 .map-pill-wrap {
