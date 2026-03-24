@@ -39,6 +39,21 @@ export const CHARACTERS: CharacterDefinition[] = [
     },
   },
   {
+    id: "thegambler",
+    name: "The Gambler",
+    description:
+      "A bar regular who turns gossip into currency and never sounds fully surprised by bad news.",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: "/game-assets/character_the_gambler_serious.png",
+      happy: "/game-assets/character_the_gambler_happy.png",
+      angry: "/game-assets/character_the_gambler_angry.png",
+      winner: "/game-assets/character_the_gambler_winner.png",
+      sad: "/game-assets/character_the_gambler_serious.png",
+      suspicious: "/game-assets/character_the_gambler_serious.png",
+    },
+  },
+  {
     id: "mysteriouskid",
     name: "Mysterious Kid",
     description:
@@ -60,7 +75,7 @@ export const CHARACTER_BY_ID: Record<string, CharacterDefinition> = Object.fromE
 
 export const STAGE_CHARACTER_ID = "bigboss";
 export const STAGE_CHARACTER_BY_ROOM: Partial<Record<RoomId, string>> = {
-  bar: "bigboss",
+  bar: "thegambler",
   apartment: "lucy",
   arcade: "mysteriouskid",
 };
@@ -506,7 +521,7 @@ export const NPCS: Npc[] = [
     id: "bigboss",
     name: "Big Boss",
     schedule: [
-      { from: "20:00", to: "21:00", room: "bar" },
+      { from: "20:00", to: "21:00", room: "alley" },
       { from: "21:00", to: "22:00", room: "alley" },
     ],
   },
@@ -515,7 +530,7 @@ export const NPCS: Npc[] = [
     name: "Lucy",
     schedule: [
       { from: "20:00", to: "21:00", room: "apartment" },
-      { from: "21:00", to: "22:00", room: "bar" },
+      { from: "21:00", to: "22:00", room: "apartment" },
     ],
   },
   {
@@ -523,6 +538,14 @@ export const NPCS: Npc[] = [
     name: "Milo Trent",
     schedule: [
       { from: "20:00", to: "21:00", room: "store" },
+      { from: "21:00", to: "22:00", room: "store" },
+    ],
+  },
+  {
+    id: "thegambler",
+    name: "The Gambler",
+    schedule: [
+      { from: "20:00", to: "21:00", room: "bar" },
       { from: "21:00", to: "22:00", room: "bar" },
     ],
   },
@@ -547,6 +570,10 @@ export const CLUES: Record<string, string> = {
   lucy_pointed_to_bar_and_photo: "Lucy pointed you to Blondie's photo in the jacket and the Bar address in the email.",
   lucy_bad_feeling_before_disappearance: "Lucy felt something bad was already in motion before Blondie vanished.",
   building_neighbor_note: "A neighbor left a warning in the elevator: 'Don't trust the night super.'",
+  gambler_confirms_blondie_was_here: "The Gambler confirmed Blondie was at the Bar that night.",
+  gambler_confirms_meeting_went_wrong: "The Gambler said Blondie's meeting at the Bar went wrong fast.",
+  bar_story_clue_obtained: "The Bar story suggests Blondie left in a hurry after meeting the wrong company.",
+  crumpled_receipt: "A crumpled receipt from under the Bar table may help place the timing of Blondie's stop here.",
 };
 
 export const DIALOGUE: Record<string, DialogueEntry> = {

@@ -1,0 +1,222 @@
+{
+  "scene": "bar",
+  "characterId": "thegambler",
+  "conversationId": "gambler_bar_intro",
+  "description": "First bar encounter with The Gambler. Main clue scene after the apartment intro.",
+  "startNode": "gambler_intro_001",
+  "nodes": [
+    {
+      "id": "gambler_intro_001",
+      "speaker": "the_gambler",
+      "emotion": "serious",
+      "text": "If you came here for comfort, wrong stool. If you came for answers, make the question worth the trouble.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "Lucy said Blondie was last seen here.",
+          "type": "question",
+          "requirements": ["bar_address_known"],
+          "next": "gambler_bar_lead_001"
+        },
+        {
+          "id": "opt_002",
+          "text": "Recognize her?",
+          "type": "question",
+          "requirements": ["blondie_photo"],
+          "next": "gambler_photo_001"
+        },
+        {
+          "id": "opt_003",
+          "text": "You always sound this friendly?",
+          "type": "comment",
+          "next": "gambler_friendly_001"
+        },
+        {
+          "id": "opt_004",
+          "text": "You dealing cards or just bad news tonight?",
+          "type": "comment",
+          "next": "gambler_cards_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_bar_lead_001",
+      "speaker": "the_gambler",
+      "emotion": "serious",
+      "text": "She was here. Late. Sat down with the wrong company and left before the room had time to pretend it was normal.",
+      "effects": {
+        "addClues": ["gambler_confirms_blondie_was_here"]
+      },
+      "options": [
+        {
+          "id": "opt_005",
+          "text": "Who was she meeting?",
+          "type": "question",
+          "next": "gambler_meeting_001"
+        },
+        {
+          "id": "opt_006",
+          "text": "Did she look scared?",
+          "type": "question",
+          "next": "gambler_scared_001"
+        },
+        {
+          "id": "opt_007",
+          "text": "Did she leave anything behind?",
+          "type": "question",
+          "next": "gambler_left_anything_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_meeting_001",
+      "speaker": "the_gambler",
+      "emotion": "angry",
+      "text": "I did not get a name. Just a man with money on him and the kind of eyes that make everybody else finish their drinks faster. Whatever that meeting was, it went wrong quick.",
+      "effects": {
+        "addClues": ["gambler_confirms_meeting_went_wrong", "bar_story_clue_obtained"]
+      },
+      "options": [
+        {
+          "id": "opt_008",
+          "text": "That enough to make her run?",
+          "type": "question",
+          "next": "gambler_run_001"
+        },
+        {
+          "id": "opt_009",
+          "text": "Convenient memory.",
+          "type": "pressure",
+          "next": "gambler_memory_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_scared_001",
+      "speaker": "the_gambler",
+      "emotion": "serious",
+      "text": "Scared enough to keep one eye on the door and the other on the people pretending not to watch her. That is how fear looks in a place like this.",
+      "effects": {
+        "addClues": ["gambler_confirms_meeting_went_wrong", "bar_story_clue_obtained"]
+      },
+      "options": [
+        {
+          "id": "opt_010",
+          "text": "So she knew she was already in trouble.",
+          "type": "comment",
+          "next": "gambler_trouble_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_left_anything_001",
+      "speaker": "the_gambler",
+      "emotion": "happy",
+      "text": "Maybe. I saw something get kicked under the table after she left. Could be trash. Could be your night getting slightly less useless.",
+      "effects": {
+        "addFlags": ["gambler_points_under_table"]
+      },
+      "options": [
+        {
+          "id": "opt_011",
+          "text": "Then I will check under the table.",
+          "type": "comment",
+          "next": "gambler_check_table_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_check_table_001",
+      "speaker": "the_gambler",
+      "emotion": "winner",
+      "text": "Good. It is nice when somebody in this city still follows a lead while it is warm.",
+      "options": []
+    },
+    {
+      "id": "gambler_run_001",
+      "speaker": "the_gambler",
+      "emotion": "serious",
+      "text": "Not run. Move fast, yes. The kind of fast people use when they are trying not to admit they are already late.",
+      "options": []
+    },
+    {
+      "id": "gambler_memory_001",
+      "speaker": "the_gambler",
+      "emotion": "angry",
+      "text": "Convenient is charging you for the truth. I am giving you the version that still keeps me breathing.",
+      "options": []
+    },
+    {
+      "id": "gambler_trouble_001",
+      "speaker": "the_gambler",
+      "emotion": "serious",
+      "text": "That is my read. She did not come in looking for fun. She came in looking like she had run out of safer places to stand.",
+      "options": []
+    },
+    {
+      "id": "gambler_photo_001",
+      "speaker": "the_gambler",
+      "emotion": "happy",
+      "text": "Yeah. Blondie. Hard face to forget. She walked in like she wanted answers and walked out like she hated the ones she got.",
+      "options": [
+        {
+          "id": "opt_012",
+          "text": "Then start with what you saw.",
+          "type": "question",
+          "next": "gambler_bar_lead_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_friendly_001",
+      "speaker": "the_gambler",
+      "emotion": "happy",
+      "text": "Only with people I do not trust yet. It keeps the conversation honest.",
+      "options": [
+        {
+          "id": "opt_013",
+          "text": "Honest is not the word I would use for this room.",
+          "type": "comment",
+          "next": "gambler_honest_room_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_honest_room_001",
+      "speaker": "the_gambler",
+      "emotion": "winner",
+      "text": "Exactly. That is why you came to the right place.",
+      "options": []
+    },
+    {
+      "id": "gambler_cards_001",
+      "speaker": "the_gambler",
+      "emotion": "winner",
+      "text": "Cards, lies, bad bets. Depends how much cash you are willing to lose before the answers start sounding beautiful.",
+      "options": [
+        {
+          "id": "opt_014",
+          "text": "I am here for Blondie, not the table.",
+          "type": "comment",
+          "next": "gambler_blondie_first_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_blondie_first_001",
+      "speaker": "the_gambler",
+      "emotion": "serious",
+      "text": "Good. Then ask about her before the room changes its mind again.",
+      "options": []
+    }
+  ],
+  "conditionalFollowups": [
+    {
+      "id": "gambler_after_main_story",
+      "requirements": ["gambler_confirms_blondie_was_here", "gambler_confirms_meeting_went_wrong"],
+      "speaker": "the_gambler",
+      "emotion": "serious",
+      "text": "I already told you the important part. Blondie was here, the meeting went bad, and she left in a hurry. If the table gives you anything, follow that next."
+    }
+  ]
+}

@@ -542,11 +542,20 @@ export function useGame() {
       nextGame.addClue("building_neighbor_note");
       nextGame.lastMessage = "You pocket the neighbor's warning from the elevator wall.";
     }
-    if (overrideText) {
+    if (game.currentRoom === "bar" && hotspotId === "bar-under-table" && !nextGame.hasClue("crumpled_receipt")) {
+      nextGame.addClue("crumpled_receipt");
+      nextGame.lastMessage = "You pull a crumpled receipt from the grime under the table.";
+      overrideText =
+        "A crumpled receipt was wedged under the table leg. The paper is damp, but the time stamp still looks like it wants to matter.";
+    }
+    if (game.currentRoom === "apartment" && hotspotId === "apartment-computer-screen" && overrideText) {
       setGame(nextGame);
       ensureCharacterMemory("lucy");
       recordCluesForCharacter("lucy", ["bar_address_known"]);
-    } else if (game.currentRoom === "elevator" && hotspotId === "elevator-neighbor-note" && nextGame.hasClue("building_neighbor_note")) {
+    } else if (
+      (game.currentRoom === "elevator" && hotspotId === "elevator-neighbor-note" && nextGame.hasClue("building_neighbor_note")) ||
+      (game.currentRoom === "bar" && hotspotId === "bar-under-table" && nextGame.hasClue("crumpled_receipt"))
+    ) {
       setGame(nextGame);
     }
 
