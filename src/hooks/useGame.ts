@@ -538,10 +538,16 @@ export function useGame() {
       overrideText =
         "Lucy left the mail open. The message points to <span style=\"color:#f2cf4a\">The Bar, 14 Mercer Street</span>, written plain enough to feel important and dangerous at the same time.";
     }
+    if (game.currentRoom === "elevator" && hotspotId === "elevator-neighbor-note" && !nextGame.hasClue("building_neighbor_note")) {
+      nextGame.addClue("building_neighbor_note");
+      nextGame.lastMessage = "You pocket the neighbor's warning from the elevator wall.";
+    }
     if (overrideText) {
       setGame(nextGame);
       ensureCharacterMemory("lucy");
       recordCluesForCharacter("lucy", ["bar_address_known"]);
+    } else if (game.currentRoom === "elevator" && hotspotId === "elevator-neighbor-note" && nextGame.hasClue("building_neighbor_note")) {
+      setGame(nextGame);
     }
 
     setCurrentTalkNpcId(null);

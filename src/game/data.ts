@@ -255,34 +255,34 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
   ],
   elevator: [
     {
-      id: "elevator-call-button",
-      label: "Call Button",
-      x: 2480,
-      y: 720,
-      width: 165,
-      height: 230,
+      id: "elevator-window-city",
+      label: "Window and City",
+      x: 295,
+      y: 390,
+      width: 195,
+      height: 240,
       inspectText:
-        "The call button glows behind scratched plastic. One press and the building asks where you think you belong tonight.",
+        "The city looks cleaner from up here, which only means distance is doing its job. Neon and rain turn every block into a lie with better lighting.",
     },
     {
       id: "elevator-neighbor-note",
       label: "Neighbor Note",
-      x: 345,
-      y: 520,
-      width: 420,
-      height: 430,
+      x: 720,
+      y: 435,
+      width: 128,
+      height: 192,
       inspectText:
-        "A folded note is taped beside the panel. Somebody wrote 'DON'T TRUST THE NIGHT SUPER' in quick, angry strokes, then thought better of signing it.",
+        "A taped note curls at the edges from damp air. The handwriting is rushed: 'DON'T TRUST THE NIGHT SUPER.' Whoever left it expected somebody else to need the warning.",
     },
     {
-      id: "elevator-carved-number",
-      label: "Carved Number",
-      x: 2320,
-      y: 640,
-      width: 290,
-      height: 370,
+      id: "elevator-call-button",
+      label: "Call Button",
+      x: 1635,
+      y: 470,
+      width: 305,
+      height: 400,
       inspectText:
-        "Someone scratched an apartment number into the metal wall deep enough to survive repainting. Either it mattered once, or it still does.",
+        "The call button glows behind scratched plastic. One press and the building asks where you think you belong tonight.",
     },
   ],
   rooftop: [
@@ -546,6 +546,7 @@ export const CLUES: Record<string, string> = {
   lucy_blondie_was_running: "Lucy believes Blondie was trying to stay ahead of someone.",
   lucy_pointed_to_bar_and_photo: "Lucy pointed you to Blondie's photo in the jacket and the Bar address in the email.",
   lucy_bad_feeling_before_disappearance: "Lucy felt something bad was already in motion before Blondie vanished.",
+  building_neighbor_note: "A neighbor left a warning in the elevator: 'Don't trust the night super.'",
 };
 
 export const DIALOGUE: Record<string, DialogueEntry> = {
