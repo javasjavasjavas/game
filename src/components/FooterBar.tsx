@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import type { InventoryItemDefinition } from "../game/types";
 
 interface SceneActionDefinition {
@@ -12,6 +11,7 @@ interface Props {
   showNav: boolean;
   mapOpen: boolean;
   mapEnabled: boolean;
+  mapBadgeLabel: string | null;
   inventoryItems: InventoryItemDefinition[];
   selectedInventoryId: string | null;
   sceneActions: SceneActionDefinition[];
@@ -24,6 +24,7 @@ export function FooterBar({
   showNav,
   mapOpen,
   mapEnabled,
+  mapBadgeLabel,
   inventoryItems,
   selectedInventoryId,
   sceneActions,
@@ -31,23 +32,6 @@ export function FooterBar({
   onInspect,
   onMap,
 }: Props) {
-  const [showNewMapBadge, setShowNewMapBadge] = useState(false);
-  const hasShownMapBadgeRef = useRef(false);
-  const previousMapEnabledRef = useRef(mapEnabled);
-
-  useEffect(() => {
-    if (!previousMapEnabledRef.current && mapEnabled && !hasShownMapBadgeRef.current) {
-      setShowNewMapBadge(true);
-    }
-    previousMapEnabledRef.current = mapEnabled;
-  }, [mapEnabled]);
-
-  const handleMapClick = () => {
-    setShowNewMapBadge(false);
-    hasShownMapBadgeRef.current = true;
-    onMap();
-  };
-
   if (!showNav) return null;
 
   return (
@@ -77,13 +61,13 @@ export function FooterBar({
         ))}
         {mapEnabled && (
           <div className="map-pill-wrap">
-            {showNewMapBadge && (
+            {mapBadgeLabel && (
               <div className="map-new-badge" aria-hidden>
-                <span className="map-new-badge-text">New</span>
+                <span className="map-new-badge-text">{mapBadgeLabel}</span>
                 <span className="map-new-badge-arrow" />
               </div>
             )}
-            <button className="pill-btn" onClick={handleMapClick}>
+            <button className="pill-btn" onClick={onMap}>
               <img className="pill-icon-image" src="/game-assets/icon_map.png" alt="Map" /> {mapOpen ? "Close City Map" : "Open City Map"}
             </button>
           </div>

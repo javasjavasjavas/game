@@ -37,8 +37,9 @@
         "locationId": "bar",
         "required": true,
         "steps": [
-          "talk:the_gambler (requires bar_address_known)",
-          "inspect:under_the_table -> crumpled_receipt"
+          "talk:the_gambler (requires bar_address_known) -> blondie_was_here + back_table_lead + arcade_room_marked_on_map",
+          "inspect:under_the_table -> crumpled_pharmacy_receipt + pharmacy_marked_on_map",
+          "ui:open_city_map -> new_locations_badge"
         ]
       },
       {
@@ -46,6 +47,7 @@
         "locationId": "pharmacy",
         "required": true,
         "steps": [
+          "note:pharmacy_and_arcade_room_unlock_in_parallel_after_the_bar",
           "talk:doctor",
           "inspect:medicine_shelf_2",
           "inspect:medicine_shelf_1 -> sedative_box"
@@ -56,6 +58,7 @@
         "locationId": "arcade_room",
         "required": true,
         "steps": [
+          "note:pharmacy_and_arcade_room_unlock_in_parallel_after_the_bar",
           "talk:mysterious_kid",
           "inspect:counter_computer",
           "inspect:arcade_machine_2_dispenser -> arcade_token"

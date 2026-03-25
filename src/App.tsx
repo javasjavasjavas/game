@@ -301,6 +301,7 @@ export default function App() {
             showNav={showNavigation}
             mapOpen={game.mapOpen}
             mapEnabled={game.canOpenMap}
+            mapBadgeLabel={game.mapBadgeLabel}
             inventoryItems={game.ownedInventoryItems}
             selectedInventoryId={game.selectedInventoryId}
             sceneActions={game.sceneActions}

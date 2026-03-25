@@ -563,7 +563,11 @@ export const MAX_CHARACTER_CLUES_PER_NPC = 3;
 
 export const CHARACTER_CLUE_PRIORITY_BY_NPC: Partial<Record<string, string[]>> = {
   lucy: ["bar_address_known", "lucy_warned_about_police", "lucy_blondie_was_running"],
-  thegambler: ["gambler_confirms_blondie_was_here", "gambler_confirms_meeting_went_wrong"],
+  thegambler: [
+    "gambler_confirms_blondie_was_here",
+    "gambler_confirms_meeting_went_wrong",
+    "gambler_points_to_arcade_room",
+  ],
   bigboss: ["tornJacket"],
   clerk: ["keyLog"],
 };
@@ -578,7 +582,8 @@ export const CLUES: Record<string, string> = {
   building_neighbor_note: "A neighbor left a warning in the elevator: 'Don't trust the night super.'",
   gambler_confirms_blondie_was_here: "The Gambler confirmed Blondie was at the Bar that night.",
   gambler_confirms_meeting_went_wrong: "The Gambler said Blondie's meeting at the Bar went wrong fast.",
-  crumpled_receipt: "A crumpled receipt from under the Bar table may help place the timing of Blondie's stop here.",
+  gambler_points_to_arcade_room: "The Gambler said Mysterious Kid never sleeps and may know more at the Arcade Room.",
+  crumpled_receipt: "A crumpled Pharmacy receipt from Blondie's back table points to the next lead.",
 };
 
 export const DIALOGUE: Record<string, DialogueEntry> = {

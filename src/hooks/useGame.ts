@@ -69,6 +69,8 @@ export function useGame() {
   const [inspectedHotspotId, setInspectedHotspotId] = useState<string | null>(null);
   const [inspectOverrideText, setInspectOverrideText] = useState<string | null>(null);
   const [elevatorChoiceOpen, setElevatorChoiceOpen] = useState(false);
+  const [mapBadgeLabel, setMapBadgeLabel] = useState<string | null>(null);
+  const [hasTriggeredMapBadge, setHasTriggeredMapBadge] = useState(false);
   const [ownedInventoryIds, setOwnedInventoryIds] = useState<string[]>([]);
   const [collectedHotspotItemIds, setCollectedHotspotItemIds] = useState<string[]>([]);
   const [itemPopup, setItemPopup] = useState<HotspotItemDefinition | null>(null);
@@ -241,7 +243,17 @@ export function useGame() {
     });
   }, [game]);
   const canOpenMap = game.hasFlag("entered_city_map");
-  const availableMapRooms = canOpenMap ? (["apartment", "bar"] as RoomId[]) : [];
+  const availableMapRooms = useMemo(() => {
+    if (!canOpenMap) return [] as RoomId[];
+    const rooms: RoomId[] = ["apartment", "bar"];
+    if (game.hasFlag("pharmacy_marked_on_map")) {
+      rooms.push("pharmacy");
+    }
+    if (game.hasFlag("arcade_marked_on_map")) {
+      rooms.push("arcade");
+    }
+    return rooms;
+  }, [canOpenMap, game]);
   const canGoBackConversation = Boolean(
     activeScriptedDialogue &&
       scriptedConversationState?.kind === "node" &&
@@ -462,6 +474,7 @@ export function useGame() {
       }
 
       const nextGame = game.clone();
+      const beforeFlags = new Set(nextGame.flags);
       const beforeClues = new Set(nextGame.clues);
       applyScriptEffects(nextGame, selectedOption.effects);
       applyNodeEffects(nextGame, nextNode);
@@ -500,7 +513,15 @@ export function useGame() {
         ]);
       }
       setConversationText(getScriptNodeText(scriptedDialogue, nextNode));
+      const discoveredFlags = [...nextGame.flags].filter((flagId) => !beforeFlags.has(flagId));
       const discoveredClues = [...nextGame.clues].filter((clueId) => !beforeClues.has(clueId));
+      if (
+        discoveredFlags.includes("arcade_marked_on_map") &&
+        nextGame.hasFlag("arcade_marked_on_map") &&
+        nextGame.hasFlag("pharmacy_marked_on_map")
+      ) {
+        setMapBadgeLabel("New Locations");
+      }
       const recordableClues = getRecordableCharacterClueIds(npcId, discoveredClues);
       setConversationHasClue(recordableClues.length > 0);
       ensureCharacterMemory(npcId);
@@ -604,11 +625,32 @@ export function useGame() {
       nextGame.addClue("building_neighbor_note");
       nextGame.lastMessage = "You pocket the neighbor's warning from the elevator wall.";
     }
-    if (game.currentRoom === "bar" && hotspotId === "bar-under-table" && !nextGame.hasClue("crumpled_receipt")) {
-      nextGame.addClue("crumpled_receipt");
-      nextGame.lastMessage = "You pull a crumpled receipt from the grime under the table.";
+    if (game.currentRoom === "bar" && hotspotId === "bar-under-table" && !game.hasFlag("gambler_points_under_table")) {
       overrideText =
-        "A crumpled receipt was wedged under the table leg. The paper is damp, but the time stamp still looks like it wants to matter.";
+        "From here it is only damp shadow under the back table. If something matters down there, you need a better reason to dig for it.";
+    }
+    if (
+      game.currentRoom === "bar" &&
+      hotspotId === "bar-under-table" &&
+      game.hasFlag("gambler_points_under_table") &&
+      !nextGame.hasClue("crumpled_receipt")
+    ) {
+      nextGame.addClue("crumpled_receipt");
+      nextGame.addFlag("pharmacy_marked_on_map");
+      nextGame.lastMessage = "You pull a crumpled Pharmacy receipt from beneath Blondie's back table.";
+      overrideText =
+        "Wedged under the back table is a crumpled receipt from the <span style=\"color:#f2cf4a\">Pharmacy</span>. The paper is damp, but the place name is still clear enough to matter.";
+      if (nextGame.hasFlag("arcade_marked_on_map")) {
+        setMapBadgeLabel("New Locations");
+      }
+    }
+    if (
+      game.currentRoom === "bar" &&
+      hotspotId === "bar-under-table" &&
+      game.hasFlag("gambler_points_under_table") &&
+      nextGame.hasClue("crumpled_receipt")
+    ) {
+      overrideText = "Only damp dust remains under the back table. The receipt is already in your pocket.";
     }
     if (game.currentRoom === "apartment" && hotspotId === "apartment-computer-screen" && overrideText) {
       setGame(nextGame);
@@ -669,6 +711,25 @@ export function useGame() {
     setHoverHotspot(false);
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
+    setScriptedConversationState(null);
+    setScriptedBackStack([]);
+  };
+
+  const returnToApartment = () => {
+    mutate((draft) => {
+      if (draft.currentRoom !== "elevator") return;
+      draft.currentRoom = "apartment";
+      draft.advanceTime(1);
+      draft.lastMessage = "You head back into the apartment before the elevator decides anything for you.";
+    });
+    setCurrentTalkNpcId(null);
+    setConversationText("");
+    setConversationHasClue(false);
+    setInspectOpen(false);
+    setHoverHotspot(false);
+    setInspectedHotspotId(null);
+    setInspectOverrideText(null);
+    setElevatorChoiceOpen(false);
     setScriptedConversationState(null);
     setScriptedBackStack([]);
   };
@@ -738,6 +799,10 @@ export function useGame() {
     setElevatorChoiceOpen(false);
     setScriptedConversationState(null);
     setScriptedBackStack([]);
+    if (!hasTriggeredMapBadge) {
+      setMapBadgeLabel("New");
+      setHasTriggeredMapBadge(true);
+    }
     setMapOpen(true);
   };
 
@@ -826,6 +891,9 @@ export function useGame() {
       });
       return;
     }
+    if (mapBadgeLabel) {
+      setMapBadgeLabel(null);
+    }
     setMapOpen((prev) => !prev);
   };
 
@@ -842,7 +910,14 @@ export function useGame() {
     }
 
     if (game.currentRoom === "elevator") {
-      return [];
+      return [
+        {
+          id: "return-apartment",
+          label: "Go Back to Apartment",
+          icon: "/game-assets/icon_location.png",
+          onClick: returnToApartment,
+        },
+      ];
     }
 
     if (game.currentRoom === "rooftop") {
@@ -857,7 +932,7 @@ export function useGame() {
     }
 
     return [];
-  }, [game, goToElevator, returnToElevator]);
+  }, [game, goToElevator, returnToApartment, returnToElevator]);
 
   const ensureCharacterMemory = (npcId: string) => {
     const nextMemory = createCharacterMemory(npcId);
@@ -906,6 +981,7 @@ export function useGame() {
     selectedInventoryId,
     itemPopup,
     canOpenMap,
+    mapBadgeLabel,
     availableMapRooms,
     canGoBackConversation,
     setMapOpen,

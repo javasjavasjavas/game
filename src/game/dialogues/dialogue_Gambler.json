@@ -43,7 +43,7 @@
       "id": "gambler_bar_lead_001",
       "speaker": "the_gambler",
       "emotion": "serious",
-      "text": "She was here. Late. Sat down with the wrong company and left before the room had time to pretend it was normal.",
+      "text": "She was here. Late. Back table by the wall. Sat down with the wrong company and left before the room had time to pretend it was normal.",
       "effects": {
         "addClues": ["gambler_confirms_blondie_was_here"]
       },
@@ -65,6 +65,12 @@
           "text": "Did she leave anything behind?",
           "type": "question",
           "next": "gambler_left_anything_001"
+        },
+        {
+          "id": "opt_015",
+          "text": "Who else in this district might know something?",
+          "type": "question",
+          "next": "gambler_arcade_001"
         }
       ]
     },
@@ -112,7 +118,7 @@
       "id": "gambler_left_anything_001",
       "speaker": "the_gambler",
       "emotion": "happy",
-      "text": "Maybe. I saw something get kicked under the table after she left. Could be trash. Could be your night getting slightly less useless.",
+      "text": "Back table. Something got kicked under it after she left. Could be trash. Could be your night getting slightly less useless.",
       "effects": {
         "addFlags": ["gambler_points_under_table"]
       },
@@ -130,6 +136,31 @@
       "speaker": "the_gambler",
       "emotion": "winner",
       "text": "Good. It is nice when somebody in this city still follows a lead while it is warm.",
+      "options": []
+    },
+    {
+      "id": "gambler_arcade_001",
+      "speaker": "the_gambler",
+      "emotion": "winner",
+      "text": "Try the Arcade Room. Mysterious Kid never sleeps, and he notices people who would rather pass through a night unseen.",
+      "effects": {
+        "addFlags": ["arcade_marked_on_map", "gambler_points_to_arcade_room"],
+        "addClues": ["gambler_points_to_arcade_room"]
+      },
+      "options": [
+        {
+          "id": "opt_016",
+          "text": "Arcade Room. Fine. I will shake the night shift awake.",
+          "type": "comment",
+          "next": "gambler_arcade_confirm_001"
+        }
+      ]
+    },
+    {
+      "id": "gambler_arcade_confirm_001",
+      "speaker": "the_gambler",
+      "emotion": "serious",
+      "text": "You will not need to. The kid is usually more awake than the city deserves.",
       "options": []
     },
     {
@@ -216,7 +247,7 @@
       "requirements": ["gambler_confirms_blondie_was_here", "gambler_confirms_meeting_went_wrong"],
       "speaker": "the_gambler",
       "emotion": "serious",
-      "text": "I already told you the important part. Blondie was here, the meeting went bad, and she left in a hurry. If the table gives you anything, follow that next."
+      "text": "I already told you the important part. Blondie was here, the meeting went bad, and she left in a hurry. Check the back table, then try the Arcade Room if you still need another angle."
     }
   ]
 }

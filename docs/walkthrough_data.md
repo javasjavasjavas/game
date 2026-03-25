@@ -120,15 +120,23 @@
             "result": [
               "gambler_confirms_blondie_was_here",
               "gambler_confirms_meeting_went_wrong",
-              "bar_story_clue_obtained"
+              "gambler_points_to_arcade_room",
+              "arcade_marked_on_map"
             ],
-            "notes": "The detective uses the email-derived Bar clue in conversation. This unlocks a stronger version of Gambler's testimony."
+            "notes": "The Gambler confirms Blondie was at the Bar, seated at the back table, and suggests checking the Arcade Room because Mysterious Kid never sleeps."
           },
           {
             "type": "inspect_hotspot",
             "target": "under_the_table",
-            "result": ["crumpled_receipt"]
+            "requirements": ["gambler_points_under_table"],
+            "result": ["crumpled_receipt", "pharmacy_marked_on_map"],
+            "notes": "Under Blondie's back table the detective finds a crumpled Pharmacy receipt, which unlocks Pharmacy on the city map."
           }
+        ],
+        "notes": [
+          "After the Bar scene, the city map shows a New Locations tag.",
+          "The two newly unlocked destinations are Pharmacy and Arcade Room.",
+          "These two leads can be followed in either order."
         ],
         "optionalActions": [
           {
@@ -154,6 +162,7 @@
         "name": "Pharmacy",
         "location": "pharmacy",
         "required": true,
+        "notes": ["Unlocked from the crumpled receipt found under Blondie's back table at the Bar."],
         "actions": [
           {
             "type": "talk",
@@ -187,6 +196,7 @@
         "name": "Arcade Room — First Pass",
         "location": "arcade_room",
         "required": true,
+        "notes": ["Unlocked when The Gambler points the detective toward Mysterious Kid at the Arcade Room."],
         "actions": [
           {
             "type": "talk",
@@ -611,3 +621,4 @@
   ]
 }
 ```
+

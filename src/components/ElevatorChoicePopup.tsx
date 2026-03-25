@@ -99,6 +99,10 @@ export function ElevatorChoicePopup({
               boxShadow: "0 0 32px rgba(8,145,168,0.1)",
             }}
           >
+            <button type="button" className="popup-close-button" onClick={onCancel} aria-label="Close elevator destination popup">
+              <img className="popup-close-icon" src="/game-assets/icon_cross.png" alt="" />
+            </button>
+
             <div
               style={{
                 fontSize: "0.4rem",
@@ -160,17 +164,10 @@ export function ElevatorChoicePopup({
               >
                 <motion.button
                   whileTap={{ scale: 0.97 }}
-                  onClick={onCancel}
-                  className="pill-btn popup-pill-btn"
-                >
-                  CANCEL
-                </motion.button>
-
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
                   onClick={onRooftop}
                   className="pill-btn popup-pill-btn"
                 >
+                  <img className="pill-icon-image" src="/game-assets/icon_location.png" alt="" />
                   ROOFTOP
                 </motion.button>
 
@@ -179,6 +176,7 @@ export function ElevatorChoicePopup({
                   onClick={onExitBuilding}
                   className="pill-btn popup-pill-btn"
                 >
+                  <img className="pill-icon-image" src="/game-assets/icon_map.png" alt="" />
                   EXIT BUILDING
                 </motion.button>
               </motion.div>
