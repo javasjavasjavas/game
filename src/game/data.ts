@@ -706,7 +706,7 @@ export const ENDINGS = {
 };
 
 export const INVENTORY_ITEMS: InventoryItemDefinition[] = [
-  { id: "blondie_photo", label: "Blondie Photo", image: "/game-assets/icon_eye.png" },
+  { id: "blondie_photo", label: "Blondie Photo", image: "/game-assets/item_photo_blondie.png" },
 ];
 
 export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
@@ -714,7 +714,7 @@ export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
     hotspotId: "apartment-jacket-pocket",
     itemId: "blondie_photo",
     label: "Blondie Photo",
-    image: "/game-assets/icon_eye.png",
+    image: "/game-assets/item_photo_blondie.png",
     description:
       "A photo of Blondie, worn at the corners from being handled too often. A useful face to carry through a city full of bad liars.",
   },

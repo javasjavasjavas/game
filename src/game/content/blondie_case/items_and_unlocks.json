@@ -13,6 +13,7 @@
       "id": "blondie_photo",
       "name": "Blondie Photo",
       "category": "clue",
+      "image": "/game-assets/item_photo_blondie.png",
       "obtainedAt": "apartment.jacket_pocket",
       "usedWith": ["rose", "the_gambler", "doctor", "mysterious_kid", "pepe", "jenny"]
     },
