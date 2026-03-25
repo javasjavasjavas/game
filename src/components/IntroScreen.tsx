@@ -9,6 +9,8 @@ In this town, nobody disappears by accident.`;
 const CHAR_DELAY = 30;
 const VOICE_TRACK = "/game-assets/audio/chapter_1_voice.mp3";
 const APARTMENT_BACKGROUND = "/game-assets/background_apartment.jpg";
+const RECOMMENDATION_ART = "/game-assets/icon_sound_recomendation.png";
+const RECOMMENDATION_ART_FALLBACK = "/game-assets/icon_sound.png";
 
 interface IntroScreenProps {
   onContinue: () => void;
@@ -17,13 +19,18 @@ interface IntroScreenProps {
 
 export function IntroScreen({ onContinue, onUserInteract }: IntroScreenProps) {
   const [displayedText, setDisplayedText] = useState("");
+  const [readyToPlay, setReadyToPlay] = useState(false);
   const [isTyping, setIsTyping] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
-  const [btnHovered, setBtnHovered] = useState(false);
+  const [recommendationArtSrc, setRecommendationArtSrc] = useState(RECOMMENDATION_ART);
   const timerRef = useRef<number | null>(null);
   const voiceRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    if (!readyToPlay) return;
+
+    setDisplayedText("");
+    setIsTyping(true);
     let index = 0;
     timerRef.current = window.setInterval(() => {
       index += 1;
@@ -42,9 +49,11 @@ export function IntroScreen({ onContinue, onUserInteract }: IntroScreenProps) {
         window.clearInterval(timerRef.current);
       }
     };
-  }, []);
+  }, [readyToPlay]);
 
   useEffect(() => {
+    if (!readyToPlay) return;
+
     const voice = new Audio(VOICE_TRACK);
     voice.preload = "auto";
     voice.volume = 1;
@@ -61,10 +70,9 @@ export function IntroScreen({ onContinue, onUserInteract }: IntroScreenProps) {
       voice.currentTime = 0;
       voiceRef.current = null;
     };
-  }, []);
+  }, [readyToPlay]);
 
   const handleSkip = useCallback(() => {
-    onUserInteract?.();
     if (!isTyping) return;
     if (timerRef.current !== null) {
       window.clearInterval(timerRef.current);
@@ -75,15 +83,19 @@ export function IntroScreen({ onContinue, onUserInteract }: IntroScreenProps) {
     if (voiceRef.current) {
       voiceRef.current.pause();
     }
-  }, [isTyping, onUserInteract]);
+  }, [isTyping]);
 
   const handleContinue = () => {
-    onUserInteract?.();
     setIsExiting(true);
     if (voiceRef.current) {
       voiceRef.current.pause();
     }
     window.setTimeout(onContinue, 600);
+  };
+
+  const handleAcceptRecommendation = () => {
+    onUserInteract?.();
+    setReadyToPlay(true);
   };
 
   return (
@@ -92,9 +104,6 @@ export function IntroScreen({ onContinue, onUserInteract }: IntroScreenProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: 0.6 }}
-      onPointerDown={onUserInteract}
-      onClick={onUserInteract}
-      onKeyDown={onUserInteract}
     >
       <motion.img
         className="chapter-intro-bg"
@@ -127,34 +136,80 @@ export function IntroScreen({ onContinue, onUserInteract }: IntroScreenProps) {
 
         <div className="chapter-intro-text">
           {displayedText}
-          {isTyping && <span className="chapter-intro-cursor" />}
+          {readyToPlay && isTyping && <span className="chapter-intro-cursor" />}
         </div>
 
+        {readyToPlay && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: isTyping ? 2.5 : 0, duration: 0.6 }}
+            className="chapter-intro-actions"
+          >
+            <motion.button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                if (isTyping) {
+                  handleSkip();
+                  return;
+                }
+                handleContinue();
+              }}
+              whileTap={{ scale: 0.97 }}
+              className="pill-btn chapter-intro-pill-btn"
+            >
+              {isTyping ? "SKIP" : "CONTINUE"}
+            </motion.button>
+          </motion.div>
+        )}
+      </motion.div>
+
+      {!readyToPlay && (
         <motion.div
+          className="chapter-intro-recommendation-overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: isTyping ? 2.5 : 0, duration: 0.6 }}
-          className="chapter-intro-actions"
+          transition={{ duration: 0.3 }}
         >
-          <motion.button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              if (isTyping) {
-                handleSkip();
-                return;
-              }
-              handleContinue();
-            }}
-            onMouseEnter={() => setBtnHovered(true)}
-            onMouseLeave={() => setBtnHovered(false)}
-            whileTap={{ scale: 0.97 }}
-            className={`chapter-intro-button ${btnHovered ? "is-hovered" : ""}`}
+          <motion.div
+            className="chapter-intro-recommendation-card"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
           >
-            {isTyping ? "skip" : "continue"}
-          </motion.button>
+            <div className="chapter-intro-recommendation-kicker">Recommended Setup</div>
+            <div className="chapter-intro-recommendation-title">Best Experienced on Desktop</div>
+            <p className="chapter-intro-recommendation-copy">
+              This game is designed for desktop, and we recommend using headphones for a more immersive experience.
+            </p>
+
+            <div className="chapter-intro-recommendation-art-wrap">
+              <img
+                className="chapter-intro-recommendation-art"
+                src={recommendationArtSrc}
+                alt="Desktop plus headphones recommended"
+                onError={() => {
+                  if (recommendationArtSrc !== RECOMMENDATION_ART_FALLBACK) {
+                    setRecommendationArtSrc(RECOMMENDATION_ART_FALLBACK);
+                  }
+                }}
+              />
+            </div>
+
+            <div className="popup-pill-row chapter-intro-recommendation-actions">
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.97 }}
+                onClick={handleAcceptRecommendation}
+                className="pill-btn popup-pill-btn"
+              >
+                ACCEPT
+              </motion.button>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </motion.section>
   );
 }

@@ -19,6 +19,7 @@ import { useGame } from "./hooks/useGame";
 const SCENE_MUSIC: Partial<Record<RoomId, string>> = {
   bar: "/game-assets/audio/the_bar.mp3",
   apartment: "/game-assets/audio/apartment.mp3",
+  elevator: "/game-assets/audio/elevator.mp3",
 };
 const INTRO_MUSIC = "/game-assets/audio/Intro.mp3";
 
@@ -124,24 +125,6 @@ export default function App() {
   }, [getTargetTrack, soundEnabled]);
 
   useEffect(() => {
-    if (audioUnlocked) return;
-
-    const unlock = () => requestAudioUnlock();
-
-    window.addEventListener("pointerdown", unlock, { passive: true });
-    window.addEventListener("pointermove", unlock, { passive: true });
-    window.addEventListener("click", unlock, { passive: true });
-    window.addEventListener("keydown", unlock);
-
-    return () => {
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("pointermove", unlock);
-      window.removeEventListener("click", unlock);
-      window.removeEventListener("keydown", unlock);
-    };
-  }, [audioUnlocked, requestAudioUnlock]);
-
-  useEffect(() => {
     const audio = musicRef.current;
     if (!audio) return;
     const targetTrack = getTargetTrack();
@@ -239,7 +222,6 @@ export default function App() {
           game.setCurrentRoomInstant("apartment");
           setScreen("chapter");
         }}
-        onUserInteract={requestAudioUnlock}
       />
     );
   }

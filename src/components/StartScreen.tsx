@@ -218,10 +218,9 @@ function GlitchText({ text }: { text: string }) {
 
 interface StartScreenProps {
   onStart: () => void;
-  onUserInteract?: () => void;
 }
 
-export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
+export function StartScreen({ onStart }: StartScreenProps) {
   const [showLogo, setShowLogo] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -250,7 +249,6 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
   }, [showButton]);
 
   const handleStart = async () => {
-    if (onUserInteract) onUserInteract();
     if (isExiting) return;
     setIsExiting(true);
     const nextSceneBackgroundPromise = preloadImage(NEXT_SCENE_BG_IMAGE);
@@ -269,10 +267,6 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
   return (
     <motion.section
       className="start-screen"
-      onPointerDown={onUserInteract}
-      onPointerMove={onUserInteract}
-      onClick={onUserInteract}
-      onKeyDown={onUserInteract}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: EXIT_DURATION_MS / 1000, ease: "easeInOut" }}
     >
@@ -376,19 +370,6 @@ export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
                 <span className="start-screen-button-glow" />
                 <span className="start-screen-button-body">Start Game</span>
               </motion.button>
-
-              <motion.p
-                className="start-screen-audio-hint"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                  delay: 0.35,
-                  duration: 0.6,
-                  ease: "easeOut",
-                }}
-              >
-                Click anywhere on the screen to activate the music in your browser
-              </motion.p>
             </motion.div>
           )}
         </AnimatePresence>
