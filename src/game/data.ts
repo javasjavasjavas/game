@@ -9,6 +9,22 @@ import type {
   RoomId,
 } from "./types";
 
+export const ROOM_BACKGROUND_BY_ID: Record<RoomId, string> = {
+  bar: "/game-assets/background_bar.jpg",
+  cab: "/game-assets/background_cab.jpg",
+  apartment: "/game-assets/background_apartment.jpg",
+  elevator: "/game-assets/background_elevator.jpg",
+  rooftop: "/game-assets/background_street.jpg",
+  store: "/game-assets/background_store.jpg",
+  alley: "/game-assets/background_bar.jpg",
+  pharmacy: "/game-assets/background_pharmacy.jpg",
+  arcade: "/game-assets/background_arcades.jpg",
+  garage: "/game-assets/background_garage.jpg",
+  restooutside: "/game-assets/background_resto_outside.jpg",
+  restoinside: "/game-assets/background_resto_inside.jpg",
+  street: "/game-assets/background_street.jpg",
+};
+
 export const CHARACTERS: CharacterDefinition[] = [
   {
     id: "bigboss",
@@ -707,6 +723,7 @@ export const ENDINGS = {
 
 export const INVENTORY_ITEMS: InventoryItemDefinition[] = [
   { id: "blondie_photo", label: "Blondie Photo", image: "/game-assets/item_photo_blondie.png" },
+  { id: "crumpled_receipt", label: "Pharmacy Receipt", image: "/game-assets/item_pharmacy_receipt.png" },
 ];
 
 export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
@@ -717,6 +734,17 @@ export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
     image: "/game-assets/item_photo_blondie.png",
     description:
       "A photo of Blondie, worn at the corners from being handled too often. A useful face to carry through a city full of bad liars.",
+  },
+  {
+    hotspotId: "bar-under-table",
+    itemId: "crumpled_receipt",
+    label: "Pharmacy Receipt",
+    image: "/game-assets/item_pharmacy_receipt.png",
+    description:
+      "A damp Pharmacy receipt folded small enough to hide under Blondie's back table. The print is smudged, but the destination still lands like a real lead.",
+    addClues: ["crumpled_receipt"],
+    addFlags: ["pharmacy_marked_on_map"],
+    pickupMessage: "You pocket the crumpled Pharmacy receipt from beneath Blondie's back table.",
   },
 ];
 

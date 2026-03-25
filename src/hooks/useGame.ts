@@ -595,6 +595,20 @@ export function useGame() {
       setElevatorChoiceOpen(true);
       return;
     }
+    if (game.currentRoom === "bar" && hotspotId === "bar-under-table" && !game.hasFlag("gambler_points_under_table")) {
+      setCurrentTalkNpcId(null);
+      setConversationText("");
+      setConversationHasClue(false);
+      setInspectOpen(false);
+      setInspectedHotspotId(hotspotId);
+      setInspectOverrideText(
+        "From here it is only damp shadow under the back table. If something matters down there, you need a better reason to dig for it.",
+      );
+      setElevatorChoiceOpen(false);
+      setScriptedConversationState(null);
+      setScriptedBackStack([]);
+      return;
+    }
     const hotspotItem = HOTSPOT_ITEM_BY_ID[hotspotId];
     if (hotspotItem && !collectedHotspotItemIds.includes(hotspotId)) {
       setCurrentTalkNpcId(null);
@@ -625,30 +639,10 @@ export function useGame() {
       nextGame.addClue("building_neighbor_note");
       nextGame.lastMessage = "You pocket the neighbor's warning from the elevator wall.";
     }
-    if (game.currentRoom === "bar" && hotspotId === "bar-under-table" && !game.hasFlag("gambler_points_under_table")) {
-      overrideText =
-        "From here it is only damp shadow under the back table. If something matters down there, you need a better reason to dig for it.";
-    }
     if (
       game.currentRoom === "bar" &&
       hotspotId === "bar-under-table" &&
-      game.hasFlag("gambler_points_under_table") &&
-      !nextGame.hasClue("crumpled_receipt")
-    ) {
-      nextGame.addClue("crumpled_receipt");
-      nextGame.addFlag("pharmacy_marked_on_map");
-      nextGame.lastMessage = "You pull a crumpled Pharmacy receipt from beneath Blondie's back table.";
-      overrideText =
-        "Wedged under the back table is a crumpled receipt from the <span style=\"color:#f2cf4a\">Pharmacy</span>. The paper is damp, but the place name is still clear enough to matter.";
-      if (nextGame.hasFlag("arcade_marked_on_map")) {
-        setMapBadgeLabel("New Locations");
-      }
-    }
-    if (
-      game.currentRoom === "bar" &&
-      hotspotId === "bar-under-table" &&
-      game.hasFlag("gambler_points_under_table") &&
-      nextGame.hasClue("crumpled_receipt")
+      collectedHotspotItemIds.includes(hotspotId)
     ) {
       overrideText = "Only damp dust remains under the back table. The receipt is already in your pocket.";
     }
@@ -656,10 +650,7 @@ export function useGame() {
       setGame(nextGame);
       ensureCharacterMemory("lucy");
       recordCluesForCharacter("lucy", ["bar_address_known"]);
-    } else if (
-      (game.currentRoom === "elevator" && hotspotId === "elevator-neighbor-note" && nextGame.hasClue("building_neighbor_note")) ||
-      (game.currentRoom === "bar" && hotspotId === "bar-under-table" && nextGame.hasClue("crumpled_receipt"))
-    ) {
+    } else if (game.currentRoom === "elevator" && hotspotId === "elevator-neighbor-note" && nextGame.hasClue("building_neighbor_note")) {
       setGame(nextGame);
     }
 
@@ -690,9 +681,18 @@ export function useGame() {
       setOwnedInventoryIds((prev) => [...prev, itemPopup.itemId]);
     }
     setCollectedHotspotItemIds((prev) => (prev.includes(itemPopup.hotspotId) ? prev : [...prev, itemPopup.hotspotId]));
+    const addsPharmacyLead = itemPopup.addFlags?.includes("pharmacy_marked_on_map") ?? false;
     mutate((draft) => {
+      itemPopup.addClues?.forEach((clueId) => draft.addClue(clueId));
+      itemPopup.addFlags?.forEach((flagId) => draft.addFlag(flagId));
       draft.lastMessage = `You picked up ${itemPopup.label}.`;
+      if (itemPopup.pickupMessage) {
+        draft.lastMessage = itemPopup.pickupMessage;
+      }
     });
+    if (addsPharmacyLead && game.hasFlag("arcade_marked_on_map")) {
+      setMapBadgeLabel("New Locations");
+    }
     setItemPopup(null);
   };
 

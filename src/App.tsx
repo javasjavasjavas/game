@@ -12,7 +12,7 @@ import { Sidebar } from "./components/Sidebar";
 import { StartScreen } from "./components/StartScreen";
 import { StageView } from "./components/StageView";
 import { TopBar } from "./components/TopBar";
-import { ROOMS } from "./game/data";
+import { ROOM_BACKGROUND_BY_ID, ROOMS } from "./game/data";
 import type { RoomId } from "./game/types";
 import { useGame } from "./hooks/useGame";
 
@@ -316,6 +316,7 @@ export default function App() {
         />
 
         <NewItemPopup
+          backgroundSrc={ROOM_BACKGROUND_BY_ID[game.game.currentRoom]}
           icon={game.itemPopup?.image ?? ""}
           label={game.itemPopup?.label ?? ""}
           description={game.itemPopup?.description}

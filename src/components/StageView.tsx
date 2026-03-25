@@ -1,27 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent, SyntheticEvent } from "react";
-import { CHARACTER_BY_ID, CHARACTERS, STAGE_CHARACTER_BY_ROOM } from "../game/data";
+import { CHARACTER_BY_ID, CHARACTERS, ROOM_BACKGROUND_BY_ID, STAGE_CHARACTER_BY_ROOM } from "../game/data";
 import { MapOverlay } from "./MapOverlay";
 import type { CharacterEmotion, HotspotDefinition, RoomId } from "../game/types";
 
 const ALL_CHARACTER_SPRITES = CHARACTERS.flatMap((character) => Object.values(character.emotions));
 const MAP_BACKGROUND_SRC = "/game-assets/map_bg.jpg";
-const BACKGROUND_BY_ROOM: Record<RoomId, string> = {
-  bar: "/game-assets/background_bar.jpg",
-  cab: "/game-assets/background_cab.jpg",
-  apartment: "/game-assets/background_apartment.jpg",
-  elevator: "/game-assets/background_elevator.jpg",
-  rooftop: "/game-assets/background_street.jpg",
-  store: "/game-assets/background_store.jpg",
-  alley: "/game-assets/background_bar.jpg",
-  pharmacy: "/game-assets/background_pharmacy.jpg",
-  arcade: "/game-assets/background_arcades.jpg",
-  garage: "/game-assets/background_garage.jpg",
-  restooutside: "/game-assets/background_resto_outside.jpg",
-  restoinside: "/game-assets/background_resto_inside.jpg",
-  street: "/game-assets/background_street.jpg",
-};
 
 function preloadImage(src: string, cache: Set<string>): Promise<void> {
   if (cache.has(src)) return Promise.resolve();
@@ -101,7 +86,7 @@ export function StageView({
     ? stageCharacter.emotions[activeCharacterEmotion] ?? stageCharacter.emotions[stageCharacter.defaultEmotion]
     : null;
   const showStageCharacter = Boolean(stageCharacter && activeCharacterSrc);
-  const backgroundSrc = BACKGROUND_BY_ROOM[displayedRoom];
+  const backgroundSrc = ROOM_BACKGROUND_BY_ID[displayedRoom];
   const roomHotspots = hotspots;
   const stageLoading = useMemo(() => bootLoading || !activeBackgroundReady, [activeBackgroundReady, bootLoading]);
   const loadingLabel = "Loading Scene";
@@ -251,7 +236,7 @@ export function StageView({
 
   useEffect(() => {
     if (currentRoom === displayedRoom) return;
-    const targetBackgroundSrc = BACKGROUND_BY_ROOM[currentRoom];
+    const targetBackgroundSrc = ROOM_BACKGROUND_BY_ID[currentRoom];
     const changedFromMap = mapOpen || wasMapOpenRef.current;
 
     if (changedFromMap) {
@@ -308,7 +293,7 @@ export function StageView({
     (async () => {
       const allAssets = Array.from(
         new Set([
-          ...Object.values(BACKGROUND_BY_ROOM),
+          ...Object.values(ROOM_BACKGROUND_BY_ID),
           MAP_BACKGROUND_SRC,
           ...ALL_CHARACTER_SPRITES,
         ])
@@ -439,6 +424,14 @@ export function StageView({
     setActiveBackgroundReady(true);
   };
 
+  const characterImageClassName = [
+    "character-image",
+    stageCharacterId === "lucy" ? "character-image-lucy" : "",
+    stageCharacterId === "mysteriouskid" ? "character-image-mysteriouskid" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <section className="stage scanlines" ref={stageRef}>
       <img
@@ -510,7 +503,7 @@ export function StageView({
             <motion.img
               ref={characterImageRef}
               key={`${stageCharacterId}-${activeCharacterEmotion}`}
-              className={`character-image ${stageCharacterId === "lucy" ? "character-image-lucy" : ""}`.trim()}
+              className={characterImageClassName}
               src={activeCharacterSrc ?? ""}
               alt={stageCharacter ? `${stageCharacter.name} portrait` : "Character portrait"}
               initial={{ opacity: 0.1 }}

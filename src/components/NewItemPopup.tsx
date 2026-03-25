@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
-const APARTMENT_BACKGROUND = "/game-assets/background_apartment.jpg";
-
 interface NewItemPopupProps {
+  backgroundSrc: string;
   icon: string;
   label: string;
   description?: string;
@@ -13,6 +12,7 @@ interface NewItemPopupProps {
 }
 
 export function NewItemPopup({
+  backgroundSrc,
   icon,
   label,
   description,
@@ -50,7 +50,7 @@ export function NewItemPopup({
           }}
         >
           <motion.img
-            src={APARTMENT_BACKGROUND}
+            src={backgroundSrc}
             alt=""
             initial={{ opacity: 0, scale: 1.03, filter: "blur(16px)" }}
             animate={{ opacity: 1, scale: 1.015, filter: "blur(12px)" }}

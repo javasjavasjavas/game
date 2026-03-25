@@ -75,6 +75,9 @@ export interface HotspotItemDefinition {
   label: string;
   image: string;
   description: string;
+  addClues?: string[];
+  addFlags?: string[];
+  pickupMessage?: string;
 }
 
 export interface DialogueOption {

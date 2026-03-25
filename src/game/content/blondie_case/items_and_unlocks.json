@@ -19,8 +19,9 @@
     },
     {
       "id": "crumpled_receipt",
-      "name": "Crumpled Receipt",
+      "name": "Pharmacy Receipt",
       "category": "clue",
+      "image": "/game-assets/item_pharmacy_receipt.png",
       "obtainedAt": "bar.under_the_table"
     },
     {
