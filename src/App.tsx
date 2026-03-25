@@ -222,12 +222,13 @@ export default function App() {
           game.setCurrentRoomInstant("apartment");
           setScreen("chapter");
         }}
+        onUserInteract={requestAudioUnlock}
       />
     );
   }
 
   if (screen === "chapter") {
-    return <IntroScreen onContinue={() => setScreen("game")} onUserInteract={requestAudioUnlock} />;
+    return <IntroScreen onContinue={() => setScreen("game")} />;
   }
 
   return (

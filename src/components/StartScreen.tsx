@@ -8,6 +8,8 @@ const SUBTITLE = "After Hours";
 const LOGO_DELAY = 900;
 const BUTTON_DELAY = 1700;
 const EXIT_DURATION_MS = 800;
+const RECOMMENDATION_ART = "/game-assets/icon_sound_recomendation.png";
+const RECOMMENDATION_ART_FALLBACK = "/game-assets/icon_sound.png";
 const CORRUPT_CHARS = "▓░▒█▄▀■□▪▫◊◈⬡⬢⏣⎔";
 
 const PRELOADED_IMAGES = new Set<string>();
@@ -218,13 +220,16 @@ function GlitchText({ text }: { text: string }) {
 
 interface StartScreenProps {
   onStart: () => void;
+  onUserInteract?: () => void;
 }
 
-export function StartScreen({ onStart }: StartScreenProps) {
+export function StartScreen({ onStart, onUserInteract }: StartScreenProps) {
   const [showLogo, setShowLogo] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [backgroundReady, setBackgroundReady] = useState(false);
+  const [recommendationAccepted, setRecommendationAccepted] = useState(false);
+  const [recommendationArtSrc, setRecommendationArtSrc] = useState(RECOMMENDATION_ART);
   const nextSceneBackgroundPromiseRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
@@ -232,7 +237,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
   }, []);
 
   useEffect(() => {
-    if (!backgroundReady) return;
+    if (!backgroundReady || !recommendationAccepted) return;
 
     const logoTimer = window.setTimeout(() => setShowLogo(true), LOGO_DELAY);
     const buttonTimer = window.setTimeout(() => setShowButton(true), BUTTON_DELAY);
@@ -241,7 +246,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
       window.clearTimeout(logoTimer);
       window.clearTimeout(buttonTimer);
     };
-  }, [backgroundReady]);
+  }, [backgroundReady, recommendationAccepted]);
 
   useEffect(() => {
     if (!showButton) return;
@@ -262,6 +267,11 @@ export function StartScreen({ onStart }: StartScreenProps) {
     ]);
 
     onStart();
+  };
+
+  const handleAcceptRecommendation = () => {
+    onUserInteract?.();
+    setRecommendationAccepted(true);
   };
 
   return (
@@ -374,6 +384,52 @@ export function StartScreen({ onStart }: StartScreenProps) {
           )}
         </AnimatePresence>
       </motion.div>
+
+      {backgroundReady && !recommendationAccepted && (
+        <motion.div
+          className="chapter-intro-recommendation-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div
+            className="chapter-intro-recommendation-card"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+          >
+            <div className="chapter-intro-recommendation-kicker">Recommended Setup</div>
+            <div className="chapter-intro-recommendation-title">Best Experienced on Desktop</div>
+            <p className="chapter-intro-recommendation-copy">
+              This game is designed for desktop, and we recommend using headphones for a more immersive experience.
+            </p>
+
+            <div className="chapter-intro-recommendation-art-wrap">
+              <img
+                className="chapter-intro-recommendation-art"
+                src={recommendationArtSrc}
+                alt="Desktop plus headphones recommended"
+                onError={() => {
+                  if (recommendationArtSrc !== RECOMMENDATION_ART_FALLBACK) {
+                    setRecommendationArtSrc(RECOMMENDATION_ART_FALLBACK);
+                  }
+                }}
+              />
+            </div>
+
+            <div className="popup-pill-row chapter-intro-recommendation-actions">
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.97 }}
+                onClick={handleAcceptRecommendation}
+                className="pill-btn popup-pill-btn"
+              >
+                ACCEPT
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </motion.section>
   );
 }
