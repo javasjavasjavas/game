@@ -451,7 +451,7 @@ export function StageView({
             <button
               key={hotspot.id}
               type="button"
-              className="stage-hotspot-debug is-visible"
+              className="stage-hotspot-debug"
               style={{
                 left: `${hotspot.left}px`,
                 top: `${hotspot.top}px`,
