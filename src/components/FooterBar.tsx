@@ -38,16 +38,18 @@ export function FooterBar({
     <div className="footer-row" id="footer-navigation">
       <div className="inv-wrap">
         <span className="inv-title">INV</span>
-        {inventoryItems.map((item) => (
-          <button
-            key={item.id}
-            className={`inv-item ${selectedInventoryId === item.id ? "active" : ""}`}
-            data-label={item.label}
-            onClick={() => onToggleInventory(item.id)}
-          >
-            <img className="inv-item-image" src={item.image} alt={item.label} />
-          </button>
-        ))}
+        <div className="inv-items">
+          {inventoryItems.map((item) => (
+            <button
+              key={item.id}
+              className={`inv-item ${selectedInventoryId === item.id ? "active" : ""}`}
+              data-label={item.label}
+              onClick={() => onToggleInventory(item.id)}
+            >
+              <img className="inv-item-image" src={item.image} alt={item.label} />
+            </button>
+          ))}
+        </div>
       </div>
       <div className="nav-actions">
         <button className="pill-btn" onClick={onInspect}>

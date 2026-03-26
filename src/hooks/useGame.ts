@@ -515,12 +515,8 @@ export function useGame() {
       setConversationText(getScriptNodeText(scriptedDialogue, nextNode));
       const discoveredFlags = [...nextGame.flags].filter((flagId) => !beforeFlags.has(flagId));
       const discoveredClues = [...nextGame.clues].filter((clueId) => !beforeClues.has(clueId));
-      if (
-        discoveredFlags.includes("arcade_marked_on_map") &&
-        nextGame.hasFlag("arcade_marked_on_map") &&
-        nextGame.hasFlag("pharmacy_marked_on_map")
-      ) {
-        setMapBadgeLabel("New Locations");
+      if (discoveredFlags.includes("arcade_marked_on_map") && nextGame.hasFlag("arcade_marked_on_map")) {
+        setMapBadgeLabel(nextGame.hasFlag("pharmacy_marked_on_map") ? "New Locations" : "New Location");
       }
       const recordableClues = getRecordableCharacterClueIds(npcId, discoveredClues);
       setConversationHasClue(recordableClues.length > 0);
@@ -690,8 +686,8 @@ export function useGame() {
         draft.lastMessage = itemPopup.pickupMessage;
       }
     });
-    if (addsPharmacyLead && game.hasFlag("arcade_marked_on_map")) {
-      setMapBadgeLabel("New Locations");
+    if (addsPharmacyLead) {
+      setMapBadgeLabel(game.hasFlag("arcade_marked_on_map") ? "New Locations" : "New Location");
     }
     setItemPopup(null);
   };
