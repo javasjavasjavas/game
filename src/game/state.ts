@@ -7,8 +7,9 @@ function toMinutes(hhmm: string): number {
 }
 
 export function formatTime(totalMinutes: number): string {
-  const h = Math.floor(totalMinutes / 60);
-  const m = totalMinutes % 60;
+  const normalizedMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
+  const h = Math.floor(normalizedMinutes / 60);
+  const m = normalizedMinutes % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
@@ -24,15 +25,15 @@ export class GameState {
   lastMessage: string;
 
   constructor(seed?: Partial<GameState>) {
-    this.timeMinutes = seed?.timeMinutes ?? 20 * 60;
-    this.currentRoom = seed?.currentRoom ?? "bar";
+    this.timeMinutes = seed?.timeMinutes ?? 22 * 60;
+    this.currentRoom = seed?.currentRoom ?? "apartment";
     this.characterEmotion = seed?.characterEmotion ?? "serious";
     this.money = seed?.money ?? 120;
     this.expenses = seed?.expenses ? [...seed.expenses] : [];
     this.clues = new Set(seed?.clues ? [...seed.clues] : []);
     this.flags = new Set(seed?.flags ? [...seed.flags] : []);
     this.finished = seed?.finished ?? false;
-    this.lastMessage = seed?.lastMessage ?? "You entered the city at night. Find who forged the logs.";
+    this.lastMessage = seed?.lastMessage ?? "Lucy woke you with a missing-person case and a deadline that ends at dawn.";
   }
 
   clone(): GameState {
@@ -62,8 +63,8 @@ export class GameState {
 
   advanceTime(minutes = 30): void {
     if (this.finished) return;
-    this.timeMinutes = Math.min(this.timeMinutes + minutes, 22 * 60);
-    if (this.timeMinutes >= 22 * 60) {
+    this.timeMinutes = Math.min(this.timeMinutes + minutes, 29 * 60);
+    if (this.timeMinutes >= 29 * 60) {
       this.finished = true;
       this.lastMessage = ENDINGS.late;
     }
@@ -103,7 +104,7 @@ export class GameState {
   }
 
   solve(accusedId: string): SolveResult {
-    if (this.timeMinutes >= 22 * 60) {
+    if (this.timeMinutes >= 29 * 60) {
       this.finished = true;
       this.lastMessage = ENDINGS.late;
       return { ok: false, ending: ENDINGS.late };

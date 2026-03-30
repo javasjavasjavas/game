@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="1100" viewBox="0 0 700 1100">
+  <rect width="700" height="1100" fill="#000000"/>
+  <rect x="46" y="46" width="608" height="1008" fill="none" stroke="#1f9ab0" stroke-width="4" stroke-dasharray="18 18"/>
+  <text x="350" y="510" fill="#d7e3f4" font-family="'Courier New', monospace" font-size="44" text-anchor="middle" letter-spacing="4">CHARACTER</text>
+  <text x="350" y="574" fill="#d7e3f4" font-family="'Courier New', monospace" font-size="44" text-anchor="middle" letter-spacing="4">TO REPLACE</text>
+</svg>

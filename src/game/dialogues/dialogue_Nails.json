@@ -1,0 +1,35 @@
+{
+  "scene": "motel",
+  "characterId": "nails",
+  "conversationId": "nails_motel_intro",
+  "description": "Nails gives up the safehouse once pressured as the weak link.",
+  "startNode": "nails_intro_001",
+  "nodes": [
+    {
+      "id": "nails_intro_001",
+      "speaker": "nails",
+      "emotion": "worried",
+      "text": "If Big Boss sent you, I already know this ends badly.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "He did not. But he did make it clear you are the one who breaks first.",
+          "type": "pressure",
+          "requirements": ["nails_is_weak_link"],
+          "next": "nails_break_001"
+        }
+      ]
+    },
+    {
+      "id": "nails_break_001",
+      "speaker": "nails",
+      "emotion": "thinking",
+      "text": "Damn it. Fine. Safehouse off the old service road. Metal door, no sign, no second chance if you hesitate.",
+      "effects": {
+        "addFlags": ["safehouse_location_known"],
+        "addClues": ["safehouse_location_known"]
+      },
+      "options": []
+    }
+  ]
+}

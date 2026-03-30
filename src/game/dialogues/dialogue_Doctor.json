@@ -1,0 +1,90 @@
+{
+  "scene": "pharmacy",
+  "characterId": "doctor",
+  "conversationId": "doctor_pharmacy_intro",
+  "description": "The Doctor confirms the medical angle and points toward the late-night store.",
+  "startNode": "doctor_intro_001",
+  "nodes": [
+    {
+      "id": "doctor_intro_001",
+      "speaker": "doctor",
+      "emotion": "serious",
+      "text": "If you are here for aspirin, take a number. If you are here for trouble, you are already next.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "This receipt came from here.",
+          "type": "question",
+          "requirements": ["crumpled_receipt"],
+          "next": "doctor_receipt_001"
+        },
+        {
+          "id": "opt_002",
+          "text": "What kind of medicine disappears this late?",
+          "type": "question",
+          "next": "doctor_meds_001"
+        },
+        {
+          "id": "opt_003",
+          "text": "You look like you have seen worse nights.",
+          "type": "comment",
+          "next": "doctor_seen_worse_001"
+        }
+      ]
+    },
+    {
+      "id": "doctor_receipt_001",
+      "speaker": "doctor",
+      "emotion": "serious",
+      "text": "Yeah. Mine. Blondie was not shopping for vitamins. Whoever crossed her path was circling sedatives, not comfort.",
+      "effects": {
+        "addClues": ["doctor_confirms_medical_suspicion", "doctor_hints_at_sedation_or_control"]
+      },
+      "options": [
+        {
+          "id": "opt_004",
+          "text": "Where do people keep moving after this place closes?",
+          "type": "question",
+          "next": "doctor_store_001"
+        }
+      ]
+    },
+    {
+      "id": "doctor_store_001",
+      "speaker": "doctor",
+      "emotion": "happy",
+      "text": "If you need cigarettes, gossip, or somebody still awake enough to notice faces, Jenny keeps the Store open deeper into the night than I do.",
+      "effects": {
+        "addFlags": ["store_marked_on_map"],
+        "addClues": ["store_marked_on_map"]
+      },
+      "options": []
+    },
+    {
+      "id": "doctor_meds_001",
+      "speaker": "doctor",
+      "emotion": "serious",
+      "text": "Sleep aids, downers, the usual quiet poisons people call treatment when they are trying not to say control.",
+      "effects": {
+        "addClues": ["doctor_hints_at_sedation_or_control"]
+      },
+      "options": []
+    },
+    {
+      "id": "doctor_seen_worse_001",
+      "speaker": "doctor",
+      "emotion": "laughing",
+      "text": "Worse nights keep my lights on. Better ones never arrive.",
+      "options": []
+    }
+  ],
+  "conditionalFollowups": [
+    {
+      "id": "doctor_after_receipt",
+      "requirements": ["doctor_confirms_medical_suspicion"],
+      "speaker": "doctor",
+      "emotion": "serious",
+      "text": "I already told you what matters. Blondie brushed against sedatives, and Jenny's Store is still open if you need the next witness awake."
+    }
+  ]
+}

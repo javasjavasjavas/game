@@ -1,0 +1,33 @@
+{
+  "scene": "restoinside",
+  "characterId": "bigboss",
+  "conversationId": "bigboss_restaurant_intro",
+  "description": "Big Boss confirms the corruption chain and points at Nails as the weak link.",
+  "startNode": "bigboss_intro_001",
+  "nodes": [
+    {
+      "id": "bigboss_intro_001",
+      "speaker": "bigboss",
+      "emotion": "serious",
+      "text": "My door does not open for strangers without a reason. So impress me by already having one.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "Blondie crossed your chain and now she is missing.",
+          "type": "accusation",
+          "next": "bigboss_chain_001"
+        }
+      ]
+    },
+    {
+      "id": "bigboss_chain_001",
+      "speaker": "bigboss",
+      "emotion": "happy",
+      "text": "Careful. Missing is a softer word than this city usually earns. But yes, you are finally looking in the right direction. Dirty cops, paid silence, nervous runners. Nails was always the piece most likely to crack first.",
+      "effects": {
+        "addClues": ["knows_big_boss_connected", "knows_dirty_cop_connected", "nails_is_weak_link"]
+      },
+      "options": []
+    }
+  ]
+}

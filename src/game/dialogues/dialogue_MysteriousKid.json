@@ -1,0 +1,81 @@
+{
+  "scene": "arcade",
+  "characterId": "mysteriouskid",
+  "conversationId": "mysterious_kid_arcade_intro",
+  "description": "First pass and return conversation with Mysterious Kid.",
+  "startNode": "kid_intro_001",
+  "nodes": [
+    {
+      "id": "kid_intro_001",
+      "speaker": "mysteriouskid",
+      "emotion": "happy",
+      "text": "You brought detective shoes into an arcade. That is either brave or tired.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "The Gambler said you notice people who do not want to be noticed.",
+          "type": "question",
+          "requirements": ["gambler_points_to_arcade_room"],
+          "next": "kid_gambler_001"
+        },
+        {
+          "id": "opt_002",
+          "text": "Blondie passed through here, did she not?",
+          "type": "question",
+          "requirements": ["blondie_photo"],
+          "next": "kid_blondie_001"
+        },
+        {
+          "id": "opt_003",
+          "text": "I brought you something with sugar and bad judgment.",
+          "type": "offer_item",
+          "requirements": ["energizing_drink"],
+          "next": "kid_drink_001"
+        }
+      ]
+    },
+    {
+      "id": "kid_gambler_001",
+      "speaker": "mysteriouskid",
+      "emotion": "suspicious",
+      "text": "The Gambler notices losing streaks. I notice escape routes. Blondie did not stay still for long. Try the Red Light Block if you want the next footprint.",
+      "effects": {
+        "addFlags": ["red_light_block_marked_on_map"],
+        "addClues": ["mysterious_kid_vague_lead", "future_energy_drink_hook", "red_light_block_marked_on_map"]
+      },
+      "options": []
+    },
+    {
+      "id": "kid_blondie_001",
+      "speaker": "mysteriouskid",
+      "emotion": "suspicious",
+      "text": "She looked at every exit before she looked at the machines. People do that when they think staying still is how they get caught.",
+      "effects": {
+        "addFlags": ["red_light_block_marked_on_map"],
+        "addClues": ["mysterious_kid_vague_lead", "future_energy_drink_hook", "red_light_block_marked_on_map"]
+      },
+      "options": []
+    },
+    {
+      "id": "kid_drink_001",
+      "speaker": "mysteriouskid",
+      "emotion": "happy",
+      "text": "Now that is respect. Fine. Underground Garage. Blondie's trail dipped there after the neon block. Follow the engines, not the faces.",
+      "effects": {
+        "removeItems": ["energizing_drink"],
+        "addFlags": ["underground_garage_unlocked"],
+        "addClues": ["garage_lead_discovered"]
+      },
+      "options": []
+    }
+  ],
+  "conditionalFollowups": [
+    {
+      "id": "kid_after_garage_unlock",
+      "requirements": ["underground_garage_unlocked"],
+      "speaker": "mysteriouskid",
+      "emotion": "happy",
+      "text": "I gave you the Garage. If that is not enough, then the night is asking for more than either of us should pay."
+    }
+  ]
+}

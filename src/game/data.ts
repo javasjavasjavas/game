@@ -9,239 +9,314 @@ import type {
   RoomId,
 } from "./types";
 
+const PLACEHOLDER_BACKGROUND_SRC = "/game-assets/background_to_replace.svg";
+const PLACEHOLDER_CHARACTER_SRC = "/game-assets/character_to_replace.svg";
+
 export const ROOM_BACKGROUND_BY_ID: Record<RoomId, string> = {
-  bar: "/game-assets/background_bar.jpg",
-  cab: "/game-assets/background_cab.jpg",
   apartment: "/game-assets/background_apartment.jpg",
   elevator: "/game-assets/background_elevator.jpg",
-  rooftop: "/game-assets/background_street.jpg",
-  store: "/game-assets/background_store.jpg",
-  alley: "/game-assets/background_bar.jpg",
+  rooftop: PLACEHOLDER_BACKGROUND_SRC,
+  bar: "/game-assets/background_bar.jpg",
   pharmacy: "/game-assets/background_pharmacy.jpg",
   arcade: "/game-assets/background_arcades.jpg",
+  store: "/game-assets/background_store.jpg",
+  street: "/game-assets/background_street.jpg",
+  alley: PLACEHOLDER_BACKGROUND_SRC,
   garage: "/game-assets/background_garage.jpg",
   restooutside: "/game-assets/background_resto_outside.jpg",
   restoinside: "/game-assets/background_resto_inside.jpg",
-  street: "/game-assets/background_street.jpg",
+  motel: PLACEHOLDER_BACKGROUND_SRC,
+  safehouse: PLACEHOLDER_BACKGROUND_SRC,
+  cab: "/game-assets/background_cab.jpg",
 };
 
 export const CHARACTERS: CharacterDefinition[] = [
   {
-    id: "bigboss",
-    name: "Big Boss",
-    description:
-      "A feared criminal boss who controls favors, debts, and silence across the district.",
-    defaultEmotion: "serious",
-    emotions: {
-      serious: "/game-assets/character_big_boss_serious.png",
-      happy: "/game-assets/character_big_boss_happy.png",
-      sad: "/game-assets/character_big_boss_serious.png",
-      angry: "/game-assets/character_big_boss_serious.png",
-      suspicious: "/game-assets/character_big_boss_serious.png",
-    },
-  },
-  {
     id: "lucy",
     name: "Lucy",
-    description:
-      "A mysterious woman who appears in your apartment, and somehow you cannot remember ever meeting her.",
+    description: "The one who starts the case and keeps her fear buried under a hard stare.",
     defaultEmotion: "serious",
     emotions: {
       serious: "/game-assets/character_lucy_serious.png",
       happy: "/game-assets/character_lucy_happy.png",
       sad: "/game-assets/character_lucy_sad.png",
       angry: "/game-assets/character_lucy_angry.png",
-      suspicious: "/game-assets/character_lucy_serious.png",
     },
   },
   {
     id: "thegambler",
     name: "The Gambler",
-    description:
-      "A bar regular who turns gossip into currency and never sounds fully surprised by bad news.",
+    description: "A bar regular who sells rumors without ever admitting which ones are true.",
     defaultEmotion: "serious",
     emotions: {
       serious: "/game-assets/character_the_gambler_serious.png",
       happy: "/game-assets/character_the_gambler_happy.png",
       angry: "/game-assets/character_the_gambler_angry.png",
       winner: "/game-assets/character_the_gambler_winner.png",
-      sad: "/game-assets/character_the_gambler_serious.png",
-      suspicious: "/game-assets/character_the_gambler_serious.png",
+    },
+  },
+  {
+    id: "doctor",
+    name: "The Doctor",
+    description: "A tired late-night pharmacist who knows when a receipt hides something uglier than medicine.",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: "/game-assets/character_the_doctor_serious.png",
+      happy: "/game-assets/character_the_doctor_happy.png",
+      laughing: "/game-assets/character_the_doctor_laughing.png",
     },
   },
   {
     id: "mysteriouskid",
     name: "Mysterious Kid",
-    description:
-      "A strange kid in the Arcade Room who reads people too quickly and smiles at the wrong moments.",
+    description: "The kind of witness who talks in riddles until the right trade loosens his tongue.",
     defaultEmotion: "happy",
     emotions: {
-      serious: "/game-assets/character_mind_reader_happy.png",
       happy: "/game-assets/character_mind_reader_happy.png",
-      sad: "/game-assets/character_mind_reader_suspicious.png",
-      angry: "/game-assets/character_mind_reader_amgry.png",
       suspicious: "/game-assets/character_mind_reader_suspicious.png",
+      angry: "/game-assets/character_mind_reader_angry.png",
+      serious: "/game-assets/character_mind_reader_suspicious.png",
+    },
+  },
+  {
+    id: "rose",
+    name: "Rose",
+    description: "A sharp witness from the Red Light Block who notices which cars stop and who gets inside them.",
+    defaultEmotion: "sensual",
+    emotions: {
+      sensual: "/game-assets/character_rose_sensual.png",
+      serious: "/game-assets/character_rose_serious.png",
+      thinking: "/game-assets/character_rose_thinking.png",
+    },
+  },
+  {
+    id: "pepe",
+    name: "Pepe",
+    description: "A street contact who reads territorial movement better than most people read weather.",
+    defaultEmotion: "serious",
+    emotions: {
+      happy: "/game-assets/character_pepe_happy.png",
+      serious: "/game-assets/character_pepe_serious.png",
+      thinking: "/game-assets/character_pepe_thinking.png",
+    },
+  },
+  {
+    id: "bodyguard",
+    name: "BodyGuard",
+    description: "The wall in front of Big Boss. He only becomes human when nicotine is involved.",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: "/game-assets/character_bodyguard_serious.png",
+      happy: "/game-assets/character_bodyguard_happy.png",
+      laughing: "/game-assets/character_bodyguard_laughing.png",
+      tired: "/game-assets/character_bodyguard_tired.png",
+    },
+  },
+  {
+    id: "bigboss",
+    name: "Big Boss",
+    description: "A polished crime boss who never says more than he thinks he can survive saying.",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: "/game-assets/character_big_boss_serious.png",
+      happy: "/game-assets/character_big_boss_happy.png",
+    },
+  },
+  {
+    id: "nails",
+    name: "Nails",
+    description: "A weak link who has survived this long by panicking before anyone else does.",
+    defaultEmotion: "worried",
+    emotions: {
+      serious: "/game-assets/character_nails_serious.png",
+      thinking: "/game-assets/character_nails_thinking.png",
+      worried: "/game-assets/character_nails_worried.png",
+    },
+  },
+  {
+    id: "jenny",
+    name: "Jenny",
+    description: "Late-shift store clerk. Sprite pending final art.",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: PLACEHOLDER_CHARACTER_SRC,
+      happy: PLACEHOLDER_CHARACTER_SRC,
+      thinking: PLACEHOLDER_CHARACTER_SRC,
+    },
+  },
+  {
+    id: "streetracer",
+    name: "Street Racer",
+    description: "Garage witness. Sprite pending final art.",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: PLACEHOLDER_CHARACTER_SRC,
+      happy: PLACEHOLDER_CHARACTER_SRC,
+      suspicious: PLACEHOLDER_CHARACTER_SRC,
+    },
+  },
+  {
+    id: "blondie",
+    name: "Blondie",
+    description: "The woman everybody moved around the city, and the one you are trying to reach before dawn.",
+    defaultEmotion: "serious",
+    emotions: {
+      serious: "/game-assets/character_blondie_serious.png",
+      happy: "/game-assets/character_blondie_happy.png",
+      sad: "/game-assets/character_blondie_sad.png",
     },
   },
 ];
 
 export const CHARACTER_BY_ID: Record<string, CharacterDefinition> = Object.fromEntries(
-  CHARACTERS.map((character) => [character.id, character])
+  CHARACTERS.map((character) => [character.id, character]),
 );
 
-export const STAGE_CHARACTER_ID = "bigboss";
+export const STAGE_CHARACTER_ID = "lucy";
 export const STAGE_CHARACTER_BY_ROOM: Partial<Record<RoomId, string>> = {
-  bar: "thegambler",
   apartment: "lucy",
+  bar: "thegambler",
+  pharmacy: "doctor",
   arcade: "mysteriouskid",
+  store: "jenny",
+  street: "rose",
+  alley: "pepe",
+  garage: "streetracer",
+  restooutside: "bodyguard",
+  restoinside: "bigboss",
+  motel: "nails",
 };
 
 export const ROOMS: Record<RoomId, Room> = {
-  bar: {
-    id: "bar",
-    name: "The Bar",
-    description: "Neon lights, old jazz, and whispers nobody repeats twice.",
-    exits: ["cab", "apartment", "store", "alley", "pharmacy", "arcade", "street"],
-  },
-  cab: {
-    id: "cab",
-    name: "Cab",
-    description: "Rain on the windshield, city lights stretched into blurred streaks.",
-    exits: ["bar", "apartment", "street", "garage"],
-  },
   apartment: {
     id: "apartment",
     name: "Apartment",
-    description: "A narrow hallway, broken intercom, and sleepless windows.",
+    description: "Your place. Lucy, the jacket, and the email are where the case begins.",
     exits: ["elevator"],
   },
   elevator: {
     id: "elevator",
     name: "Elevator",
-    description: "A stained metal box humming between floors, carrying bad choices up and down the building.",
+    description: "The building's tired throat, carrying you toward the roof or the city.",
     exits: ["apartment", "rooftop", "street"],
   },
   rooftop: {
     id: "rooftop",
     name: "Rooftop",
-    description: "Tar, wet wind, and the city breathing below like it knows your business already.",
+    description: "Open air, wet concrete, and a city that looks cleaner from far away.",
     exits: ["elevator"],
   },
-  store: {
-    id: "store",
-    name: "Store",
-    description: "Half-closed shutters, humming fridges, and nervous eyes behind glass.",
-    exits: ["bar", "alley", "pharmacy", "arcade", "street"],
-  },
-  alley: {
-    id: "alley",
-    name: "Alley",
-    description: "Wet concrete, flickering signs, and footsteps that stop when you turn.",
-    exits: ["bar", "apartment", "store", "pharmacy", "arcade", "street"],
+  bar: {
+    id: "bar",
+    name: "The Bar",
+    description: "First real lead. Neon, smoke, and a room full of people pretending not to remember Blondie.",
+    exits: ["apartment", "pharmacy", "arcade"],
   },
   pharmacy: {
     id: "pharmacy",
     name: "Pharmacy",
-    description: "Cold fluorescent aisles, late-shift silence, and receipts no one keeps.",
-    exits: ["bar", "apartment", "store", "alley", "arcade", "street"],
+    description: "Cold shelves and the kind of fluorescent honesty nobody likes after midnight.",
+    exits: ["bar", "store"],
   },
   arcade: {
     id: "arcade",
     name: "Arcade Room",
-    description: "Flickering cabinets, token clinks, and static from forgotten high scores.",
-    exits: ["bar", "apartment", "store", "alley", "pharmacy", "street"],
+    description: "Static, cabinets, and a witness who talks like he is half-awake and fully dangerous.",
+    exits: ["bar", "street", "garage"],
+  },
+  store: {
+    id: "store",
+    name: "The Store",
+    description: "Late-night supplies, cheap lies, and Jenny behind the counter.",
+    exits: ["pharmacy", "street", "restooutside"],
+  },
+  street: {
+    id: "street",
+    name: "Red Light Block",
+    description: "Neon spill, street witnesses, and the vending machine Mysterious Kid keeps hinting at.",
+    exits: ["arcade", "store", "alley"],
+  },
+  alley: {
+    id: "alley",
+    name: "Dark Alley",
+    description: "Hidden movement, stacked crates, and the kind of silence that belongs to territorial people.",
+    exits: ["street", "garage"],
   },
   garage: {
     id: "garage",
     name: "Underground Garage",
-    description: "Concrete pillars, oil slicks, and engines ticking in the dark.",
-    exits: ["street", "cab"],
+    description: "Concrete, oil, and a car that matters more than anyone wants to admit.",
+    exits: ["arcade", "alley", "restooutside", "motel"],
   },
   restooutside: {
     id: "restooutside",
-    name: "Italian Restaurant Outside",
-    description: "Warm window light spills onto wet pavement and polished parked cars.",
-    exits: ["street", "restoinside"],
+    name: "Italian Restaurant Exterior",
+    description: "Warm light outside a place that exists to keep certain conversations off the street.",
+    exits: ["store", "garage", "restoinside"],
   },
   restoinside: {
     id: "restoinside",
-    name: "Italian Restaurant Inside",
-    description: "Low chandeliers, red velvet booths, and conversations hidden behind wine glasses.",
+    name: "Italian Restaurant Interior",
+    description: "Red velvet, hushed plates, and Big Boss in the center of the room like a threat with table service.",
     exits: ["restooutside"],
   },
-  street: {
-    id: "street",
-    name: "Street",
-    description: "Traffic hiss, neon reflections, and strangers moving like static.",
-    exits: ["bar", "apartment", "store", "alley", "pharmacy", "arcade", "garage", "restooutside", "cab"],
+  motel: {
+    id: "motel",
+    name: "Motel Neon",
+    description: "A place where weak men hide until stronger ones come to collect.",
+    exits: ["garage", "safehouse"],
+  },
+  safehouse: {
+    id: "safehouse",
+    name: "The Safehouse",
+    description: "Last stop before dawn. The place the whole night has been trying not to name.",
+    exits: ["motel"],
+  },
+  cab: {
+    id: "cab",
+    name: "Cab",
+    description: "Rain on the windshield and a meter turning the night into numbers.",
+    exits: ["bar", "store", "street", "garage", "restooutside", "motel"],
   },
 };
 
 export const ROOM_ORDER: RoomId[] = [
-  "bar",
-  "cab",
   "apartment",
   "elevator",
   "rooftop",
-  "store",
-  "alley",
+  "bar",
   "pharmacy",
   "arcade",
+  "store",
+  "street",
+  "alley",
   "garage",
   "restooutside",
   "restoinside",
-  "street",
+  "motel",
+  "safehouse",
+  "cab",
 ];
 
 export const ROOM_MAP_LAYOUT: Record<RoomId, { x: number; y: number }> = {
-  bar: { x: 48, y: 48 },
-  cab: { x: 50, y: 92 },
-  apartment: { x: 22, y: 24 },
-  elevator: { x: 46, y: 24 },
-  rooftop: { x: 46, y: 12 },
-  store: { x: 78, y: 26 },
-  alley: { x: 52, y: 78 },
+  apartment: { x: 48, y: 22 },
+  elevator: { x: 48, y: 22 },
+  rooftop: { x: 48, y: 10 },
+  bar: { x: 22, y: 35 },
   pharmacy: { x: 84, y: 72 },
   arcade: { x: 14, y: 66 },
-  garage: { x: 72, y: 88 },
-  restooutside: { x: 85, y: 40 },
-  restoinside: { x: 92, y: 22 },
+  store: { x: 72, y: 55 },
   street: { x: 56, y: 42 },
+  alley: { x: 35, y: 72 },
+  garage: { x: 70, y: 88 },
+  restooutside: { x: 82, y: 40 },
+  restoinside: { x: 88, y: 28 },
+  motel: { x: 90, y: 78 },
+  safehouse: { x: 16, y: 86 },
+  cab: { x: 50, y: 92 },
 };
 
 export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>> = {
-  bar: [
-    {
-      id: "bar-poster-wall",
-      label: "Wall Poster",
-      x: 1860,
-      y: 340,
-      width: 260,
-      height: 400,
-      inspectText:
-        "A faded poster clings to the brick wall. The corners are water-warped and someone scratched a small symbol into the lower edge.",
-    },
-    {
-      id: "bar-bottle-zone",
-      label: "Bottle Zone",
-      x: 2356,
-      y: 330,
-      width: 594,
-      height: 250,
-      inspectText:
-        "Rows of bottles line the back bar. Some labels are turned inward on purpose, as if someone hid a specific brand or a missing bottle.",
-    },
-    {
-      id: "bar-under-table",
-      label: "Under Table",
-      x: 360,
-      y: 1066,
-      width: 490,
-      height: 344,
-      inspectText:
-        "The dark space beneath the table is packed with shadow. Dust is broken in one corner, like something was dragged or hastily shoved underneath.",
-    },
-  ],
   apartment: [
     {
       id: "apartment-jacket-pocket",
@@ -250,8 +325,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 1135,
       width: 330,
       height: 505,
-      inspectText:
-        "The pocket feels empty now. Whatever Lucy left there is already in your hands.",
+      inspectText: "The pocket feels empty now. Whatever Lucy left there is already in your hands.",
     },
     {
       id: "apartment-videogame-screen",
@@ -260,8 +334,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 910,
       width: 335,
       height: 485,
-      inspectText:
-        "The game screen is frozen mid-scene. Someone left it running, but the image glows like the machine was abandoned in a hurry.",
+      inspectText: "The game screen is frozen mid-scene, like somebody dropped real life on top of the pause button.",
     },
     {
       id: "apartment-computer-screen",
@@ -270,8 +343,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 875,
       width: 265,
       height: 600,
-      inspectText:
-        "The computer monitor throws a cold light across the room. A window is open on the desktop, but from here you can only make out blurred blocks of text.",
+      inspectText: "The email window is still open. From a distance all you can read is that somebody wanted you moving fast.",
     },
     {
       id: "apartment-window-city",
@@ -280,8 +352,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 175,
       width: 1300,
       height: 790,
-      inspectText:
-        "Beyond the glass, the city is all neon haze and distant sirens. The skyline feels close enough to touch, but the room still feels sealed off.",
+      inspectText: "The city is doing what it always does: glowing just enough to hide what matters.",
     },
   ],
   elevator: [
@@ -292,8 +363,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 561,
       width: 298,
       height: 416,
-      inspectText:
-        "The city looks cleaner from up here, which only means distance is doing its job. Neon and rain turn every block into a lie with better lighting.",
+      inspectText: "Distance makes the city look honest. Distance lies.",
     },
     {
       id: "elevator-neighbor-note",
@@ -302,8 +372,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 680,
       width: 195,
       height: 297,
-      inspectText:
-        "A taped note curls at the edges from damp air. The handwriting is rushed: 'DON'T TRUST THE NIGHT SUPER.' Whoever left it expected somebody else to need the warning.",
+      inspectText: "A taped note curls under the damp. Somebody needed the warning badly enough to leave it behind.",
     },
     {
       id: "elevator-call-button",
@@ -312,126 +381,47 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 736,
       width: 470,
       height: 663,
-      inspectText:
-        "The call button glows behind scratched plastic. One press and the building asks where you think you belong tonight.",
+      inspectText: "The call button glows like it is waiting to judge your next move.",
     },
   ],
   rooftop: [
     {
       id: "rooftop-edge-view",
       label: "Edge View",
-      x: 1850,
-      y: 280,
-      width: 760,
-      height: 520,
-      inspectText:
-        "From up here the district looks calm, which is exactly how you know it is lying. Neon washes over rainwater and hides more than it reveals.",
-    },
-    {
-      id: "rooftop-flower-pot",
-      label: "Flower Pot",
-      x: 780,
-      y: 1120,
-      width: 250,
-      height: 280,
-      inspectText:
-        "The flower pot is chipped and half-dead, but somebody still drags it back from the ledge every time the wind tries to claim it.",
-    },
-  ],
-  arcade: [
-    {
-      id: "arcade-counter-computer",
-      label: "Counter Computer",
-      x: 360,
-      y: 340,
-      width: 520,
-      height: 360,
-      inspectText:
-        "An old computer hums behind the counter. The casing is scratched, but the screen still throws out a stubborn blue glow.",
-    },
-    {
-      id: "arcade-machine-one",
-      label: "Arcade Machine",
-      x: 1080,
-      y: 250,
-      width: 460,
-      height: 980,
-      inspectText:
-        "The cabinet art is faded under years of fingerprints. One of the side buttons looks newer than the others.",
-    },
-    {
-      id: "arcade-machine-two",
-      label: "Arcade Machine 2",
-      x: 1770,
+      x: 900,
       y: 240,
-      width: 500,
-      height: 1010,
-      inspectText:
-        "Another arcade machine stands beside it, louder and brighter. Somebody wedged a token into the return slot and left it there.",
+      width: 980,
+      height: 620,
+      inspectText: "From up here the city looks almost quiet. That is how you know it is hiding something.",
     },
   ],
-  store: [
+  bar: [
     {
-      id: "store-counter",
-      label: "Counter",
-      x: 220,
-      y: 360,
-      width: 690,
-      height: 780,
-      inspectText:
-        "The counter is cluttered with receipts, wrappers, and a register that has been opened too many times tonight.",
+      id: "bar-poster-wall",
+      label: "Wall Poster",
+      x: 1860,
+      y: 340,
+      width: 260,
+      height: 400,
+      inspectText: "A faded poster clings to the brick wall. Even the glue looks tired.",
     },
     {
-      id: "store-ice-cream-fridge",
-      label: "Ice Cream Fridge",
-      x: 1440,
-      y: 920,
-      width: 420,
-      height: 450,
-      inspectText:
-        "The ice cream freezer in the middle gives off a tired mechanical buzz. Frost clings to the lid as if it has not closed properly in days.",
+      id: "bar-bottle-zone",
+      label: "Bottle Zone",
+      x: 2356,
+      y: 330,
+      width: 594,
+      height: 250,
+      inspectText: "Rows of bottles stare back like glass witnesses with perfect memory and no intention of helping.",
     },
     {
-      id: "store-drinks-fridge",
-      label: "Drinks Fridge",
-      x: 2750,
-      y: 260,
-      width: 450,
-      height: 1410,
-      inspectText:
-        "The drinks fridge on the right glows with a pale pink light. Rows of bottles and cans are lined up too neatly, like someone staged the shelves after closing.",
-    },
-  ],
-  garage: [
-    {
-      id: "garage-license-plate-pile",
-      label: "License Plate Pile",
-      x: 1790,
-      y: 1010,
-      width: 85,
-      height: 85,
-      inspectText:
-        "A pile of old license plates leans against the wall. Some are bent clean through, and a few numbers have been scratched away on purpose.",
-    },
-    {
-      id: "garage-tool-bench",
-      label: "Tool Bench",
-      x: 1130,
-      y: 950,
-      width: 235,
-      height: 215,
-      inspectText:
-        "The tool bench is crowded with wrenches, oil rags, and half-finished repairs. One drawer sits slightly open, like someone stopped mid-search.",
-    },
-    {
-      id: "garage-car",
-      label: "Car",
-      x: 55,
-      y: 880,
-      width: 1045,
-      height: 520,
-      inspectText:
-        "The car takes up most of the bay, polished in places and filthy in others. It looks ready to leave fast, if it has not already been waiting too long.",
+      id: "bar-under-table",
+      label: "Under Table",
+      x: 360,
+      y: 1066,
+      width: 490,
+      height: 344,
+      inspectText: "The dark space beneath the back table has been disturbed recently.",
     },
   ],
   pharmacy: [
@@ -442,8 +432,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 220,
       width: 585,
       height: 1145,
-      inspectText:
-        "The left medicine shelf is packed with painkillers, sleep aids, and generic bottles with half-peeled labels. Somebody has been browsing in a hurry.",
+      inspectText: "One shelf looks cleaner than it should. Something boxed disappeared recently.",
     },
     {
       id: "pharmacy-diploma",
@@ -452,8 +441,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 945,
       width: 240,
       height: 180,
-      inspectText:
-        "A framed diploma hangs below the counter line. The paper has yellowed at the edges, but the official seal still catches the light.",
+      inspectText: "The framed diploma says competent. The hour says exhausted.",
     },
     {
       id: "pharmacy-medicine-shelf-two",
@@ -462,40 +450,65 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 100,
       width: 450,
       height: 1280,
-      inspectText:
-        "The right medicine shelf is taller and more orderly, stacked with boxed treatments and locked cases. One row looks recently disturbed.",
+      inspectText: "This shelf keeps the controlled stuff close and the excuses closer.",
     },
   ],
-  restooutside: [
+  arcade: [
     {
-      id: "restooutside-delivery-bike",
-      label: "Delivery Bike",
-      x: 20,
-      y: 840,
-      width: 860,
-      height: 790,
-      inspectText:
-        "The delivery bike is still warm from its last run. Rain beads on the seat, and the cargo box smells faintly of garlic, gasoline, and wet cardboard.",
+      id: "arcade-counter-computer",
+      label: "Counter Computer",
+      x: 360,
+      y: 340,
+      width: 520,
+      height: 360,
+      inspectText: "The register log still glows on-screen, one more machine keeping a better timeline than the people in the room.",
     },
     {
-      id: "restooutside-entrance-door",
-      label: "Entrance Door",
-      x: 1125,
-      y: 505,
-      width: 290,
-      height: 720,
-      inspectText:
-        "The restaurant door glows under the neon sign. Fingerprints cloud the glass where customers have pushed their way inside all evening.",
+      id: "arcade-machine-one",
+      label: "Arcade Machine",
+      x: 1080,
+      y: 250,
+      width: 460,
+      height: 980,
+      inspectText: "Old cabinet. Loud attract mode. Zero useful answers.",
     },
     {
-      id: "restooutside-menu-board",
-      label: "Menu Board",
-      x: 1790,
-      y: 1010,
-      width: 285,
-      height: 430,
-      inspectText:
-        "A chalkboard menu leans toward the street. The specials have been rewritten so many times the surface is dusted white with old decisions.",
+      id: "arcade-machine-two",
+      label: "Arcade Machine 2",
+      x: 1770,
+      y: 240,
+      width: 500,
+      height: 1010,
+      inspectText: "The return slot rattles when you touch it. Somebody left value behind in a hurry.",
+    },
+  ],
+  store: [
+    {
+      id: "store-counter",
+      label: "Counter",
+      x: 220,
+      y: 360,
+      width: 690,
+      height: 780,
+      inspectText: "The counter is cluttered with the usual late-night economy: smokes, receipts, and regret.",
+    },
+    {
+      id: "store-ice-cream-fridge",
+      label: "Ice Cream Freezer",
+      x: 1440,
+      y: 920,
+      width: 420,
+      height: 450,
+      inspectText: "Frozen sugar. No answers.",
+    },
+    {
+      id: "store-drinks-fridge",
+      label: "Drinks Fridge",
+      x: 2750,
+      y: 260,
+      width: 450,
+      height: 1410,
+      inspectText: "Rows of neon-colored cans promise energy, bad ideas, or both.",
     },
   ],
   street: [
@@ -506,8 +519,7 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 785,
       width: 295,
       height: 550,
-      inspectText:
-        "The vending machine hums under a weak streetlight. Most rows are half-empty, and one slot has been jammed open with a bent coin.",
+      inspectText: "A vending machine humming under bad light. One slot is perfect for a token trade.",
     },
     {
       id: "street-alley-entrance",
@@ -516,63 +528,159 @@ export const STAGE_HOTSPOTS_BY_ROOM: Partial<Record<RoomId, HotspotDefinition[]>
       y: 785,
       width: 95,
       height: 315,
-      inspectText:
-        "The alley entrance is narrow enough to miss at a glance. Neon from deeper inside flickers across the wet wall like a warning.",
+      inspectText: "A narrow cut into the dark. Exactly the sort of place people vanish through.",
     },
     {
       id: "street-ramen-store",
-      label: "Ramen Store",
+      label: "Ramen Shop",
       x: 2485,
       y: 450,
       width: 750,
       height: 700,
-      inspectText:
-        "The ramen storefront is loud with pink signage and warm interior light. Steam fogs the glass, but silhouettes still drift behind the counter.",
+      inspectText: "Warm broth, fogged glass, and not one person inside who wants your case.",
+    },
+  ],
+  alley: [
+    {
+      id: "alley-crate-stack",
+      label: "Crate Stack",
+      x: 960,
+      y: 760,
+      width: 460,
+      height: 420,
+      inspectText: "The crate stack is half-collapsed. Something heavy and useful is wedged behind it.",
+    },
+    {
+      id: "alley-dumpster",
+      label: "Dumpster",
+      x: 160,
+      y: 640,
+      width: 420,
+      height: 520,
+      inspectText: "The dumpster smells like old rain and worse decisions.",
+    },
+    {
+      id: "alley-fire-escape",
+      label: "Fire Escape",
+      x: 2340,
+      y: 180,
+      width: 360,
+      height: 700,
+      inspectText: "A rusted ladder vanishes upward. Optional trouble, probably.",
+    },
+  ],
+  garage: [
+    {
+      id: "garage-car",
+      label: "Car License Plate",
+      x: 55,
+      y: 880,
+      width: 1045,
+      height: 520,
+      inspectText: "The car sits ready to leave. The plate matters more than the paint job.",
+    },
+    {
+      id: "garage-tool-bench",
+      label: "Tool Bench",
+      x: 1130,
+      y: 950,
+      width: 235,
+      height: 215,
+      inspectText: "The bench is crowded with tools and shortcuts.",
+    },
+    {
+      id: "garage-license-plate-pile",
+      label: "Plate Pile",
+      x: 1790,
+      y: 1010,
+      width: 85,
+      height: 85,
+      inspectText: "Bent plates and shaved numbers. Too many ways to stop a car from being itself.",
+    },
+  ],
+  restooutside: [
+    {
+      id: "restooutside-entrance-door",
+      label: "Entrance Door",
+      x: 1125,
+      y: 505,
+      width: 290,
+      height: 720,
+      inspectText: "The door looks welcoming right up until the BodyGuard notices you.",
+    },
+    {
+      id: "restooutside-menu-board",
+      label: "Menu Board",
+      x: 1790,
+      y: 1010,
+      width: 285,
+      height: 430,
+      inspectText: "Expensive food, expensive silence.",
+    },
+    {
+      id: "restooutside-delivery-bike",
+      label: "Delivery Bike",
+      x: 20,
+      y: 840,
+      width: 860,
+      height: 790,
+      inspectText: "A delivery bike cooling off in the rain. Nobody parked it here for the romance.",
+    },
+  ],
+  motel: [
+    {
+      id: "motel-neon-sign",
+      label: "Neon Sign",
+      x: 320,
+      y: 180,
+      width: 860,
+      height: 300,
+      inspectText: "The sign flickers like it is trying to forget its own name.",
+    },
+    {
+      id: "motel-room-door",
+      label: "Room Door",
+      x: 1860,
+      y: 360,
+      width: 460,
+      height: 780,
+      inspectText: "A cheap room door with enough scratches to count as a warning.",
+    },
+  ],
+  safehouse: [
+    {
+      id: "safehouse-metal-door",
+      label: "Metal Door",
+      x: 1320,
+      y: 260,
+      width: 500,
+      height: 980,
+      inspectText: "The metal door is reinforced, ugly, and just soft enough around the frame to make leverage matter.",
+    },
+    {
+      id: "safehouse-side-window",
+      label: "Boarded Window",
+      x: 560,
+      y: 240,
+      width: 360,
+      height: 460,
+      inspectText: "The window is boarded from inside. Whoever hid here expected company eventually.",
     },
   ],
 };
 
 export const NPCS: Npc[] = [
-  {
-    id: "bigboss",
-    name: "Big Boss",
-    schedule: [
-      { from: "20:00", to: "21:00", room: "alley" },
-      { from: "21:00", to: "22:00", room: "alley" },
-    ],
-  },
-  {
-    id: "lucy",
-    name: "Lucy",
-    schedule: [
-      { from: "20:00", to: "21:00", room: "apartment" },
-      { from: "21:00", to: "22:00", room: "apartment" },
-    ],
-  },
-  {
-    id: "clerk",
-    name: "Milo Trent",
-    schedule: [
-      { from: "20:00", to: "21:00", room: "store" },
-      { from: "21:00", to: "22:00", room: "store" },
-    ],
-  },
-  {
-    id: "thegambler",
-    name: "The Gambler",
-    schedule: [
-      { from: "20:00", to: "21:00", room: "bar" },
-      { from: "21:00", to: "22:00", room: "bar" },
-    ],
-  },
-  {
-    id: "mysteriouskid",
-    name: "Mysterious Kid",
-    schedule: [
-      { from: "20:00", to: "21:00", room: "arcade" },
-      { from: "21:00", to: "22:00", room: "arcade" },
-    ],
-  },
+  { id: "lucy", name: "Lucy", schedule: [{ from: "22:00", to: "29:00", room: "apartment" }] },
+  { id: "thegambler", name: "The Gambler", schedule: [{ from: "22:00", to: "29:00", room: "bar" }] },
+  { id: "doctor", name: "The Doctor", schedule: [{ from: "22:00", to: "29:00", room: "pharmacy" }] },
+  { id: "mysteriouskid", name: "Mysterious Kid", schedule: [{ from: "22:00", to: "29:00", room: "arcade" }] },
+  { id: "jenny", name: "Jenny", schedule: [{ from: "22:00", to: "29:00", room: "store" }] },
+  { id: "rose", name: "Rose", schedule: [{ from: "22:00", to: "29:00", room: "street" }] },
+  { id: "pepe", name: "Pepe", schedule: [{ from: "22:00", to: "29:00", room: "alley" }] },
+  { id: "streetracer", name: "Street Racer", schedule: [{ from: "22:00", to: "29:00", room: "garage" }] },
+  { id: "bodyguard", name: "BodyGuard", schedule: [{ from: "22:00", to: "29:00", room: "restooutside" }] },
+  { id: "bigboss", name: "Big Boss", schedule: [{ from: "22:00", to: "29:00", room: "restoinside" }] },
+  { id: "nails", name: "Nails", schedule: [{ from: "22:00", to: "29:00", room: "motel" }] },
 ];
 
 export const MAX_CHARACTER_CLUES_PER_NPC = 3;
@@ -584,147 +692,116 @@ export const CHARACTER_CLUE_PRIORITY_BY_NPC: Partial<Record<string, string[]>> =
     "gambler_confirms_meeting_went_wrong",
     "gambler_points_to_arcade_room",
   ],
-  bigboss: ["tornJacket"],
-  clerk: ["keyLog"],
+  doctor: ["doctor_confirms_medical_suspicion", "doctor_hints_at_sedation_or_control", "store_marked_on_map"],
+  mysteriouskid: ["mysterious_kid_vague_lead", "future_energy_drink_hook", "garage_lead_discovered"],
+  rose: ["rose_confirms_blondie_entered_a_car", "license_plate_note", "red_light_block_marked_on_map"],
+  pepe: ["pepe_confirms_hidden_movement", "territorial_clue_obtained"],
+  streetracer: ["plate_match_confirmed", "street_racer_identifies_car_as_nails", "motel_neon_address_known"],
+  bigboss: ["knows_big_boss_connected", "knows_dirty_cop_connected", "nails_is_weak_link"],
+  nails: ["safehouse_location_known"],
+  jenny: ["jenny_small_but_useful_detail"],
 };
 
 export const CLUES: Record<string, string> = {
-  tornJacket: "Torn jacket with neon paint from the alley wall.",
-  keyLog: "Store shutter log was edited during the blackout window.",
-  witness: "Lucy's statement: Big Boss rushed out of the alley at 21:10.",
   bar_address_known: "Lucy's email points to The Bar at 14 Mercer Street.",
-  lucy_warned_about_police: "Lucy warned Blondie did not trust the police.",
+  lucy_warned_about_police: "Lucy said Blondie did not trust the police.",
   lucy_blondie_was_running: "Lucy believes Blondie was trying to stay ahead of someone.",
-  building_neighbor_note: "A neighbor left a warning in the elevator: 'Don't trust the night super.'",
+  building_neighbor_note: "The elevator note warns: 'Don't trust the night super.'",
   gambler_confirms_blondie_was_here: "The Gambler confirmed Blondie was at the Bar that night.",
   gambler_confirms_meeting_went_wrong: "The Gambler said Blondie's meeting at the Bar went wrong fast.",
-  gambler_points_to_arcade_room: "The Gambler said Mysterious Kid never sleeps and may know more at the Arcade Room.",
-  crumpled_receipt: "A crumpled Pharmacy receipt from Blondie's back table points to the next lead.",
+  gambler_points_to_arcade_room: "The Gambler pointed you toward Mysterious Kid in the Arcade Room.",
+  crumpled_receipt: "A crumpled Pharmacy receipt was hidden under Blondie's back table.",
+  doctor_confirms_medical_suspicion: "The Doctor recognized the receipt and confirmed Blondie brushed against sedatives.",
+  doctor_hints_at_sedation_or_control: "The Doctor thinks somebody may have used sedation or chemical control.",
+  store_marked_on_map: "The Doctor mentioned Jenny's late-night store as the next practical stop.",
+  mysterious_kid_vague_lead: "Mysterious Kid noticed Blondie moving through the night in a hurry.",
+  future_energy_drink_hook: "Mysterious Kid hinted he would trade a real answer for the right drink.",
+  has_arcade_timeline_clue: "The arcade counter log confirms Blondie passed through later than she should have.",
+  red_light_block_marked_on_map: "The neon strip near the Red Light Block matters to this route.",
+  rose_confirms_blondie_entered_a_car: "Rose saw Blondie get into a car instead of walking away from the block.",
+  license_plate_note: "Rose gave you a handwritten note with the car's plate number.",
+  pepe_confirms_hidden_movement: "Pepe confirmed people were moving someone through the back routes that night.",
+  territorial_clue_obtained: "Pepe's read of the alley says the route belonged to a controlled transport chain.",
+  garage_lead_discovered: "Mysterious Kid finally gave you the lead to the Underground Garage.",
+  plate_match_confirmed: "The plate at the garage matches Rose's handwritten note.",
+  street_racer_identifies_car_as_nails: "Street Racer says the car belongs to Nails.",
+  motel_neon_address_known: "Street Racer gave you the Motel Neon address.",
+  restaurant_exterior_marked_on_map: "Street Racer linked Big Boss to the Italian Restaurant front.",
+  jenny_small_but_useful_detail: "Jenny confirmed who still buys cigarettes this late and who tips to stay invisible.",
+  knows_big_boss_connected: "Big Boss admitted enough to confirm he sits inside the corruption chain.",
+  knows_dirty_cop_connected: "Big Boss indirectly confirmed a dirty cop is part of the network around Blondie.",
+  nails_is_weak_link: "Big Boss treated Nails like a liability, which makes him the weak link.",
+  safehouse_location_known: "Nails cracked and gave you the Safehouse location.",
 };
 
-export const DIALOGUE: Record<string, DialogueEntry> = {
-  bigboss: {
-    intro: "\"Ask fast. Night is expensive in this city.\"",
-    options: [
-      {
-        id: "bigboss-who",
-        text: "Who are you?",
-        emotion: "serious",
-        onPick: () => "\"People call me Big Boss. I own nothing, but I hear everything.\"",
-      },
-      {
-        id: "bigboss-suit",
-        text: "I like your suit",
-        emotion: "happy",
-        onPick: () => "\"Finally, someone with taste.\"",
-      },
-      {
-        id: "bigboss-rumour",
-        text: "Any new rumour?",
-        emotion: "serious",
-        onPick: (state) => {
-          if (!state.hasClue("tornJacket")) {
-            state.addClue("tornJacket");
-            return "\"Rumor says someone scraped a jacket on fresh neon paint in the alley.\"";
-          }
-          return "\"Same noise, different mouths.\"";
-        },
-      },
-    ],
-  },
-  lucy: {
-    intro: "\"You looked right through me, like we never met. That's interesting.\"",
-    options: [
-      {
-        id: "lucy-who",
-        text: "Who are you and what are you doing in my apartment??",
-        emotion: "angry",
-        onPick: () => "\"Keep your voice down. I'm Lucy. I came to make sure you were still breathing.\"",
-      },
-      {
-        id: "lucy-undressed",
-        text: "Why are you naked?",
-        emotion: "happy",
-        onPick: () => "\"Comfort beats fashion tonight. Relax, detective, you're too tense.\"",
-      },
-      {
-        id: "lucy-alone",
-        text: "I need to be alone.",
-        emotion: "sad",
-        onPick: (state) => {
-          if (!state.hasClue("witness")) {
-            state.addClue("witness");
-            return "\"Then remember this before I go: Big Boss left the alley at 21:10, and he was shaking.\"";
-          }
-          return "\"Alone won't help if your memory keeps bleeding.\"";
-        },
-      },
-    ],
-  },
-  clerk: {
-    intro: "\"If you're buying answers, pay in trust.\"",
-    options: [
-      {
-        id: "clerk-who",
-        text: "Who are you?",
-        emotion: "serious",
-        onPick: () => "\"Milo Trent. I close the store and remember every lock.\"",
-      },
-      {
-        id: "clerk-suit",
-        text: "I like your suit",
-        emotion: "happy",
-        onPick: () => "\"Not bad. You notice details.\"",
-      },
-      {
-        id: "clerk-rumour",
-        text: "Any new rumour?",
-        emotion: "serious",
-        onPick: (state) => {
-          if (!state.hasClue("keyLog")) {
-            state.addClue("keyLog");
-            return "\"Someone altered the store shutter log right after the blackout.\"";
-          }
-          return "\"Rumors are cheap, facts are expensive.\"";
-        },
-      },
-    ],
-  },
-  mysteriouskid: {
-    intro: "\"You look older than yesterday, detective.\"",
-    options: [
-      {
-        id: "kid-who",
-        text: "Who are you?",
-        emotion: "suspicious",
-        onPick: () => "\"People call me the mind reader. I call myself bored.\"",
-      },
-      {
-        id: "kid-why-here",
-        text: "What are you doing in this arcade?",
-        emotion: "happy",
-        onPick: () => "\"Listening to machine noise. It hides true thoughts.\"",
-      },
-      {
-        id: "kid-stop",
-        text: "Stop playing games with me.",
-        emotion: "angry",
-        onPick: () => "\"Then stop asking questions you fear the answers to.\"",
-      },
-    ],
-  },
-};
+export const DIALOGUE: Record<string, DialogueEntry> = {};
 
 export const ENDINGS = {
-  solved: "Case solved: Big Boss staged the theft and forged the city logs.",
-  wrong: "Wrong accusation. The suspect slipped into the night crowd.",
-  late: "Too late. At 22:00 the district locks down and all leads go cold.",
+  solved: "You force the safehouse door and reach Blondie before dawn.",
+  wrong: "The trail slips away while you chase the wrong angle.",
+  late: "Too late. Dawn catches the case before you can reach Blondie.",
 };
 
 export const INVENTORY_ITEMS: InventoryItemDefinition[] = [
-  { id: "blondie_photo", label: "Blondie Photo", image: "/game-assets/item_photo_blondie.png" },
-  { id: "crumpled_receipt", label: "Pharmacy Receipt", image: "/game-assets/item_pharmacy_receipt.png" },
+  {
+    id: "blondie_photo",
+    label: "Blondie Photo",
+    image: "/game-assets/item_photo_blondie.png",
+    description: "A worn photo of Blondie. Useful for getting people to stop pretending they do not recognize her.",
+  },
+  {
+    id: "crumpled_receipt",
+    label: "Pharmacy Receipt",
+    image: "/game-assets/item_pharmacy_receipt.png",
+    description: "A damp receipt from the Pharmacy, folded small enough to hide under Blondie's table.",
+  },
+  {
+    id: "sedative_box",
+    label: "Sedative Box",
+    image: "/game-assets/item_cassette.png",
+    description: "A placeholder item sprite for a boxed sedative. It still reads like evidence.",
+  },
+  {
+    id: "arcade_token",
+    label: "Arcade Token",
+    image: "/game-assets/item_key.png",
+    description: "A placeholder sprite for an arcade token, just enough metal to buy one more clue.",
+  },
+  {
+    id: "cigarette_pack",
+    label: "Cigarette Pack",
+    image: "/game-assets/item_cigarrettes.png",
+    description: "Exactly the kind of cheap peace offering a tired BodyGuard would respect.",
+  },
+  {
+    id: "energizing_drink",
+    label: "Energy Drink",
+    image: "/game-assets/item_beer.png",
+    description: "Placeholder art, real purpose: the only bribe Mysterious Kid seems interested in.",
+  },
+  {
+    id: "license_plate_note",
+    label: "Plate Note",
+    image: "/game-assets/item_wallet.png",
+    description: "Rose's handwritten note with the plate number Blondie disappeared into.",
+  },
+  {
+    id: "steel_bar",
+    label: "Steel Bar",
+    image: "/game-assets/item_key.png",
+    description: "Placeholder art for the length of steel that can force a final door.",
+  },
+  {
+    id: "screwdriver",
+    label: "Screwdriver",
+    image: "/game-assets/item_cassette.png",
+    description: "Placeholder art for a practical tool better suited to prying than asking politely.",
+  },
 ];
+
+export const INVENTORY_ITEM_BY_ID: Record<string, InventoryItemDefinition> = Object.fromEntries(
+  INVENTORY_ITEMS.map((item) => [item.id, item]),
+);
 
 export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
   {
@@ -745,6 +822,46 @@ export const HOTSPOT_ITEMS: HotspotItemDefinition[] = [
     addClues: ["crumpled_receipt"],
     addFlags: ["pharmacy_marked_on_map"],
     pickupMessage: "You pocket the crumpled Pharmacy receipt from beneath Blondie's back table.",
+  },
+  {
+    hotspotId: "pharmacy-medicine-shelf-one",
+    itemId: "sedative_box",
+    label: "Sedative Box",
+    image: "/game-assets/item_cassette.png",
+    description: "A boxed sedative from the shelf. Placeholder art, real implication.",
+    pickupMessage: "You take the sedative box off the shelf before anyone can pretend it is ordinary.",
+  },
+  {
+    hotspotId: "arcade-machine-two",
+    itemId: "arcade_token",
+    label: "Arcade Token",
+    image: "/game-assets/item_key.png",
+    description: "A lone token stuck in the return slot, waiting for one more trade.",
+    pickupMessage: "You work the token free from the machine's return slot.",
+  },
+  {
+    hotspotId: "store-counter",
+    itemId: "cigarette_pack",
+    label: "Cigarette Pack",
+    image: "/game-assets/item_cigarrettes.png",
+    description: "A pack of cigarettes that looks useful long before it looks healthy.",
+    pickupMessage: "You pick up a cigarette pack off the counter and pay Jenny enough not to argue.",
+  },
+  {
+    hotspotId: "alley-crate-stack",
+    itemId: "steel_bar",
+    label: "Steel Bar",
+    image: "/game-assets/item_key.png",
+    description: "A length of steel tucked behind the crate stack. Crude, heavy, and exactly the kind of thing a final door hates.",
+    pickupMessage: "You drag the steel bar out from behind the crates and keep it.",
+  },
+  {
+    hotspotId: "garage-tool-bench",
+    itemId: "screwdriver",
+    label: "Screwdriver",
+    image: "/game-assets/item_cassette.png",
+    description: "A practical tool from the bench. Placeholder art now, useful leverage later.",
+    pickupMessage: "You pocket a screwdriver from the crowded tool bench.",
   },
 ];
 

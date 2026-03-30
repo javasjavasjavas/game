@@ -1,0 +1,57 @@
+{
+  "scene": "street",
+  "characterId": "rose",
+  "conversationId": "rose_red_light_intro",
+  "description": "Rose confirms Blondie's car lead and gives the plate note.",
+  "startNode": "rose_intro_001",
+  "nodes": [
+    {
+      "id": "rose_intro_001",
+      "speaker": "rose",
+      "emotion": "sensual",
+      "text": "You are wearing detective on your face again. That usually means somebody else had a worse night.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "Did you see Blondie?",
+          "type": "question",
+          "requirements": ["blondie_photo"],
+          "next": "rose_photo_001"
+        },
+        {
+          "id": "opt_002",
+          "text": "What do people leave this block in?",
+          "type": "question",
+          "next": "rose_block_001"
+        }
+      ]
+    },
+    {
+      "id": "rose_photo_001",
+      "speaker": "rose",
+      "emotion": "serious",
+      "text": "Yeah. Blondie. She got into a car instead of walking. I wrote the plate before the neon swallowed it.",
+      "effects": {
+        "addClues": ["rose_confirms_blondie_entered_a_car", "license_plate_note"],
+        "addItems": ["license_plate_note"]
+      },
+      "options": []
+    },
+    {
+      "id": "rose_block_001",
+      "speaker": "rose",
+      "emotion": "thinking",
+      "text": "Depends who is chasing who. Tonight? A car mattered more than the street did.",
+      "options": []
+    }
+  ],
+  "conditionalFollowups": [
+    {
+      "id": "rose_after_plate_note",
+      "requirements": ["license_plate_note"],
+      "speaker": "rose",
+      "emotion": "serious",
+      "text": "You have the plate note. Match it to a real car before the handwriting stops mattering."
+    }
+  ]
+}

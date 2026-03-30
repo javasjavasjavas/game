@@ -1,0 +1,50 @@
+{
+  "scene": "store",
+  "characterId": "jenny",
+  "conversationId": "jenny_store_intro",
+  "description": "Jenny provides flavor and a useful detail.",
+  "startNode": "jenny_intro_001",
+  "nodes": [
+    {
+      "id": "jenny_intro_001",
+      "speaker": "jenny",
+      "emotion": "serious",
+      "text": "If you are browsing, do it fast. The night crowd steals with eye contact first.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "Anybody buying nerves in a pack tonight?",
+          "type": "question",
+          "next": "jenny_smokes_001"
+        },
+        {
+          "id": "opt_002",
+          "text": "Recognize Blondie?",
+          "type": "question",
+          "requirements": ["blondie_photo"],
+          "next": "jenny_blondie_001"
+        }
+      ]
+    },
+    {
+      "id": "jenny_smokes_001",
+      "speaker": "jenny",
+      "emotion": "happy",
+      "text": "BodyGuard still sends runners for cigarettes from the Italian place. Big appetite, tiny patience.",
+      "effects": {
+        "addClues": ["jenny_small_but_useful_detail"]
+      },
+      "options": []
+    },
+    {
+      "id": "jenny_blondie_001",
+      "speaker": "jenny",
+      "emotion": "serious",
+      "text": "Saw her pass the block like she was counting shadows. Did not stay long enough to buy anything.",
+      "effects": {
+        "addClues": ["jenny_small_but_useful_detail"]
+      },
+      "options": []
+    }
+  ]
+}

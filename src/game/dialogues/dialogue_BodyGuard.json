@@ -1,0 +1,49 @@
+{
+  "scene": "restooutside",
+  "characterId": "bodyguard",
+  "conversationId": "bodyguard_restaurant_intro",
+  "description": "BodyGuard gates access to the restaurant interior.",
+  "startNode": "bodyguard_intro_001",
+  "nodes": [
+    {
+      "id": "bodyguard_intro_001",
+      "speaker": "bodyguard",
+      "emotion": "tired",
+      "text": "Turn around unless you booked a table or brought me a reason to care.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "I brought cigarettes.",
+          "type": "offer_item",
+          "requirements": ["cigarette_pack"],
+          "next": "bodyguard_cigarettes_001"
+        },
+        {
+          "id": "opt_002",
+          "text": "I only need five minutes with Big Boss.",
+          "type": "question",
+          "next": "bodyguard_five_minutes_001"
+        }
+      ]
+    },
+    {
+      "id": "bodyguard_cigarettes_001",
+      "speaker": "bodyguard",
+      "emotion": "happy",
+      "text": "Now you are speaking my language. Fine. Do not make me regret letting you past the door.",
+      "effects": {
+        "removeItems": ["cigarette_pack"],
+        "addFlags": ["restaurant_access_granted"],
+        "addClues": ["restaurant_access_granted"]
+      },
+      "options": []
+    },
+    {
+      "id": "bodyguard_five_minutes_001",
+      "speaker": "bodyguard",
+      "emotion": "serious",
+      "text": "Then bring me a better argument than your face.",
+      "options": []
+    }
+  ]
+}

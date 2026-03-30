@@ -35,6 +35,8 @@ const MAP_LOCATIONS: MapLocation[] = [
   { roomId: "garage", x: 70, y: 88, distance: "2.6 km", walkTime: "30 min", walkMinutes: 30 },
   { roomId: "restooutside", x: 82, y: 40, distance: "1.7 km", walkTime: "20 min", walkMinutes: 20 },
   { roomId: "street", x: 56, y: 42, distance: "0.6 km", walkTime: "7 min", walkMinutes: 7 },
+  { roomId: "motel", x: 91, y: 80, distance: "3.4 km", walkTime: "36 min", walkMinutes: 36 },
+  { roomId: "safehouse", x: 18, y: 86, distance: "4.0 km", walkTime: "42 min", walkMinutes: 42 },
 ];
 
 export function MapOverlay({ open, currentRoom, availableRooms, onClose, onSelectRoom }: Props) {

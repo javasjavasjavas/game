@@ -1,0 +1,33 @@
+{
+  "scene": "alley",
+  "characterId": "pepe",
+  "conversationId": "pepe_dark_alley_intro",
+  "description": "Pepe confirms hidden movement through the alley.",
+  "startNode": "pepe_intro_001",
+  "nodes": [
+    {
+      "id": "pepe_intro_001",
+      "speaker": "pepe",
+      "emotion": "serious",
+      "text": "You do not walk into this alley unless you are lost, stupid, or looking for the route behind the route.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "Then give me the route behind the route.",
+          "type": "question",
+          "next": "pepe_route_001"
+        }
+      ]
+    },
+    {
+      "id": "pepe_route_001",
+      "speaker": "pepe",
+      "emotion": "thinking",
+      "text": "Somebody moved a scared passenger through here under protection. Fast feet, controlled stops, no room for witnesses. That is transport, not panic.",
+      "effects": {
+        "addClues": ["pepe_confirms_hidden_movement", "territorial_clue_obtained"]
+      },
+      "options": []
+    }
+  ]
+}

@@ -11,7 +11,9 @@ export type RoomId =
   | "garage"
   | "restooutside"
   | "restoinside"
-  | "street";
+  | "street"
+  | "motel"
+  | "safehouse";
 
 export interface Room {
   id: RoomId;
@@ -67,6 +69,7 @@ export interface InventoryItemDefinition {
   id: string;
   label: string;
   image: string;
+  description?: string;
 }
 
 export interface HotspotItemDefinition {
@@ -77,6 +80,7 @@ export interface HotspotItemDefinition {
   description: string;
   addClues?: string[];
   addFlags?: string[];
+  removeItems?: string[];
   pickupMessage?: string;
 }
 
@@ -105,6 +109,8 @@ export interface DialogueScriptOption {
 export interface DialogueScriptEffects {
   addFlags?: string[];
   addClues?: string[];
+  addItems?: string[];
+  removeItems?: string[];
 }
 
 export interface DialogueScriptNode {

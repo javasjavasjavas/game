@@ -4,6 +4,7 @@ import {
   CHARACTER_CLUE_PRIORITY_BY_NPC,
   CLUES,
   HOTSPOT_ITEM_BY_ID,
+  INVENTORY_ITEM_BY_ID,
   INVENTORY_ITEMS,
   MAX_CHARACTER_CLUES_PER_NPC,
   NPCS,
@@ -51,6 +52,17 @@ const APARTMENT_HOTSPOT_REQUIREMENTS: Partial<Record<string, string>> = {
   "apartment-jacket-pocket": "lucy_explains_photo_in_jacket",
   "apartment-computer-screen": "lucy_explains_bar_address_in_email",
 };
+
+const LOCATION_UNLOCK_FLAGS = new Set([
+  "pharmacy_marked_on_map",
+  "arcade_marked_on_map",
+  "store_marked_on_map",
+  "red_light_block_marked_on_map",
+  "underground_garage_unlocked",
+  "restaurant_exterior_marked_on_map",
+  "motel_neon_unlocked",
+  "safehouse_location_known",
+]);
 
 export function useGame() {
   const [game, setGame] = useState(() => new GameState());
@@ -121,6 +133,31 @@ export function useGame() {
   };
   const applyNodeEffects = (draft: GameState, node: DialogueScriptNode | null) => {
     applyScriptEffects(draft, node?.effects);
+  };
+  const applyInventoryEffects = (...effects: Array<DialogueScriptEffects | undefined>) => {
+    const addItems = effects.flatMap((effect) => effect?.addItems ?? []);
+    const removeItems = effects.flatMap((effect) => effect?.removeItems ?? []);
+
+    if (addItems.length > 0) {
+      setOwnedInventoryIds((prev) => {
+        const next = [...prev];
+        addItems.forEach((itemId) => {
+          if (!INVENTORY_ITEM_BY_ID[itemId] || next.includes(itemId)) return;
+          next.push(itemId);
+        });
+        return next;
+      });
+    }
+
+    if (removeItems.length > 0) {
+      setOwnedInventoryIds((prev) => prev.filter((itemId) => !removeItems.includes(itemId)));
+      setSelectedInventoryId((prev) => (prev && removeItems.includes(prev) ? null : prev));
+    }
+  };
+  const updateMapBadgeForDiscoveredFlags = (discoveredFlags: string[]) => {
+    const locationUnlockCount = discoveredFlags.filter((flagId) => LOCATION_UNLOCK_FLAGS.has(flagId)).length;
+    if (locationUnlockCount === 0) return;
+    setMapBadgeLabel(locationUnlockCount > 1 ? "New Locations" : "New Location");
   };
   const getRecordableCharacterClueIds = (npcId: string, clueIds: string[]) => {
     const uniqueClueIds = clueIds.filter(
@@ -251,6 +288,24 @@ export function useGame() {
     }
     if (game.hasFlag("arcade_marked_on_map")) {
       rooms.push("arcade");
+    }
+    if (game.hasFlag("store_marked_on_map")) {
+      rooms.push("store");
+    }
+    if (game.hasFlag("red_light_block_marked_on_map")) {
+      rooms.push("street");
+    }
+    if (game.hasFlag("underground_garage_unlocked")) {
+      rooms.push("garage");
+    }
+    if (game.hasFlag("restaurant_exterior_marked_on_map")) {
+      rooms.push("restooutside");
+    }
+    if (game.hasFlag("motel_neon_unlocked")) {
+      rooms.push("motel");
+    }
+    if (game.hasFlag("safehouse_location_known")) {
+      rooms.push("safehouse");
     }
     return rooms;
   }, [canOpenMap, game]);
@@ -478,6 +533,7 @@ export function useGame() {
       const beforeClues = new Set(nextGame.clues);
       applyScriptEffects(nextGame, selectedOption.effects);
       applyNodeEffects(nextGame, nextNode);
+      applyInventoryEffects(selectedOption.effects, nextNode.effects);
       nextGame.characterEmotion = nextNode.emotion;
       nextGame.advanceTime(5);
       nextGame.lastMessage = getScriptNodeText(scriptedDialogue, nextNode);
@@ -515,9 +571,7 @@ export function useGame() {
       setConversationText(getScriptNodeText(scriptedDialogue, nextNode));
       const discoveredFlags = [...nextGame.flags].filter((flagId) => !beforeFlags.has(flagId));
       const discoveredClues = [...nextGame.clues].filter((clueId) => !beforeClues.has(clueId));
-      if (discoveredFlags.includes("arcade_marked_on_map") && nextGame.hasFlag("arcade_marked_on_map")) {
-        setMapBadgeLabel(nextGame.hasFlag("pharmacy_marked_on_map") ? "New Locations" : "New Location");
-      }
+      updateMapBadgeForDiscoveredFlags(discoveredFlags);
       const recordableClues = getRecordableCharacterClueIds(npcId, discoveredClues);
       setConversationHasClue(recordableClues.length > 0);
       ensureCharacterMemory(npcId);
@@ -565,63 +619,81 @@ export function useGame() {
     setElevatorChoiceOpen(false);
   };
 
-  const openRoomInspect = () => {
+  const resetTransientPanels = () => {
     setCurrentTalkNpcId(null);
     setConversationText("");
     setConversationHasClue(false);
+    setInspectOpen(false);
+    setElevatorChoiceOpen(false);
     setInspectedHotspotId(null);
     setInspectOverrideText(null);
-    setElevatorChoiceOpen(false);
     setScriptedConversationState(null);
     setScriptedBackStack([]);
+  };
+
+  const openRoomInspect = () => {
+    resetTransientPanels();
     setInspectOpen(true);
   };
 
   const openHotspotInspect = (hotspotId: string) => {
     if (currentTalkNpcId) return;
+
     if (game.currentRoom === "elevator" && hotspotId === "elevator-call-button") {
-      setCurrentTalkNpcId(null);
-      setConversationText("");
-      setConversationHasClue(false);
-      setInspectOpen(false);
-      setInspectedHotspotId(null);
-      setInspectOverrideText(null);
-      setScriptedConversationState(null);
-      setScriptedBackStack([]);
+      resetTransientPanels();
       setElevatorChoiceOpen(true);
       return;
     }
+
+    if (game.currentRoom === "street" && hotspotId === "street-alley-entrance") {
+      moveRoom("alley", 4);
+      return;
+    }
+
+    if (game.currentRoom === "restooutside" && hotspotId === "restooutside-entrance-door" && game.hasFlag("restaurant_access_granted")) {
+      moveRoom("restoinside", 1);
+      return;
+    }
+
+    if (
+      game.currentRoom === "street" &&
+      hotspotId === "street-vending-machine" &&
+      !collectedHotspotItemIds.includes(hotspotId) &&
+      selectedInventoryId === "arcade_token" &&
+      ownedInventoryIds.includes("arcade_token")
+    ) {
+      resetTransientPanels();
+      setItemPopup({
+        hotspotId,
+        itemId: "energizing_drink",
+        label: "Energy Drink",
+        image: INVENTORY_ITEM_BY_ID.energizing_drink.image,
+        description: INVENTORY_ITEM_BY_ID.energizing_drink.description ?? "A cold hit of sugar, caffeine, and bad priorities.",
+        removeItems: ["arcade_token"],
+        pickupMessage: "The vending machine coughs up an energy drink after taking the arcade token.",
+      });
+      return;
+    }
+
     if (game.currentRoom === "bar" && hotspotId === "bar-under-table" && !game.hasFlag("gambler_points_under_table")) {
-      setCurrentTalkNpcId(null);
-      setConversationText("");
-      setConversationHasClue(false);
-      setInspectOpen(false);
+      resetTransientPanels();
       setInspectedHotspotId(hotspotId);
       setInspectOverrideText(
         "From here it is only damp shadow under the back table. If something matters down there, you need a better reason to dig for it.",
       );
-      setElevatorChoiceOpen(false);
-      setScriptedConversationState(null);
-      setScriptedBackStack([]);
       return;
     }
+
     const hotspotItem = HOTSPOT_ITEM_BY_ID[hotspotId];
     if (hotspotItem && !collectedHotspotItemIds.includes(hotspotId)) {
-      setCurrentTalkNpcId(null);
-      setConversationText("");
-      setConversationHasClue(false);
-      setInspectOpen(false);
-      setInspectedHotspotId(null);
-      setInspectOverrideText(null);
-      setElevatorChoiceOpen(false);
-      setScriptedConversationState(null);
-      setScriptedBackStack([]);
+      resetTransientPanels();
       setItemPopup(hotspotItem);
       return;
     }
 
     let overrideText: string | null = null;
     const nextGame = game.clone();
+
     if (game.currentRoom === "apartment" && hotspotId === "apartment-computer-screen" && !nextGame.hasFlag("bar_address_known")) {
       nextGame.addFlag("bar_address_known");
       nextGame.addClue("bar_address_known");
@@ -635,6 +707,12 @@ export function useGame() {
       nextGame.addClue("building_neighbor_note");
       nextGame.lastMessage = "You pocket the neighbor's warning from the elevator wall.";
     }
+    if (game.currentRoom === "arcade" && hotspotId === "arcade-counter-computer" && !nextGame.hasClue("has_arcade_timeline_clue")) {
+      nextGame.addClue("has_arcade_timeline_clue");
+      nextGame.lastMessage = "You pull a timeline clue out of the arcade's counter log.";
+      overrideText =
+        "The counter log still remembers what people do not. Blondie's pass through the Arcade Room happened later than it should have, and fast enough to look like she never meant to stay.";
+    }
     if (
       game.currentRoom === "bar" &&
       hotspotId === "bar-under-table" &&
@@ -642,21 +720,61 @@ export function useGame() {
     ) {
       overrideText = "Only damp dust remains under the back table. The receipt is already in your pocket.";
     }
+    if (game.currentRoom === "street" && hotspotId === "street-vending-machine") {
+      if (collectedHotspotItemIds.includes(hotspotId) || ownedInventoryIds.includes("energizing_drink")) {
+        overrideText = "The machine hums emptily. You already got what you needed out of it.";
+      } else if (ownedInventoryIds.includes("arcade_token")) {
+        overrideText = "The slot wants something metal and specific. The arcade token in your inventory should do it.";
+      }
+    }
+    if (game.currentRoom === "garage" && hotspotId === "garage-car") {
+      if (!nextGame.hasClue("plate_match_confirmed") && ownedInventoryIds.includes("license_plate_note")) {
+        nextGame.addClue("plate_match_confirmed");
+        nextGame.lastMessage = "The plate matches Rose's note.";
+        overrideText =
+          "You hold Rose's note up beside the plate and get the confirmation you were afraid of. It is the same car.";
+      } else if (!ownedInventoryIds.includes("license_plate_note")) {
+        overrideText = "The plate means nothing until you have something to compare it against.";
+      }
+    }
+    if (game.currentRoom === "restooutside" && hotspotId === "restooutside-entrance-door" && !game.hasFlag("restaurant_access_granted")) {
+      overrideText = "The BodyGuard blocks the entrance without even turning fully toward you. You need a better way in.";
+    }
+    if (game.currentRoom === "safehouse" && hotspotId === "safehouse-metal-door") {
+      if (!game.hasFlag("safehouse_location_known") && !game.hasClue("safehouse_location_known")) {
+        overrideText = "Without a real lead, this is just another dead metal door in a city full of them.";
+      } else if (selectedInventoryId === "steel_bar" && ownedInventoryIds.includes("steel_bar")) {
+        mutate((draft) => {
+          draft.advanceTime(5);
+          if (draft.finished) return;
+          draft.addFlag("blondie_found");
+          draft.finished = true;
+          draft.lastMessage = "You force the metal door with the steel bar and find Blondie alive inside.";
+        });
+        resetTransientPanels();
+        setInspectedHotspotId(hotspotId);
+        setInspectOverrideText(
+          "The steel bar bites into the frame, the lock screams, and the Safehouse finally gives up Blondie before dawn can take the case away from you.",
+        );
+        return;
+      } else if (ownedInventoryIds.includes("steel_bar")) {
+        overrideText = "The frame is weak enough to force, but only if you use the steel bar instead of just staring at the door.";
+      }
+    }
+
     if (game.currentRoom === "apartment" && hotspotId === "apartment-computer-screen" && overrideText) {
       setGame(nextGame);
       ensureCharacterMemory("lucy");
       recordCluesForCharacter("lucy", ["bar_address_known"]);
-    } else if (game.currentRoom === "elevator" && hotspotId === "elevator-neighbor-note" && nextGame.hasClue("building_neighbor_note")) {
+    } else if (
+      (game.currentRoom === "elevator" && hotspotId === "elevator-neighbor-note" && nextGame.hasClue("building_neighbor_note")) ||
+      (game.currentRoom === "arcade" && hotspotId === "arcade-counter-computer" && nextGame.hasClue("has_arcade_timeline_clue")) ||
+      (game.currentRoom === "garage" && hotspotId === "garage-car" && nextGame.hasClue("plate_match_confirmed"))
+    ) {
       setGame(nextGame);
     }
 
-    setCurrentTalkNpcId(null);
-    setConversationText("");
-    setConversationHasClue(false);
-    setInspectOpen(false);
-    setElevatorChoiceOpen(false);
-    setScriptedConversationState(null);
-    setScriptedBackStack([]);
+    resetTransientPanels();
     setInspectOverrideText(overrideText);
     setInspectedHotspotId(hotspotId);
   };
@@ -676,8 +794,12 @@ export function useGame() {
     if (!ownedInventoryIds.includes(itemPopup.itemId)) {
       setOwnedInventoryIds((prev) => [...prev, itemPopup.itemId]);
     }
+    if (itemPopup.removeItems?.length) {
+      setOwnedInventoryIds((prev) => prev.filter((itemId) => !itemPopup.removeItems?.includes(itemId)));
+      setSelectedInventoryId((prev) => (prev && itemPopup.removeItems?.includes(prev) ? null : prev));
+    }
     setCollectedHotspotItemIds((prev) => (prev.includes(itemPopup.hotspotId) ? prev : [...prev, itemPopup.hotspotId]));
-    const addsPharmacyLead = itemPopup.addFlags?.includes("pharmacy_marked_on_map") ?? false;
+    const discoveredFlags = (itemPopup.addFlags ?? []).filter((flagId) => !game.hasFlag(flagId));
     mutate((draft) => {
       itemPopup.addClues?.forEach((clueId) => draft.addClue(clueId));
       itemPopup.addFlags?.forEach((flagId) => draft.addFlag(flagId));
@@ -686,9 +808,7 @@ export function useGame() {
         draft.lastMessage = itemPopup.pickupMessage;
       }
     });
-    if (addsPharmacyLead) {
-      setMapBadgeLabel(game.hasFlag("arcade_marked_on_map") ? "New Locations" : "New Location");
-    }
+    updateMapBadgeForDiscoveredFlags(discoveredFlags);
     setItemPopup(null);
   };
 
@@ -927,8 +1047,30 @@ export function useGame() {
       ];
     }
 
+    if (game.currentRoom === "restooutside" && game.hasFlag("restaurant_access_granted")) {
+      return [
+        {
+          id: "enter-restaurant",
+          label: "Enter Restaurant",
+          icon: "/game-assets/icon_location.png",
+          onClick: () => moveRoom("restoinside", 1),
+        },
+      ];
+    }
+
+    if (game.currentRoom === "restoinside") {
+      return [
+        {
+          id: "leave-restaurant",
+          label: "Back Outside",
+          icon: "/game-assets/icon_location.png",
+          onClick: () => moveRoom("restooutside", 1),
+        },
+      ];
+    }
+
     return [];
-  }, [game, goToElevator, returnToApartment, returnToElevator]);
+  }, [game, goToElevator, moveRoom, returnToApartment, returnToElevator]);
 
   const ensureCharacterMemory = (npcId: string) => {
     const nextMemory = createCharacterMemory(npcId);

@@ -1,0 +1,35 @@
+{
+  "scene": "garage",
+  "characterId": "streetracer",
+  "conversationId": "street_racer_garage_intro",
+  "description": "Street Racer identifies Nails and opens the late-game route.",
+  "startNode": "street_racer_intro_001",
+  "nodes": [
+    {
+      "id": "street_racer_intro_001",
+      "speaker": "streetracer",
+      "emotion": "serious",
+      "text": "If you touch the wrong car in here, it starts a story you cannot finish.",
+      "options": [
+        {
+          "id": "opt_001",
+          "text": "I matched the plate. Tell me who drives it.",
+          "type": "question",
+          "requirements": ["plate_match_confirmed"],
+          "next": "street_racer_plate_001"
+        }
+      ]
+    },
+    {
+      "id": "street_racer_plate_001",
+      "speaker": "streetracer",
+      "emotion": "serious",
+      "text": "That ride belongs to Nails. If you want him, try Motel Neon. If you want the suit above him, Big Boss still eats at the Italian Restaurant like the city owes him candles.",
+      "effects": {
+        "addFlags": ["motel_neon_unlocked", "restaurant_exterior_marked_on_map"],
+        "addClues": ["street_racer_identifies_car_as_nails", "motel_neon_address_known", "restaurant_exterior_marked_on_map"]
+      },
+      "options": []
+    }
+  ]
+}
