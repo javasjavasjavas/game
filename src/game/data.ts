@@ -15,17 +15,17 @@ const PLACEHOLDER_CHARACTER_SRC = "/game-assets/character_to_replace.svg";
 export const ROOM_BACKGROUND_BY_ID: Record<RoomId, string> = {
   apartment: "/game-assets/background_apartment.jpg",
   elevator: "/game-assets/background_elevator.jpg",
-  rooftop: PLACEHOLDER_BACKGROUND_SRC,
+  rooftop: "/game-assets/background_rooftop.jpg",
   bar: "/game-assets/background_bar.jpg",
   pharmacy: "/game-assets/background_pharmacy.jpg",
   arcade: "/game-assets/background_arcades.jpg",
   store: "/game-assets/background_store.jpg",
   street: "/game-assets/background_street.jpg",
-  alley: PLACEHOLDER_BACKGROUND_SRC,
+  alley: "/game-assets/background_alley.jpg",
   garage: "/game-assets/background_garage.jpg",
   restooutside: "/game-assets/background_resto_outside.jpg",
   restoinside: "/game-assets/background_resto_inside.jpg",
-  motel: PLACEHOLDER_BACKGROUND_SRC,
+  motel: "/game-assets/background_motel.jpg",
   safehouse: PLACEHOLDER_BACKGROUND_SRC,
   cab: "/game-assets/background_cab.jpg",
 };
@@ -150,9 +150,9 @@ export const CHARACTERS: CharacterDefinition[] = [
     description: "Garage witness. Sprite pending final art.",
     defaultEmotion: "serious",
     emotions: {
-      serious: PLACEHOLDER_CHARACTER_SRC,
-      happy: PLACEHOLDER_CHARACTER_SRC,
-      suspicious: PLACEHOLDER_CHARACTER_SRC,
+      serious: "/game-assets/character_driver_serious.png",
+      happy: "/game-assets/character_driver_happy.png",
+      laughing: "/game-assets/character_driver_laughing.png",
     },
   },
   {
