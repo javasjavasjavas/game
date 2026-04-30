@@ -6,13 +6,10 @@ interface Props {
   score: number;
   money: number;
   onToggleCharacter: (npcId: string) => void;
-  onWait: () => void;
-  onTakeCab: () => void;
   mobileOpen: boolean;
   soundEnabled: boolean;
   onToggleSound: () => void;
   onSettingsClick: () => void;
-  inCab: boolean;
 }
 
 export function Sidebar({
@@ -21,13 +18,10 @@ export function Sidebar({
   score,
   money,
   onToggleCharacter,
-  onWait,
-  onTakeCab,
   mobileOpen,
   soundEnabled,
   onToggleSound,
   onSettingsClick,
-  inCab,
 }: Props) {
   return (
     <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
@@ -97,15 +91,6 @@ export function Sidebar({
         </div>
       </section>
 
-      <section className="panel" style={{ marginTop: "auto" }}>
-        <h2>Actions</h2>
-        <button className="action-btn" onClick={onWait}>
-          <img className="action-icon-image" src="/game-assets/icon_clock.png" alt="Clock" /> Wait 30 minutes
-        </button>
-        <button className="action-btn" onClick={onTakeCab}>
-          <img className="action-icon-image" src="/game-assets/icon_cab.png" alt="Cab" /> {inCab ? "Leave the cab" : "Take a cab"}
-        </button>
-      </section>
     </aside>
   );
 }

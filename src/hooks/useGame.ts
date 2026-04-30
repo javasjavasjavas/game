@@ -104,8 +104,10 @@ export function useGame() {
     getAvailableScriptOptions(node, hasRequirement).filter(
       (option) => !isOptionUsed(dialogue.conversationId, node.id, option.id),
     );
-  const getLatestFollowup = (dialogue: DialogueScriptDefinition) =>
-    (dialogue.conditionalFollowups ?? []).filter((followup) => followup.requirements.every(hasRequirement)).at(-1) ?? null;
+  const getLatestFollowup = (dialogue: DialogueScriptDefinition) => {
+    const availableFollowups = (dialogue.conditionalFollowups ?? []).filter((followup) => followup.requirements.every(hasRequirement));
+    return availableFollowups[availableFollowups.length - 1] ?? null;
+  };
   const getScriptNodeText = (dialogue: DialogueScriptDefinition, node: DialogueScriptNode) => {
     if (dialogue.characterId !== "lucy" || dialogue.scene !== "apartment") {
       return node.text;

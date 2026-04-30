@@ -87,7 +87,6 @@ export default function App() {
     const audio = new Audio();
     audio.loop = true;
     audio.preload = "auto";
-    audio.playsInline = true;
     audio.volume = 0;
     musicRef.current = audio;
     return () => {
@@ -243,21 +242,12 @@ export default function App() {
         score={game.clues.length * 100}
         money={game.game.money}
         onToggleCharacter={game.toggleCharacterMemory}
-        onWait={game.wait}
-        onTakeCab={() => {
-          if (game.game.currentRoom === "cab") {
-            game.leaveCab();
-          } else {
-            game.takeCab();
-          }
-        }}
         mobileOpen={mobileSidebar}
         soundEnabled={soundEnabled}
         onToggleSound={() => setSoundEnabled((prev) => !prev)}
         onSettingsClick={() => {
           // Placeholder: behavior will be added in a next step.
         }}
-        inCab={game.game.currentRoom === "cab"}
       />
 
       <main className={rootClass} onContextMenu={handleContextMenu}>
